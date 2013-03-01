@@ -9,11 +9,6 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CandidateTest {
-	
-	@Test(expected = NullPointerException.class)
-	public void throwsWhenInstantiatedWithNullName() {
-	    new Candidate(null, false);
-	}
 
 	@Test
 	public void isNaturallyOrderedByName() {

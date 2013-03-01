@@ -1,6 +1,6 @@
 package info.gehrels.voting;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A Ballot instance represents a physical piece of paper marked by a voter. It contains one or more areas, each
@@ -11,9 +11,9 @@ public class Ballot {
     private static int ballotIdFactory = 0;
 
     public final int id;
-    public final ImmutableSortedSet<Candidate> rankedCandidates;
+    public final ImmutableSet<Candidate> rankedCandidates;
 
-    public Ballot(ImmutableSortedSet<Candidate> rankedCandidates) {
+    public Ballot(ImmutableSet<Candidate> rankedCandidates) {
         this.id = ++ballotIdFactory;
         this.rankedCandidates = rankedCandidates;
     }

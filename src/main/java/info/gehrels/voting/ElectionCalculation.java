@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -272,19 +273,17 @@ public class ElectionCalculation {
 
     private static class BallotState {
         private final Ballot ballot;
-        private int candidateOfCurrentPreference = 0;
-        private double voteWeigt = 1;
+        private double voteWeigt;
+	    private Iterator<Candidate> ballotIterator;
+	    private Candidate candidateOfCurrentPreference;
 
-        public BallotState(Ballot ballot) {
+	    public BallotState(Ballot ballot) {
             this.ballot = ballot;
+		    reset();
         }
 
         public Candidate getPreferredCandidate() {
-            if (candidateOfCurrentPreference >= ballot.rankedCandidates.size()) {
-                return null;
-            }
-			throw new UnsupportedOperationException();
-            //return ballot.rankedCandidates.get(candidateOfCurrentPreference);
+            return candidateOfCurrentPreference;
         }
 
         public double getVoteWeight() {
@@ -292,14 +291,12 @@ public class ElectionCalculation {
         }
 
         public Candidate proceedToNextPreference() {
-            candidateOfCurrentPreference++;
-
-            if (candidateOfCurrentPreference >= ballot.rankedCandidates.size()) {
-                return null;
+	        candidateOfCurrentPreference = null;
+            if (ballotIterator.hasNext()) {
+	            candidateOfCurrentPreference = ballotIterator.next();
             }
 
-	        throw new UnsupportedOperationException();
-            //return ballot.rankedCandidates.get(candidateOfCurrentPreference);
+	        return candidateOfCurrentPreference;
         }
 
         public void reduceVoteWeight(double fractionOfExcessiveVotes) {
@@ -307,7 +304,9 @@ public class ElectionCalculation {
         }
 
         public void reset() {
-            candidateOfCurrentPreference = 0;
+	        this.ballotIterator = ballot.rankedCandidates.iterator();
+            proceedToNextPreference();
+
             voteWeigt = 1;
         }
     }

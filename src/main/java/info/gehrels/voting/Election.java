@@ -7,14 +7,20 @@ import com.google.common.collect.ImmutableSet;
  * most be successful.
  */
 public class Election {
+	private final Office office;
 	private final int numberOfFemaleExclusivePositions;
 	private final int numberOfNotFemaleExclusivePositions;
 	private final ImmutableSet<Candidate> candidates;
 
-	public Election(int numberOfFemaleExclusivePositions, int numberOfNotFemaleExclusivePositions,
+	public Election(Office office, int numberOfFemaleExclusivePositions, int numberOfNotFemaleExclusivePositions,
 	                ImmutableSet<Candidate> candidates) {
+		this.office = office;
 		this.numberOfFemaleExclusivePositions = numberOfFemaleExclusivePositions;
 		this.numberOfNotFemaleExclusivePositions = numberOfNotFemaleExclusivePositions;
 		this.candidates = candidates;
+	}
+
+	public ImmutableSet<Candidate> getCandidates() {
+		return candidates;
 	}
 }
