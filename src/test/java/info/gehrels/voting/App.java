@@ -62,7 +62,7 @@ public class App {
 	}
 
 	private static Ballot createBallot(String preferences, CombinedElectionsOnOneBallot combinedElectionsOnOneBallot) {
-		Election election = combinedElectionsOnOneBallot.iterator().next();
+		Election election = combinedElectionsOnOneBallot.elections.iterator().next();
 		ImmutableSet<Candidate> candidates = election.getCandidates();
 		ImmutableSet.Builder<Candidate> preferenceBuilder = ImmutableSet.builder();
 		for (int i = 0; i < preferences.length(); i++) {
