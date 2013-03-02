@@ -57,7 +57,8 @@ public class App {
                 .add(createBallot("IJH", combinedElectionsOnOneBallot))
                 .add(createBallot("JIHFE", combinedElectionsOnOneBallot));
 
-		new ElectionCalculation(election, ballotBuilder.build(), new MyConflictResolutionAlgorithm())
+		new ElectionCalculation(election, ballotBuilder.build(), new MyConflictResolutionAlgorithm(),
+		                        new AuditLogger())
 			.calculateElectionResult();
 	}
 

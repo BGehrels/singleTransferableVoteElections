@@ -21,13 +21,16 @@ public class ElectionCalculation {
 	private final ImmutableCollection<Ballot> ballots;
     private final int numberOfFemaleSeats;
     private int numberOfOpenSeats;
-    private ConflictResolutionAlgorithm conflictResolutionAlgorithm;
+    private final ConflictResolutionAlgorithm conflictResolutionAlgorithm;
+	private final ElectionCalculationListener electionCalculationListener;
 
     public ElectionCalculation(Election election, ImmutableCollection<Ballot> ballots,
-                               ConflictResolutionAlgorithm conflictResolutionAlgorithm) {
+                               ConflictResolutionAlgorithm conflictResolutionAlgorithm,
+                               ElectionCalculationListener electionCalculationListener) {
 	    this.election = election;
 	    this.ballots = ballots;
-        this.numberOfFemaleSeats = election.getNumberOfFemaleExclusivePositions();
+	    this.electionCalculationListener = electionCalculationListener;
+	    this.numberOfFemaleSeats = election.getNumberOfFemaleExclusivePositions();
         this.numberOfOpenSeats = election.getNumberOfNotFemaleExclusivePositions();
         this.conflictResolutionAlgorithm = conflictResolutionAlgorithm;
     }
@@ -37,12 +40,12 @@ public class ElectionCalculation {
         // Runden oder nicht runden?
         // Satzungsmäßig klarstellen, dass eigenes Quorum für Frauen und nicht Frauen...
         //double femaleQuorum = numberOfValidBallots / (numberOfFemaleSeats + 1) + 1;
-        //double openQuorum = numberOfValidBallots / (numberOfOpenSeats + 1) + 1;
+        //double nonFemaleQuorum = numberOfValidBallots / (numberOfOpenSeats + 1) + 1;
         double femaleQuorum = numberOfValidBallots / (numberOfFemaleSeats + 1.0);
-        double openQuorum = numberOfValidBallots / (numberOfOpenSeats + 1.0);
+        double nonFemaleQuorum = numberOfValidBallots / (numberOfOpenSeats + 1.0);
 
-        System.out.println("Das Quorum für die Frauenplätze liegt bei " + femaleQuorum);
-        System.out.println("Das Quorum für die Offenen Plätze liegt bei " + openQuorum);
+	    electionCalculationListener.quorumHasBeenCalculated(true, femaleQuorum);
+	    electionCalculationListener.quorumHasBeenCalculated(false, nonFemaleQuorum);
 
         ImmutableCollection<BallotState> ballotStates = constructBallotStates();
         ImmutableMap<Candidate, CandidateState> candidateStates = constructCandidateStates();
@@ -65,9 +68,9 @@ public class ElectionCalculation {
 
         int numberOfElectedOpenCandidates = 0;
         while (notAllSeatsFilled(numberOfElectedOpenCandidates) && anyCandidateIsHopeful(false, candidateStates)) {
-            Candidate candidate = bestCandidateThatReachedTheQuorum(openQuorum, false, candidateStates, ballotStates);
+            Candidate candidate = bestCandidateThatReachedTheQuorum(nonFemaleQuorum, false, candidateStates, ballotStates);
             if (candidate != null) {
-                redistributeExceededVoteWeight(candidate, openQuorum, ballotStates);
+                redistributeExceededVoteWeight(candidate, nonFemaleQuorum, ballotStates);
                 candidateStates.get(candidate).setElected();
                 numberOfElectedOpenCandidates++;
             } else {
