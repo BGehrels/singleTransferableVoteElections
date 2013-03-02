@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 /**
  * A Candidate is a person running for one office.
  */
-public class Candidate implements Comparable<Candidate> {
+public class Candidate {
     public final String name;
     public final boolean isFemale;
 
@@ -15,11 +15,6 @@ public class Candidate implements Comparable<Candidate> {
 	    this.name = validateThat(name, not(isEmptyOrNullString()));
         this.isFemale = female;
     }
-
-	@Override
-	public int compareTo(Candidate o) {
-		return name.compareTo(o.name);
-	}
 
 	@Override
 	public String toString() {

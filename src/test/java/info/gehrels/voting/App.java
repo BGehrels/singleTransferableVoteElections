@@ -3,7 +3,6 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 
 import java.util.Collection;
@@ -13,8 +12,8 @@ import java.util.Collection;
  */
 public class App {
 	public static void main(String[] args) {
-		ImmutableSortedSet.Builder<Candidate> candidateBuilder = ImmutableSortedSet.naturalOrder();
-		ImmutableSortedSet<Candidate> candidates =
+		ImmutableSet.Builder<Candidate> candidateBuilder = ImmutableSet.builder();
+		ImmutableSet<Candidate> candidates =
 			candidateBuilder
 				.add(new Candidate("A", true))
 				.add(new Candidate("B", true))
