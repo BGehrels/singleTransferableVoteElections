@@ -11,7 +11,7 @@ public class AuditLogger implements ElectionCalculationListener {
 		if (femaleExclusive) {
 			LOGGER.info("Das Quorum für die Frauenplätze liegt bei {}", quorum);
 		} else {
-			LOGGER.info("Das Quorum für die Offenen Plätze liegt bei " + quorum);
+			LOGGER.info("Das Quorum für die Offenen Plätze liegt bei {}", quorum);
 		}
 	}
 }
