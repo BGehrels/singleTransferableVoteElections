@@ -43,7 +43,7 @@ public class Ballot {
 		private final ImmutableSet<Candidate> candidatePreference;
 
 		public ElectionCandidatePreference(Election election, ImmutableSet<Candidate> candidatePreference) {
-			validateThat(candidatePreference, isSubSetOf(election.getCandidates()));
+			validateThat(candidatePreference, isSubSetOf(election.candidates));
 			this.election = election;
 			this.candidatePreference = candidatePreference;
 		}

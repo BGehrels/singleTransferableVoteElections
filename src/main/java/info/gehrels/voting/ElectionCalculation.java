@@ -30,8 +30,8 @@ public class ElectionCalculation {
 	    this.election = election;
 	    this.ballots = ballots;
 	    this.electionCalculationListener = electionCalculationListener;
-	    this.numberOfFemaleSeats = election.getNumberOfFemaleExclusivePositions();
-        this.numberOfOpenSeats = election.getNumberOfNotFemaleExclusivePositions();
+	    this.numberOfFemaleSeats = election.numberOfFemaleExclusivePositions;
+        this.numberOfOpenSeats = election.numberOfNotFemaleExclusivePositions;
         this.conflictResolutionAlgorithm = conflictResolutionAlgorithm;
     }
 
@@ -254,7 +254,7 @@ public class ElectionCalculation {
 
     private ImmutableMap<Candidate, CandidateState> constructCandidateStates() {
         Builder<Candidate, CandidateState> builder = ImmutableMap.builder();
-        for (Candidate candidate : election.getCandidates()) {
+        for (Candidate candidate : election.candidates) {
             builder.put(candidate, new CandidateState(candidate));
         }
         return builder.build();
