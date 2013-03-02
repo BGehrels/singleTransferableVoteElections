@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
+import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 
 import java.util.Collection;
 
@@ -15,10 +16,10 @@ public class App {
 		ImmutableSortedSet.Builder<Candidate> candidateBuilder = ImmutableSortedSet.naturalOrder();
 		ImmutableSortedSet<Candidate> candidates =
 			candidateBuilder
-				.add(new Candidate("A", false))
-				.add(new Candidate("B", false))
-				.add(new Candidate("C", false))
-				.add(new Candidate("D", false))
+				.add(new Candidate("A", true))
+				.add(new Candidate("B", true))
+				.add(new Candidate("C", true))
+				.add(new Candidate("D", true))
 				.add(new Candidate("E", false))
 				.add(new Candidate("F", false))
 				.add(new Candidate("G", false))
@@ -56,19 +57,22 @@ public class App {
                 .add(createBallot("IJH", combinedElectionsOnOneBallot))
                 .add(createBallot("JIHFE", combinedElectionsOnOneBallot));
 
-		new ElectionCalculation(candidates, ballotBuilder.build(), 0, 1, new MyConflictResolutionAlgorithm())
+		new ElectionCalculation(election, ballotBuilder.build(), new MyConflictResolutionAlgorithm())
 			.calculateElectionResult();
 	}
 
 	private static Ballot createBallot(String preferences, CombinedElectionsOnOneBallot combinedElectionsOnOneBallot) {
 		Election election = combinedElectionsOnOneBallot.iterator().next();
 		ImmutableSet<Candidate> candidates = election.getCandidates();
-		ImmutableSet.Builder<Candidate> ballotBuilder = ImmutableSet.builder();
+		ImmutableSet.Builder<Candidate> preferenceBuilder = ImmutableSet.builder();
 		for (int i = 0; i < preferences.length(); i++) {
 			char c = preferences.charAt(i);
-			ballotBuilder.add(candidateByName("" + c, candidates));
+			preferenceBuilder.add(candidateByName("" + c, candidates));
 		}
-		return new Ballot(ballotBuilder.build());
+
+		ImmutableSet<Candidate> preference = preferenceBuilder.build();
+		ElectionCandidatePreference electionCandidatePreference = new ElectionCandidatePreference(election, preference);
+		return new Ballot(ImmutableSet.of(electionCandidatePreference));
 	}
 
 	private static Candidate candidateByName(String s, ImmutableSet<Candidate> candidates) {

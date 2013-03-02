@@ -17,19 +17,18 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 
 public class ElectionCalculation {
-    private final ImmutableCollection<Candidate> candidates;
-    private final ImmutableCollection<Ballot> ballots;
+	private final Election election;
+	private final ImmutableCollection<Ballot> ballots;
     private final int numberOfFemaleSeats;
     private int numberOfOpenSeats;
     private ConflictResolutionAlgorithm conflictResolutionAlgorithm;
 
-    public ElectionCalculation(ImmutableCollection<Candidate> candidates, ImmutableCollection<Ballot> ballots,
-                               int numberOfFemaleSeats, int numberOfOpenSeats,
+    public ElectionCalculation(Election election, ImmutableCollection<Ballot> ballots,
                                ConflictResolutionAlgorithm conflictResolutionAlgorithm) {
-        this.candidates = candidates;
-        this.ballots = ballots;
-        this.numberOfFemaleSeats = numberOfFemaleSeats;
-        this.numberOfOpenSeats = numberOfOpenSeats;
+	    this.election = election;
+	    this.ballots = ballots;
+        this.numberOfFemaleSeats = election.getNumberOfFemaleExclusivePositions();
+        this.numberOfOpenSeats = election.getNumberOfNotFemaleExclusivePositions();
         this.conflictResolutionAlgorithm = conflictResolutionAlgorithm;
     }
 
@@ -252,7 +251,7 @@ public class ElectionCalculation {
 
     private ImmutableMap<Candidate, CandidateState> constructCandidateStates() {
         Builder<Candidate, CandidateState> builder = ImmutableMap.builder();
-        for (Candidate candidate : candidates) {
+        for (Candidate candidate : election.getCandidates()) {
             builder.put(candidate, new CandidateState(candidate));
         }
         return builder.build();
@@ -263,7 +262,7 @@ public class ElectionCalculation {
         return builder.addAll(transform(ballots, new Function<Ballot, BallotState>() {
             @Override
             public BallotState apply(Ballot ballot) {
-                return new BallotState(ballot);
+                return new BallotState(election, ballot);
             }
         })).build();
     }
@@ -271,13 +270,13 @@ public class ElectionCalculation {
     private static class ElectionResult {
     }
 
-    private static class BallotState {
+    private  class BallotState {
         private final Ballot ballot;
         private double voteWeigt;
 	    private Iterator<Candidate> ballotIterator;
 	    private Candidate candidateOfCurrentPreference;
 
-	    public BallotState(Ballot ballot) {
+	    public BallotState(Election election, Ballot ballot) {
             this.ballot = ballot;
 		    reset();
         }
@@ -304,7 +303,7 @@ public class ElectionCalculation {
         }
 
         public void reset() {
-	        this.ballotIterator = ballot.rankedCandidates.iterator();
+	        this.ballotIterator = ballot.getRankedCandidatesByElection(election).iterator();
             proceedToNextPreference();
 
             voteWeigt = 1;

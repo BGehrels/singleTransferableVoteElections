@@ -20,7 +20,19 @@ public class Election {
 		this.candidates = candidates;
 	}
 
+	public Office getOffice() {
+		return office;
+	}
+
 	public ImmutableSet<Candidate> getCandidates() {
 		return candidates;
+	}
+
+	public int getNumberOfFemaleExclusivePositions() {
+		return numberOfFemaleExclusivePositions;
+	}
+
+	public int getNumberOfNotFemaleExclusivePositions() {
+		return numberOfNotFemaleExclusivePositions;
 	}
 }
