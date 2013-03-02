@@ -1,12 +1,17 @@
 package info.gehrels.voting;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AuditLogger implements ElectionCalculationListener {
+	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
 	@Override
 	public void quorumHasBeenCalculated(boolean femaleExclusive, double quorum) {
 		if (femaleExclusive) {
-			System.out.println("Das Quorum für die Frauenplätze liegt bei " + quorum);
+			LOGGER.info("Das Quorum für die Frauenplätze liegt bei {}", quorum);
 		} else {
-			System.out.println("Das Quorum für die Offenen Plätze liegt bei " + quorum);
+			LOGGER.info("Das Quorum für die Offenen Plätze liegt bei " + quorum);
 		}
 	}
 }
