@@ -67,6 +67,8 @@ public class ElectionCalculation {
         resetLoosers(candidateStates);
         resetBallotStates(ballotStates);
 
+
+	    // TODO: reduce numberOfElectedOpenCandidates, if not enough women were elected.
         int numberOfElectedOpenCandidates = 0;
         while (notAllSeatsFilled(numberOfElectedOpenCandidates, false) && anyCandidateIsHopeful(false, candidateStates)) {
             Candidate candidate = bestCandidateThatReachedTheQuorum(nonFemaleQuorum, false, candidateStates, ballotStates);
