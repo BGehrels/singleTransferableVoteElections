@@ -65,4 +65,9 @@ public class AuditLogger implements ElectionCalculationListener {
 	public void candidateIsElected(Candidate winner, double numberOfVotes, double quorum) {
 		LOGGER.info("{} hat mit {} Stimmen das Quorum von {} Stimmen erreicht und ist gewählt.", winner.name, numberOfVotes, quorum);
 	}
+
+	@Override
+	public void nobodyReachedTheQuorumYet() {
+		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum erreicht.");
+	}
 }

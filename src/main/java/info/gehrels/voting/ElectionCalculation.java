@@ -64,7 +64,7 @@ public class ElectionCalculation {
 				redistributeExceededVoteWeight(winner, femaleQuorum, ballotStates);
 				candidateStates.get(winner).setElected();
 			} else {
-				System.out.println("Niemand hat das Quorum erreicht.");
+				electionCalculationListener.nobodyReachedTheQuorumYet();
 				strikeWeakestCandidate(true, candidateStates, ballotStates);
 			}
 		}
@@ -240,8 +240,7 @@ public class ElectionCalculation {
 
 		System.out.println("Die Stimmen verteilen sich wie folgt:");
 		for (Entry<Candidate, Double> candidateDoubleEntry : votesByCandidate.entrySet()) {
-			System.out.println(
-				"\t" + candidateDoubleEntry.getKey().name + ": " + candidateDoubleEntry.getValue() + " Stimmen");
+			System.out.println("\t" + candidateDoubleEntry.getKey().name + ": " + candidateDoubleEntry.getValue() + " Stimmen");
 		}
 		return votesByCandidate;
 	}

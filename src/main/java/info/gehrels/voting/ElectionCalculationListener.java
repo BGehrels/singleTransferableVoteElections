@@ -20,4 +20,6 @@ public interface ElectionCalculationListener {
 	void externalyResolvedAmbiguity(AmbiguityResolverResult winner);
 
 	void candidateIsElected(Candidate winner, double v, double femaleQuorum);
+
+	void nobodyReachedTheQuorumYet();
 }
