@@ -70,4 +70,14 @@ public class AuditLogger implements ElectionCalculationListener {
 	public void nobodyReachedTheQuorumYet() {
 		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum erreicht.");
 	}
+
+	@Override
+	public void someCandidatesAreStillInTheRace() {
+		LOGGER.info("Es gibt noch hoffnungsvolle Kandidierende");
+	}
+
+	@Override
+	public void noCandidatesAreLeft() {
+		LOGGER.info("Es gibt keine hoffnungsvollen Kandidierende mehr");
+	}
 }

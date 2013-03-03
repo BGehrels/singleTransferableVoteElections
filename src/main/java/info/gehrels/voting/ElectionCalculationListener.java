@@ -22,4 +22,8 @@ public interface ElectionCalculationListener {
 	void candidateIsElected(Candidate winner, double v, double femaleQuorum);
 
 	void nobodyReachedTheQuorumYet();
+
+	void someCandidatesAreStillInTheRace();
+
+	void noCandidatesAreLeft();
 }

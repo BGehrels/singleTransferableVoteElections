@@ -210,11 +210,12 @@ public class ElectionCalculation {
 	                                      ImmutableMap<Candidate, CandidateState> candidateStates) {
 		for (CandidateState candidateState : candidateStates.values()) {
 			if (isAcceptableCandidate(onlyFemaleCandidates, candidateState.candidate) && candidateState.isHopeful()) {
-				System.out.println("Es gibt noch hoffnungsvolle Kandidierende");
+				electionCalculationListener.someCandidatesAreStillInTheRace();
 				return true;
 			}
 		}
-		System.out.println("Es gibt keine hoffnungsvollen Kandidierende mehr");
+
+		electionCalculationListener.noCandidatesAreLeft();
 		return false;
 	}
 
