@@ -71,9 +71,7 @@ public class ElectionCalculation {
 					calculateVotesByCandidate(true, candidateStates, ballotStates));
 
 			} else {
-				electionCalculationListener.nobodyReachedTheQuorumYet(femaleQuorum, calculateVotesByCandidate(true,
-				                                                                                              candidateStates,
-				                                                                                              ballotStates));
+				electionCalculationListener.nobodyReachedTheQuorumYet(femaleQuorum);
 				strikeWeakestCandidate(true, candidateStates, ballotStates);
 			}
 		}

@@ -80,9 +80,8 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void nobodyReachedTheQuorumYet(double quorum, Map<Candidate, Double> votesByCandidate) {
+	public void nobodyReachedTheQuorumYet(double quorum) {
 		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum von {} Stimmen erreicht:", quorum);
-		dumpVoteDistribution(votesByCandidate);
 	}
 
 	@Override

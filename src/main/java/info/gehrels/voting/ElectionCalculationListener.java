@@ -26,7 +26,7 @@ public interface ElectionCalculationListener {
 
 	void candidateIsElected(Candidate winner, double v, double femaleQuorum);
 
-	void nobodyReachedTheQuorumYet(double quorum, Map<Candidate, Double> votesByCandidate);
+	void nobodyReachedTheQuorumYet(double quorum);
 
 	void noCandidatesAreLeft();
 
