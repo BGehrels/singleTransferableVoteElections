@@ -205,9 +205,8 @@ public class ElectionCalculation {
 		if (candidates.size() == 1) {
 			return candidates.iterator().next();
 		} else if (candidates.size() > 1) {
-			ImmutableSet<Candidate> bestCandidates1 = candidates;
-			electionCalculationListener.delegatingToExternalAmbiguityResolution(bestCandidates1);
-			AmbiguityResolverResult ambiguityResolverResult = ambiguityResolver.chooseOneOfMany(bestCandidates1);
+			electionCalculationListener.delegatingToExternalAmbiguityResolution(candidates);
+			AmbiguityResolverResult ambiguityResolverResult = ambiguityResolver.chooseOneOfMany(candidates);
 			electionCalculationListener.externalyResolvedAmbiguity(ambiguityResolverResult);
 			winner = ambiguityResolverResult.choosenCandidate;
 		}
