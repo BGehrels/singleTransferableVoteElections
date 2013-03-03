@@ -1,5 +1,6 @@
 package info.gehrels.voting;
 
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,15 @@ public class AuditLogger implements ElectionCalculationListener {
 			            typeOfSeat);
 		} else {
 			LOGGER.info("Alle {} {} sind gewählt.", numberOfSeatsToElect, typeOfSeat);
+		}
+	}
+
+	@Override
+	public void electedCandidates(ImmutableSet<Candidate> electedCandidates) {
+		LOGGER.info("======================================");
+		LOGGER.info("Gewählt sind: ");
+		for (Candidate electedCandidate : electedCandidates) {
+			LOGGER.info("\t{}", electedCandidate.name);
 		}
 	}
 }

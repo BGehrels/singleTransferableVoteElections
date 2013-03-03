@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,19 +79,23 @@ public class ElectionCalculation {
             }
         }
 
-        System.out.println("======================================");
-        System.out.println("Gewählt sind: ");
-        for (CandidateState candidateState : candidateStates.values()) {
-            if (candidateState.elected) {
-                System.out.println("\t" + candidateState.candidate.name);
-            }
-        }
-
-
-        return null;
+	    ImmutableSet<Candidate> electedCandidates = getElectedCandidates(candidateStates);
+	    electionCalculationListener.electedCandidates(electedCandidates);
+        return new ElectionResult(electedCandidates);
     }
 
-    private boolean notAllSeatsFilled(int numberOfElectedCandidates, boolean female) {
+	private ImmutableSet<Candidate> getElectedCandidates(ImmutableMap<Candidate, CandidateState> candidateStates) {
+		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
+
+		for (CandidateState candidateState : candidateStates.values()) {
+			if (candidateState.elected) {
+				builder.add(candidateState.candidate);
+			}
+		}
+		return builder.build();
+	}
+
+	private boolean notAllSeatsFilled(int numberOfElectedCandidates, boolean female) {
 	    int numberOfSeatsToElect = female ? numberOfFemaleSeats : numberOfOpenSeats;
         boolean notAllSeatsFilled = numberOfElectedCandidates < numberOfSeatsToElect;
 	    electionCalculationListener.numberOfElectedPositions(female, numberOfElectedCandidates, numberOfSeatsToElect);
@@ -267,6 +272,11 @@ public class ElectionCalculation {
     }
 
     private static class ElectionResult {
+	    public final ImmutableSet<Candidate> electedCandidates;
+
+	    private ElectionResult(ImmutableSet<Candidate> electedCandidates) {
+		    this.electedCandidates = electedCandidates;
+	    }
     }
 
     private  class BallotState {
