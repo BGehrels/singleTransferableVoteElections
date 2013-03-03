@@ -1,6 +1,7 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,5 +48,16 @@ public class AuditLogger implements ElectionCalculationListener {
 			"Es werden {}% der Stimmen weiterverteilt: "
 			+ "Stimmzettel {} hat nun ein verbleibendes Stimmgewicht von {}.",
 			excessiveFractionOfVoteWeight * 100, ballot.id, voteWeight);
+	}
+
+	@Override
+	public void delegatingToExternalAmbiguityResolution(ImmutableSet<Candidate> bestCandidates) {
+		LOGGER.info("Mehrere Stimmgleiche Kandidierende: {}. Delegiere an externes Auswahlverfahren.", bestCandidates);
+	}
+
+	@Override
+	public void externalyResolvedAmbiguity(AmbiguityResolverResult ambiguityResolverResult) {
+		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.choosenCandidate,
+		            ambiguityResolverResult.auditLog);
 	}
 }

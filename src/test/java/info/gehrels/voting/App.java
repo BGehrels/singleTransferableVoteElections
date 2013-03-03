@@ -5,8 +5,6 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 
-import java.util.Collection;
-
 /**
  * Hello world!
  */
@@ -33,10 +31,10 @@ public class App {
 		CombinedElectionsOnOneBallot combinedElectionsOnOneBallot = new CombinedElectionsOnOneBallot(elections);
 
 		Builder<Ballot> ballotBuilder = ImmutableList.builder();
-	    ballotBuilder
-                .add(createBallot("ABDC", combinedElectionsOnOneBallot))
-                .add(createBallot("ACBDE", combinedElectionsOnOneBallot))
-                .add(createBallot("C", combinedElectionsOnOneBallot))
+		ballotBuilder
+			.add(createBallot("ABDC", combinedElectionsOnOneBallot))
+			.add(createBallot("ACBDE", combinedElectionsOnOneBallot))
+			.add(createBallot("C", combinedElectionsOnOneBallot))
                 .add(createBallot("CAE", combinedElectionsOnOneBallot))
                 .add(createBallot("CBAFEDG", combinedElectionsOnOneBallot))
                 .add(createBallot("CBDE", combinedElectionsOnOneBallot))
@@ -56,7 +54,7 @@ public class App {
                 .add(createBallot("IJH", combinedElectionsOnOneBallot))
                 .add(createBallot("JIHFE", combinedElectionsOnOneBallot));
 
-		new ElectionCalculation(election, ballotBuilder.build(), new MyConflictResolutionAlgorithm(),
+		new ElectionCalculation(election, ballotBuilder.build(), new MyAmbiguityResolver(),
 		                        new AuditLogger())
 			.calculateElectionResult();
 	}
@@ -85,10 +83,11 @@ public class App {
 		throw new IllegalArgumentException(s);
 	}
 
-	private static class MyConflictResolutionAlgorithm implements ConflictResolutionAlgorithm {
+	private static class MyAmbiguityResolver implements AmbiguityResolver {
 		@Override
-		public Candidate chooseWinner(Collection<Candidate> bestCandidates) {
-			return bestCandidates.iterator().next();
+		public AmbiguityResolverResult chooseOneOfMany(ImmutableSet<Candidate> bestCandidates) {
+			return new AmbiguityResolverResult(bestCandidates.iterator().next(),
+			                                   "Habe ganz primitiv das erste Element der Menge genommen");
 		}
 	}
 }
