@@ -10,4 +10,7 @@ public interface ElectionCalculationListener {
 	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
 
 	void candidateDropped(String name, double weakestVoteCount);
+
+	void voteWeightRedistributed(double excessiveFractionOfVoteWeight,
+	                             Ballot ballot, double voteWeight);
 }

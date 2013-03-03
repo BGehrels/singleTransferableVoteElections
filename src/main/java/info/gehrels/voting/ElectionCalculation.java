@@ -137,15 +137,15 @@ public class ElectionCalculation {
                                                 Collection<BallotState> ballotStates) {
         double votesForCandidate = calculateVotesForCandidate(candidate, ballotStates);
         double excessiveVotes = votesForCandidate - quorum;
-        double fractionOfExcessiveVotes = excessiveVotes / votesForCandidate;
-        System.out.println("Es werden " + fractionOfExcessiveVotes * 100 + "% der Stimmen weiterverteilt");
+        double excessiveFractionOfVoteWeight = excessiveVotes / votesForCandidate;
+        System.out.println("Es werden " + excessiveFractionOfVoteWeight * 100 + "% der Stimmen weiterverteilt");
 
         for (BallotState ballotState : ballotStates) {
             if (ballotState.getPreferredCandidate() == candidate) {
-                ballotState.reduceVoteWeight(fractionOfExcessiveVotes);
-                System.out.println(
-                        "Stimmzettel " + ballotState.ballot.id + " hat nun ein verbleibendes Stimmgewicht von "
-                        + ballotState.getVoteWeight());
+                ballotState.reduceVoteWeight(excessiveFractionOfVoteWeight);
+
+	            electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
+	                                                                ballotState.ballot, ballotState.getVoteWeight());
             }
         }
     }
@@ -280,8 +280,8 @@ public class ElectionCalculation {
 	    }
     }
 
-    private  class BallotState {
-        private final Ballot ballot;
+    class BallotState {
+        final Ballot ballot;
         private double voteWeigt;
 	    private Iterator<Candidate> ballotIterator;
 	    private Candidate candidateOfCurrentPreference;

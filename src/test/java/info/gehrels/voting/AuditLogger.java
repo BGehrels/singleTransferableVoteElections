@@ -40,4 +40,12 @@ public class AuditLogger implements ElectionCalculationListener {
 	public void candidateDropped(String name, double weakestVoteCount) {
 		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", name, weakestVoteCount);
 	}
+
+	@Override
+	public void voteWeightRedistributed(double excessiveFractionOfVoteWeight, Ballot ballot, double voteWeight) {
+		LOGGER.info(
+			"Es werden {}% der Stimmen weiterverteilt: "
+			+ "Stimmzettel {} hat nun ein verbleibendes Stimmgewicht von {}.",
+			excessiveFractionOfVoteWeight * 100, ballot.id, voteWeight);
+	}
 }
