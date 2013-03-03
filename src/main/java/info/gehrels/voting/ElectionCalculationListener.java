@@ -18,4 +18,6 @@ public interface ElectionCalculationListener {
 	void delegatingToExternalAmbiguityResolution(ImmutableSet<Candidate> bestCandidates);
 
 	void externalyResolvedAmbiguity(AmbiguityResolverResult winner);
+
+	void candidateIsElected(Candidate winner, double v, double femaleQuorum);
 }

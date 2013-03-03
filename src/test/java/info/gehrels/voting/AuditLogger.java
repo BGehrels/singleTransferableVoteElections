@@ -60,4 +60,9 @@ public class AuditLogger implements ElectionCalculationListener {
 		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.choosenCandidate,
 		            ambiguityResolverResult.auditLog);
 	}
+
+	@Override
+	public void candidateIsElected(Candidate winner, double numberOfVotes, double quorum) {
+		LOGGER.info("{} hat mit {} Stimmen das Quorum von {} Stimmen erreicht und ist gewählt.", winner.name, numberOfVotes, quorum);
+	}
 }

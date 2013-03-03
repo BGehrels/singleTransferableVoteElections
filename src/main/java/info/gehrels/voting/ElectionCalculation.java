@@ -41,11 +41,9 @@ public class ElectionCalculation {
 	public ElectionResult calculateElectionResult() {
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
-		// Satzungsmäßig klarstellen, dass eigenes Quorum für Frauen und nicht Frauen...
-		//double femaleQuorum = numberOfValidBallots / (numberOfFemaleSeats + 1) + 1;
-		//double nonFemaleQuorum = numberOfValidBallots / (numberOfOpenSeats + 1) + 1;
-		double femaleQuorum = numberOfValidBallots / (numberOfFemaleSeats + 1.0);
-		double nonFemaleQuorum = numberOfValidBallots / (numberOfOpenSeats + 1.0);
+		// Satzungsmäßig klarstellen, dass eigenes Quorum für Frauen und nicht Frauen.
+		double femaleQuorum = numberOfValidBallots / (numberOfFemaleSeats + 1.0) + 1;
+		double nonFemaleQuorum = numberOfValidBallots / (numberOfOpenSeats + 1.0) + 1;
 
 		electionCalculationListener.quorumHasBeenCalculated(true, femaleQuorum);
 		electionCalculationListener.quorumHasBeenCalculated(false, nonFemaleQuorum);
@@ -57,12 +55,16 @@ public class ElectionCalculation {
 
 		while (notAllSeatsFilled(numberOfElectedFemaleCandidates, true) && anyCandidateIsHopeful(true,
 		                                                                                         candidateStates)) {
-			Candidate candidate = bestCandidateThatReachedTheQuorum(femaleQuorum, true, candidateStates, ballotStates);
-			if (candidate != null) {
+			Candidate winner = bestCandidateThatReachedTheQuorum(femaleQuorum, true, candidateStates, ballotStates);
+			if (winner != null) {
+				electionCalculationListener
+					.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), femaleQuorum);
+
 				numberOfElectedFemaleCandidates++;
-				redistributeExceededVoteWeight(candidate, femaleQuorum, ballotStates);
-				candidateStates.get(candidate).setElected();
+				redistributeExceededVoteWeight(winner, femaleQuorum, ballotStates);
+				candidateStates.get(winner).setElected();
 			} else {
+				System.out.println("Niemand hat das Quorum erreicht.");
 				strikeWeakestCandidate(true, candidateStates, ballotStates);
 			}
 		}
@@ -175,9 +177,7 @@ public class ElectionCalculation {
 		double numberOfVotesOfBestCandidate = -1;
 		Collection<Candidate> bestCandidates = newArrayList();
 		for (Entry<Candidate, Double> votesForCandidate : votesByCandidate.entrySet()) {
-			if (votesForCandidate.getValue() > quorum) {
-				System.out.println(votesForCandidate.getKey().name + " hat mit " + votesForCandidate.getValue()
-				                   + " Stimmen das Quorum erreicht.");
+			if (votesForCandidate.getValue() >= quorum) {
 				if (votesForCandidate.getValue() > numberOfVotesOfBestCandidate) {
 					numberOfVotesOfBestCandidate = votesForCandidate.getValue();
 					bestCandidates = new ArrayList<>(asList(votesForCandidate.getKey()));
@@ -189,14 +189,7 @@ public class ElectionCalculation {
 
 
 		// TODO: Ist ambiguity resolution hier überhaupt nötig?
-		Candidate winner = chooseOneOutOfManyCandidates(
-			ImmutableSet.copyOf(bestCandidates));
-		if (winner != null) {
-			System.out.println(winner.name + " hat das Quorum erreicht und ist gewählt");
-		} else {
-			System.out.println("Kein_e Kandidierende_r hat das Quorum erreicht.");
-		}
-		return winner;
+		return chooseOneOutOfManyCandidates(ImmutableSet.copyOf(bestCandidates));
 	}
 
 	private Candidate chooseOneOutOfManyCandidates(ImmutableSet<Candidate> candidates) {
