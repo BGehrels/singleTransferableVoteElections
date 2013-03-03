@@ -35,4 +35,9 @@ public class AuditLogger implements ElectionCalculationListener {
 			LOGGER.info("\t{}", electedCandidate.name);
 		}
 	}
+
+	@Override
+	public void candidateDropped(String name, double weakestVoteCount) {
+		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", name, weakestVoteCount);
+	}
 }

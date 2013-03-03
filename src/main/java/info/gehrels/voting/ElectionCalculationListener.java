@@ -8,4 +8,6 @@ public interface ElectionCalculationListener {
 	void numberOfElectedPositions(boolean female, int numberOfElectedCandidates, int numberOfSeatsToElect);
 
 	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
+
+	void candidateDropped(String name, double weakestVoteCount);
 }

@@ -129,8 +129,7 @@ public class ElectionCalculation {
             }
         }
 
-        System.out.println(weakestCandidate.name + " hat mit " + weakestVoteCount
-                           + " Stimmen das schlechteste Ergebnis und scheidet aus.");
+	    electionCalculationListener.candidateDropped(weakestCandidate.name, weakestVoteCount);
         candidateStates.get(weakestCandidate).setLooser();
     }
 
