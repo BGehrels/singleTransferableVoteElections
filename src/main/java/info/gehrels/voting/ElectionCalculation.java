@@ -146,7 +146,6 @@ public class ElectionCalculation {
 		double votesForCandidate = calculateVotesForCandidate(candidate, ballotStates);
 		double excessiveVotes = votesForCandidate - quorum;
 		double excessiveFractionOfVoteWeight = excessiveVotes / votesForCandidate;
-		System.out.println("Es werden " + excessiveFractionOfVoteWeight * 100 + "% der Stimmen weiterverteilt");
 
 		for (BallotState ballotState : ballotStates) {
 			if (ballotState.getPreferredCandidate() == candidate) {
