@@ -14,4 +14,15 @@ public class AuditLogger implements ElectionCalculationListener {
 			LOGGER.info("Das Quorum für die Offenen Plätze liegt bei {}", quorum);
 		}
 	}
+
+	@Override
+	public void numberOfElectedPositions(boolean femaleSeat, int numberOfElectedCandidates, int numberOfSeatsToElect) {
+		String typeOfSeat = femaleSeat ? "Frauenplätzen" : "offenen Plätzen";
+		if (numberOfElectedCandidates < numberOfSeatsToElect) {
+			LOGGER.info("Es sind erst {} von {} {} gewählt.", numberOfElectedCandidates, numberOfSeatsToElect,
+			            typeOfSeat);
+		} else {
+			LOGGER.info("Alle {} {} sind gewählt.", numberOfSeatsToElect, typeOfSeat);
+		}
+	}
 }

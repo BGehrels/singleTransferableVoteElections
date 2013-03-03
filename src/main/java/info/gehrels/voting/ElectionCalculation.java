@@ -20,7 +20,7 @@ public class ElectionCalculation {
 	private final Election election;
 	private final ImmutableCollection<Ballot> ballots;
     private final int numberOfFemaleSeats;
-    private int numberOfOpenSeats;
+    private final int numberOfOpenSeats;
     private final ConflictResolutionAlgorithm conflictResolutionAlgorithm;
 	private final ElectionCalculationListener electionCalculationListener;
 
@@ -52,7 +52,7 @@ public class ElectionCalculation {
 
         int numberOfElectedFemaleCandidates = 0;
 
-        while (anyCandidateIsHopeful(true, candidateStates) && numberOfElectedFemaleCandidates < numberOfFemaleSeats) {
+        while (notAllSeatsFilled(numberOfElectedFemaleCandidates, true) && anyCandidateIsHopeful(true, candidateStates)) {
             Candidate candidate = bestCandidateThatReachedTheQuorum(femaleQuorum, true, candidateStates, ballotStates);
             if (candidate != null) {
                 numberOfElectedFemaleCandidates++;
@@ -67,7 +67,7 @@ public class ElectionCalculation {
         resetBallotStates(ballotStates);
 
         int numberOfElectedOpenCandidates = 0;
-        while (notAllSeatsFilled(numberOfElectedOpenCandidates) && anyCandidateIsHopeful(false, candidateStates)) {
+        while (notAllSeatsFilled(numberOfElectedOpenCandidates, false) && anyCandidateIsHopeful(false, candidateStates)) {
             Candidate candidate = bestCandidateThatReachedTheQuorum(nonFemaleQuorum, false, candidateStates, ballotStates);
             if (candidate != null) {
                 redistributeExceededVoteWeight(candidate, nonFemaleQuorum, ballotStates);
@@ -90,14 +90,10 @@ public class ElectionCalculation {
         return null;
     }
 
-    private boolean notAllSeatsFilled(int numberOfElectedOpenCandidates) {
-        boolean notAllSeatsFilled = numberOfElectedOpenCandidates < numberOfOpenSeats;
-        if (notAllSeatsFilled) {
-            System.out.println("Es sind erst " + numberOfElectedOpenCandidates + " auf " + numberOfOpenSeats
-                               + " offene Plätze gewählt");
-        } else {
-            System.out.println("Alle " + numberOfOpenSeats + " offenen Plätze sind gewählt");
-        }
+    private boolean notAllSeatsFilled(int numberOfElectedCandidates, boolean female) {
+	    int numberOfSeatsToElect = female ? numberOfFemaleSeats : numberOfOpenSeats;
+        boolean notAllSeatsFilled = numberOfElectedCandidates < numberOfSeatsToElect;
+	    electionCalculationListener.numberOfElectedPositions(female, numberOfElectedCandidates, numberOfSeatsToElect);
         return notAllSeatsFilled;
     }
 
