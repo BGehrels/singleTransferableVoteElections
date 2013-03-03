@@ -261,7 +261,7 @@ public class ElectionCalculation {
         return builder.addAll(transform(ballots, new Function<Ballot, BallotState>() {
             @Override
             public BallotState apply(Ballot ballot) {
-                return new BallotState(election, ballot);
+                return new BallotState(ballot);
             }
         })).build();
     }
@@ -275,7 +275,7 @@ public class ElectionCalculation {
 	    private Iterator<Candidate> ballotIterator;
 	    private Candidate candidateOfCurrentPreference;
 
-	    public BallotState(Election election, Ballot ballot) {
+	    public BallotState(Ballot ballot) {
             this.ballot = ballot;
 		    reset();
         }
