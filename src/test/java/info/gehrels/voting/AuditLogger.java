@@ -5,6 +5,9 @@ import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 public class AuditLogger implements ElectionCalculationListener {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -38,8 +41,11 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void candidateDropped(String name, double weakestVoteCount) {
+	public void candidateDropped(Map<Candidate, Double> votesByCandidateBeforeStriking, String name,
+	                             double weakestVoteCount, Map<Candidate, Double> votesByCandidateAfterStriking) {
 		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", name, weakestVoteCount);
+		LOGGER.info("Neue Stimmverteilung:");
+		dumpVoteDistribution(votesByCandidateAfterStriking);
 	}
 
 	@Override
@@ -51,33 +57,51 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
+	public void voteWeightRedistributionCompleted(Map<Candidate, Double> votesByCandidate) {
+		LOGGER.info("Neue Stimmverteilung:");
+		dumpVoteDistribution(votesByCandidate);
+	}
+
+	@Override
 	public void delegatingToExternalAmbiguityResolution(ImmutableSet<Candidate> bestCandidates) {
 		LOGGER.info("Mehrere Stimmgleiche Kandidierende: {}. Delegiere an externes Auswahlverfahren.", bestCandidates);
 	}
 
 	@Override
 	public void externalyResolvedAmbiguity(AmbiguityResolverResult ambiguityResolverResult) {
-		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.choosenCandidate,
+		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.choosenCandidate.name,
 		            ambiguityResolverResult.auditLog);
 	}
 
 	@Override
 	public void candidateIsElected(Candidate winner, double numberOfVotes, double quorum) {
-		LOGGER.info("{} hat mit {} Stimmen das Quorum von {} Stimmen erreicht und ist gewählt.", winner.name, numberOfVotes, quorum);
+		LOGGER.info("{} hat mit {} Stimmen das Quorum von {} Stimmen erreicht und ist gewählt.", winner.name,
+		            numberOfVotes, quorum);
 	}
 
 	@Override
-	public void nobodyReachedTheQuorumYet() {
-		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum erreicht.");
-	}
-
-	@Override
-	public void someCandidatesAreStillInTheRace() {
-		LOGGER.info("Es gibt noch hoffnungsvolle Kandidierende");
+	public void nobodyReachedTheQuorumYet(double quorum, Map<Candidate, Double> votesByCandidate) {
+		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum von {} Stimmen erreicht:", quorum);
+		dumpVoteDistribution(votesByCandidate);
 	}
 
 	@Override
 	public void noCandidatesAreLeft() {
-		LOGGER.info("Es gibt keine hoffnungsvollen Kandidierende mehr");
+		LOGGER.info("Es gibt keine hoffnungsvollen Kandidierenden mehr. Der Wahlgang wird daher beendet.");
+	}
+
+	@Override
+	public void calculationStarted(boolean femaleExclusivePosition, Election election,
+	                               Map<Candidate, Double> voteDistribution) {
+		LOGGER.info("Beginne die Berechnung für die {} der Wahl „{}“. Ausgangsstimmverteilung:",
+		            femaleExclusivePosition ? "Frauenplätze" : "offenen Plätze",
+		            election.office.name);
+		dumpVoteDistribution(voteDistribution);
+	}
+
+	private void dumpVoteDistribution(Map<Candidate, Double> votesByCandidate) {
+		for (Entry<Candidate, Double> candidateDoubleEntry : votesByCandidate.entrySet()) {
+			LOGGER.info("\t{}: {} Stimmen", candidateDoubleEntry.getKey().name, candidateDoubleEntry.getValue());
+		}
 	}
 }

@@ -3,6 +3,8 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 
+import java.util.Map;
+
 public interface ElectionCalculationListener {
 	void quorumHasBeenCalculated(boolean b, double femaleQuorum);
 
@@ -10,10 +12,13 @@ public interface ElectionCalculationListener {
 
 	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
 
-	void candidateDropped(String name, double weakestVoteCount);
+	void candidateDropped(Map<Candidate, Double> votesByCandidateBeforeStriking, String name, double weakestVoteCount,
+	                      Map<Candidate, Double> votesByCandidateAfterStriking);
 
 	void voteWeightRedistributed(double excessiveFractionOfVoteWeight,
 	                             Ballot ballot, double voteWeight);
+
+	void voteWeightRedistributionCompleted(Map<Candidate, Double> candidateDoubleMap);
 
 	void delegatingToExternalAmbiguityResolution(ImmutableSet<Candidate> bestCandidates);
 
@@ -21,9 +26,9 @@ public interface ElectionCalculationListener {
 
 	void candidateIsElected(Candidate winner, double v, double femaleQuorum);
 
-	void nobodyReachedTheQuorumYet();
-
-	void someCandidatesAreStillInTheRace();
+	void nobodyReachedTheQuorumYet(double quorum, Map<Candidate, Double> votesByCandidate);
 
 	void noCandidatesAreLeft();
+
+	void calculationStarted(boolean b, Election election, Map<Candidate, Double> candidateDoubleMap);
 }

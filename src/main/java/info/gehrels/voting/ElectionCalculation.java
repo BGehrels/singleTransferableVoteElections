@@ -53,6 +53,9 @@ public class ElectionCalculation {
 
 		int numberOfElectedFemaleCandidates = 0;
 
+		electionCalculationListener
+			.calculationStarted(true, election, calculateVotesByCandidate(true, candidateStates, ballotStates));
+
 		while (notAllSeatsFilled(numberOfElectedFemaleCandidates, true) && anyCandidateIsHopeful(true,
 		                                                                                         candidateStates)) {
 			Candidate winner = bestCandidateThatReachedTheQuorum(femaleQuorum, true, candidateStates, ballotStates);
@@ -61,10 +64,16 @@ public class ElectionCalculation {
 					.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), femaleQuorum);
 
 				numberOfElectedFemaleCandidates++;
-				redistributeExceededVoteWeight(winner, femaleQuorum, ballotStates);
+				redistributeExceededVoteWeight(winner, femaleQuorum, ballotStates
+				);
 				candidateStates.get(winner).setElected();
+				electionCalculationListener.voteWeightRedistributionCompleted(
+					calculateVotesByCandidate(true, candidateStates, ballotStates));
+
 			} else {
-				electionCalculationListener.nobodyReachedTheQuorumYet();
+				electionCalculationListener.nobodyReachedTheQuorumYet(femaleQuorum, calculateVotesByCandidate(true,
+				                                                                                              candidateStates,
+				                                                                                              ballotStates));
 				strikeWeakestCandidate(true, candidateStates, ballotStates);
 			}
 		}
@@ -73,15 +82,23 @@ public class ElectionCalculation {
 		resetBallotStates(ballotStates);
 
 
+		electionCalculationListener
+			.calculationStarted(false, election, calculateVotesByCandidate(false, candidateStates, ballotStates));
 		// TODO: reduce numberOfElectedOpenCandidates, if not enough women were elected.
 		int numberOfElectedOpenCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedOpenCandidates, false) && anyCandidateIsHopeful(false,
 		                                                                                        candidateStates)) {
-			Candidate candidate = bestCandidateThatReachedTheQuorum(nonFemaleQuorum, false, candidateStates,
+			Candidate winner = bestCandidateThatReachedTheQuorum(nonFemaleQuorum, false, candidateStates,
 			                                                        ballotStates);
-			if (candidate != null) {
-				redistributeExceededVoteWeight(candidate, nonFemaleQuorum, ballotStates);
-				candidateStates.get(candidate).setElected();
+			if (winner != null) {
+				electionCalculationListener
+					.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), nonFemaleQuorum);
+				redistributeExceededVoteWeight(winner, nonFemaleQuorum, ballotStates
+				);
+				candidateStates.get(winner).setElected();
+				electionCalculationListener.voteWeightRedistributionCompleted(
+					calculateVotesByCandidate(false, candidateStates, ballotStates));
+
 				numberOfElectedOpenCandidates++;
 			} else {
 				strikeWeakestCandidate(false, candidateStates, ballotStates);
@@ -125,20 +142,39 @@ public class ElectionCalculation {
 
 	private void strikeWeakestCandidate(boolean onlyFemaleCandidates, Map<Candidate, CandidateState> candidateStates,
 	                                    Collection<BallotState> ballotStates) {
-		Map<Candidate, Double> candidateDoubleMap = calculateVotesByCandidate(onlyFemaleCandidates, candidateStates,
-		                                                                      ballotStates);
-		Candidate weakestCandidate = null;
-		Double weakestVoteCount = null;
-		for (Entry<Candidate, Double> votesForCandidate : candidateDoubleMap.entrySet()) {
-			if (weakestVoteCount == null || votesForCandidate.getValue() < weakestVoteCount) {
-				weakestCandidate = votesForCandidate.getKey();
-				weakestVoteCount = votesForCandidate.getValue();
+		Map<Candidate, Double> votesByCandidateBeforeStriking = calculateVotesByCandidate(onlyFemaleCandidates,
+		                                                                                  candidateStates,
+		                                                                                  ballotStates);
+
+		Candidate weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
+
+		// TODO: Mehrdeutigkeiten bei Schwächsten Kandidaten extern auswählen lassen
+		candidateStates.get(weakestCandidate).setLooser();
+
+		Map<Candidate, Double> votesByCandidateAfterStriking = calculateVotesByCandidate(onlyFemaleCandidates,
+		                                                                                 candidateStates, ballotStates);
+
+		electionCalculationListener.candidateDropped(
+			votesByCandidateBeforeStriking,
+			weakestCandidate.name,
+			votesByCandidateBeforeStriking.get(weakestCandidate),
+			votesByCandidateAfterStriking);
+	}
+
+	private Candidate calculateWeakestCandidate(Map<Candidate, Double> votesByCandidate) {
+		double numberOfVotesOfBestCandidate = Double.MAX_VALUE;
+		//TODO: Hier sollten eigentlich 0-Kandidierende noch aufgeführt werden, solange sie nicht bereits gedroppd sind.
+		Collection<Candidate> weakestCandidates = newArrayList();
+		for (Entry<Candidate, Double> votesForCandidate : votesByCandidate.entrySet()) {
+			if (votesForCandidate.getValue() < numberOfVotesOfBestCandidate) {
+				numberOfVotesOfBestCandidate = votesForCandidate.getValue();
+				weakestCandidates = new ArrayList<>(asList(votesForCandidate.getKey()));
+			} else if (votesForCandidate.getValue() == numberOfVotesOfBestCandidate) {
+				weakestCandidates.add(votesForCandidate.getKey());
 			}
 		}
 
-		// TODO: Mehrdeutigkeiten bei Schwächsten Kandidaten extern auswählen lassen
-		electionCalculationListener.candidateDropped(weakestCandidate.name, weakestVoteCount);
-		candidateStates.get(weakestCandidate).setLooser();
+		return chooseOneOutOfManyCandidates(ImmutableSet.copyOf(weakestCandidates));
 	}
 
 	private void redistributeExceededVoteWeight(Candidate candidate, double quorum,
@@ -155,6 +191,7 @@ public class ElectionCalculation {
 				                                                    ballotState.ballot, ballotState.getVoteWeight());
 			}
 		}
+
 	}
 
 	private double calculateVotesForCandidate(Candidate candidate, Collection<BallotState> ballotStates) {
@@ -210,7 +247,6 @@ public class ElectionCalculation {
 	                                      ImmutableMap<Candidate, CandidateState> candidateStates) {
 		for (CandidateState candidateState : candidateStates.values()) {
 			if (isAcceptableCandidate(onlyFemaleCandidates, candidateState.candidate) && candidateState.isHopeful()) {
-				electionCalculationListener.someCandidatesAreStillInTheRace();
 				return true;
 			}
 		}
@@ -222,7 +258,7 @@ public class ElectionCalculation {
 	private Map<Candidate, Double> calculateVotesByCandidate(boolean onlyFemaleCandidates,
 	                                                         Map<Candidate, CandidateState> candidateStates,
 	                                                         Collection<BallotState> ballotStates) {
-		Map<Candidate, Double> votesByCandidate = new HashMap<>();
+		Map<Candidate, Double> votesByCandidateDraft = new HashMap<>();
 		for (BallotState ballotState : ballotStates) {
 			CandidateState preferredHopefulCandidate = getPreferredHopefulCandidate(candidateStates, ballotState,
 			                                                                        onlyFemaleCandidates);
@@ -230,19 +266,30 @@ public class ElectionCalculation {
 				continue;
 			}
 
-			Double votes = votesByCandidate.get(preferredHopefulCandidate.candidate);
+			Double votes = votesByCandidateDraft.get(preferredHopefulCandidate.candidate);
 			if (votes == null) {
-				votesByCandidate.put(preferredHopefulCandidate.candidate, ballotState.getVoteWeight());
+				votesByCandidateDraft.put(preferredHopefulCandidate.candidate, ballotState.getVoteWeight());
 			} else {
-				votesByCandidate.put(preferredHopefulCandidate.candidate, votes + ballotState.getVoteWeight());
+				votesByCandidateDraft.put(preferredHopefulCandidate.candidate, votes + ballotState.getVoteWeight());
 			}
 		}
 
-		System.out.println("Die Stimmen verteilen sich wie folgt:");
-		for (Entry<Candidate, Double> candidateDoubleEntry : votesByCandidate.entrySet()) {
-			System.out.println("\t" + candidateDoubleEntry.getKey().name + ": " + candidateDoubleEntry.getValue() + " Stimmen");
+		Builder<Candidate, Double> builder = ImmutableMap.builder();
+		for (Candidate candidate : election.candidates) {
+			if (onlyFemaleCandidates && !candidate.isFemale) {
+				continue;
+			}
+
+			CandidateState candidateState = candidateStates.get(candidate);
+			if (candidateState != null && (candidateState.elected || candidateState.looser)) {
+				continue;
+			}
+
+			Double votes = votesByCandidateDraft.get(candidate);
+			builder.put(candidate, votes == null ? 0.0 : votes);
 		}
-		return votesByCandidate;
+
+		return builder.build();
 	}
 
 
