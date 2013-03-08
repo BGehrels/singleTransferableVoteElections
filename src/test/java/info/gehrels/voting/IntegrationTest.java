@@ -27,100 +27,52 @@ public class IntegrationTest {
 	public static final Candidate CANDIDATE_I = new Candidate("I", false);
 	public static final Candidate CANDIDATE_J = new Candidate("J", false);
 
-	private final ImmutableSet<Candidate> candidateSet;
-
-	private Ballot ballot1;
-	private Ballot ballot2;
-	private Ballot ballot3;
-	private Ballot ballot4;
-	private Ballot ballot5;
-	private Ballot ballot6;
-	private Ballot ballot7;
-	private Ballot ballot8;
-	private Ballot ballot9;
-	private Ballot ballot10;
-	private Ballot ballot11;
-	private Ballot ballot12;
-	private Ballot ballot13;
-	private Ballot ballot14;
-	private Ballot ballot15;
-	private Ballot ballot16;
-	private Ballot ballot17;
-	private Ballot ballot18;
-	private Ballot ballot19;
-	private Ballot ballot20;
-	private Ballot ballot21;
-
 	private ImmutableList<Ballot> ballotImmutableList;
 	private ElectionCalculationListener calculationListener;
 	private Election election;
-	private ImmutableSet<Election> elections;
 	private CombinedElectionsOnOneBallot combinedElectionsOnOneBallot;
 
 	public IntegrationTest() {
-		candidateSet = ImmutableSet.<Candidate>builder()
-			.add(CANDIDATE_A)
-			.add(CANDIDATE_B)
-			.add(CANDIDATE_C)
-			.add(CANDIDATE_D)
-			.add(CANDIDATE_E)
-			.add(CANDIDATE_F)
-			.add(CANDIDATE_G)
-			.add(CANDIDATE_H)
-			.add(CANDIDATE_I)
-			.add(CANDIDATE_J)
-			.build();
+		ImmutableSet<Candidate> candidateSet = ImmutableSet.of(
+			CANDIDATE_A,
+			CANDIDATE_B,
+			CANDIDATE_C,
+			CANDIDATE_D,
+			CANDIDATE_E,
+			CANDIDATE_F,
+			CANDIDATE_G,
+			CANDIDATE_H,
+			CANDIDATE_I,
+			CANDIDATE_J);
 
 		election = new Election(OFFICE, 0, 4, candidateSet);
-
-		elections = ImmutableSet.<Election>builder().add(election).build();
-		this.combinedElectionsOnOneBallot = new CombinedElectionsOnOneBallot(elections);
+		this.combinedElectionsOnOneBallot = new CombinedElectionsOnOneBallot(ImmutableSet.of(election));
 
 
-		ballot1 = createBallot("ABDC", combinedElectionsOnOneBallot);
-		ballot2 = createBallot("ACBDE", combinedElectionsOnOneBallot);
-		ballot3 = createBallot("C", combinedElectionsOnOneBallot);
-		ballot4 = createBallot("CAE", combinedElectionsOnOneBallot);
-		ballot5 = createBallot("CBAFEDG", combinedElectionsOnOneBallot);
-		ballot6 = createBallot("CBDE", combinedElectionsOnOneBallot);
-		ballot7 = createBallot("CFBDEH", combinedElectionsOnOneBallot);
-		ballot8 = createBallot("CDFEHA", combinedElectionsOnOneBallot);
-		ballot9 = createBallot("DEC", combinedElectionsOnOneBallot);
-		ballot10 = createBallot("EBDCAF", combinedElectionsOnOneBallot);
-		ballot11 = createBallot("EDCA", combinedElectionsOnOneBallot);
-		ballot12 = createBallot("F", combinedElectionsOnOneBallot);
-		ballot13 = createBallot("FCH", combinedElectionsOnOneBallot);
-		ballot14 = createBallot("FGEIHJ", combinedElectionsOnOneBallot);
-		ballot15 = createBallot("FHG", combinedElectionsOnOneBallot);
-		ballot16 = createBallot("GFEI", combinedElectionsOnOneBallot);
-		ballot17 = createBallot("HFJAI", combinedElectionsOnOneBallot);
-		ballot18 = createBallot("HGIF", combinedElectionsOnOneBallot);
-		ballot19 = createBallot("IJF", combinedElectionsOnOneBallot);
-		ballot20 = createBallot("IJH", combinedElectionsOnOneBallot);
-		ballot21 = createBallot("JIHFE", combinedElectionsOnOneBallot);
-		ballotImmutableList = ImmutableList.<Ballot>builder()
-				.add(ballot1)
-				.add(ballot2)
-				.add(ballot3)
-				.add(ballot4)
-				.add(ballot5)
-				.add(ballot6)
-				.add(ballot7)
-				.add(ballot8)
-				.add(ballot9)
-				.add(ballot10)
-				.add(ballot11)
-				.add(ballot12)
-				.add(ballot13)
-				.add(ballot14)
-				.add(ballot15)
-				.add(ballot16)
-				.add(ballot17)
-				.add(ballot18)
-				.add(ballot19)
-				.add(ballot20)
-				.add(ballot21).build();
-			calculationListener = mock(ElectionCalculationListener.class);
+		ballotImmutableList = ImmutableList.of(
+			createBallot("ABDC"),
+			createBallot("ACBDE"),
+			createBallot("C"),
+			createBallot("CAE"),
+			createBallot("CBAFEDG"),
+			createBallot("CBDE"),
+			createBallot("CFBDEH"),
+			createBallot("CDFEHA"),
+			createBallot("DEC"),
+			createBallot("EBDCAF"),
+			createBallot("EDCA"),
+			createBallot("F"),
+			createBallot("FCH"),
+			createBallot("FGEIHJ"),
+			createBallot("FHG"),
+			createBallot("GFEI"),
+			createBallot("HFJAI"),
+			createBallot("HGIF"),
+			createBallot("IJF"),
+			createBallot("IJH"),
+			createBallot("JIHFE"));
+
+		calculationListener = mock(ElectionCalculationListener.class);
 	}
 
 	@Test
@@ -134,7 +86,7 @@ public class IntegrationTest {
 		           containsInAnyOrder(CANDIDATE_C, CANDIDATE_E, CANDIDATE_F, CANDIDATE_I));
 	}
 
-	private static Ballot createBallot(String preferences, CombinedElectionsOnOneBallot combinedElectionsOnOneBallot) {
+	private Ballot createBallot(String preferences) {
 		Election election = combinedElectionsOnOneBallot.elections.iterator().next();
 		ImmutableSet<Candidate> candidates = election.candidates;
 		ImmutableSet.Builder<Candidate> preferenceBuilder = ImmutableSet.builder();
@@ -157,6 +109,7 @@ public class IntegrationTest {
 
 		throw new IllegalArgumentException(s);
 	}
+
 	private static class JustTakeTheFirstOneAmbiguityResolver implements AmbiguityResolver {
 		@Override
 		public AmbiguityResolverResult chooseOneOfMany(ImmutableSet<Candidate> bestCandidates) {
