@@ -26,9 +26,11 @@ public class ElectionCalculation {
 	private final int numberOfOpenSeats;
 	private final AmbiguityResolver ambiguityResolver;
 	private final ElectionCalculationListener electionCalculationListener;
+	private QuorumCalculation quorumCalculation;
+	;
 
 	public ElectionCalculation(Election election, ImmutableCollection<Ballot> ballots,
-	                           AmbiguityResolver ambiguityResolver,
+	                           QuorumCalculation quorumCalculation, AmbiguityResolver ambiguityResolver,
 	                           ElectionCalculationListener electionCalculationListener) {
 		this.election = election;
 		this.ballots = ballots;
@@ -36,14 +38,15 @@ public class ElectionCalculation {
 		this.numberOfFemaleSeats = election.numberOfFemaleExclusivePositions;
 		this.numberOfOpenSeats = election.numberOfNotFemaleExclusivePositions;
 		this.ambiguityResolver = ambiguityResolver;
+		this.quorumCalculation = quorumCalculation;
 	}
 
 	public ElectionResult calculateElectionResult() {
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
 		// Satzungsmäßig klarstellen, dass eigenes Quorum für Frauen und nicht Frauen.
-		double femaleQuorum = numberOfValidBallots / (numberOfFemaleSeats + 1.0) + 1;
-		double nonFemaleQuorum = numberOfValidBallots / (numberOfOpenSeats + 1.0) + 1;
+		double femaleQuorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfFemaleSeats);
+		double nonFemaleQuorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfOpenSeats);
 
 		electionCalculationListener.quorumHasBeenCalculated(true, femaleQuorum);
 		electionCalculationListener.quorumHasBeenCalculated(false, nonFemaleQuorum);
@@ -328,7 +331,7 @@ public class ElectionCalculation {
 		})).build();
 	}
 
-	private static class ElectionResult {
+	public static class ElectionResult {
 		public final ImmutableSet<Candidate> electedCandidates;
 
 		private ElectionResult(ImmutableSet<Candidate> electedCandidates) {
@@ -402,4 +405,5 @@ public class ElectionCalculation {
 			this.looser = false;
 		}
 	}
+
 }
