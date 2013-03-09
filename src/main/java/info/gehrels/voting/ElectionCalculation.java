@@ -27,7 +27,6 @@ public class ElectionCalculation {
 	private final AmbiguityResolver ambiguityResolver;
 	private final ElectionCalculationListener electionCalculationListener;
 	private QuorumCalculation quorumCalculation;
-	;
 
 	public ElectionCalculation(Election election, ImmutableCollection<Ballot> ballots,
 	                           QuorumCalculation quorumCalculation, AmbiguityResolver ambiguityResolver,
@@ -42,6 +41,10 @@ public class ElectionCalculation {
 	}
 
 	public ElectionResult calculateElectionResult() {
+		ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup = new ElectionCalculationForQualifiedGroup(
+			ballots);
+		ImmutableCollection<Candidate> electedFemaleCandidates = electionCalculationForQualifiedGroup.calculate(new FemaleCondition(electionCalculationListener));
+		electionCalculationForQualifiedGroup.calculate(new NotElectedBeforeCondition(electedFemaleCandidates, electionCalculationListener));
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
 		// Satzungsmäßig klarstellen, dass eigenes Quorum für Frauen und nicht Frauen.

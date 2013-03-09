@@ -98,6 +98,11 @@ public class AuditLogger implements ElectionCalculationListener {
 		dumpVoteDistribution(voteDistribution);
 	}
 
+	@Override
+	public void candidateNotQualified(Candidate candidate, String reason) {
+		LOGGER.info("{} kann in diesem Wahlgang nicht antreten, Grund: {}", candidate.name, reason);
+	}
+
 	private void dumpVoteDistribution(Map<Candidate, Double> votesByCandidate) {
 		for (Entry<Candidate, Double> candidateDoubleEntry : votesByCandidate.entrySet()) {
 			LOGGER.info("\t{}: {} Stimmen", candidateDoubleEntry.getKey().name, candidateDoubleEntry.getValue());

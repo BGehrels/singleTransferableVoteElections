@@ -31,4 +31,6 @@ public interface ElectionCalculationListener {
 	void noCandidatesAreLeft();
 
 	void calculationStarted(boolean b, Election election, Map<Candidate, Double> candidateDoubleMap);
+
+	void candidateNotQualified(Candidate candidate, String reason);
 }
