@@ -8,7 +8,7 @@ import java.util.Map;
 public interface ElectionCalculationListener {
 	void quorumHasBeenCalculated(boolean b, double femaleQuorum);
 
-	void numberOfElectedPositions(boolean female, int numberOfElectedCandidates, int numberOfSeatsToElect);
+	void numberOfElectedPositions(int numberOfElectedCandidates, int numberOfSeatsToElect);
 
 	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
 

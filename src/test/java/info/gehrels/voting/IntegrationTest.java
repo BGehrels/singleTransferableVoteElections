@@ -82,7 +82,7 @@ public class IntegrationTest {
 		                                                                  calculationListener);
 		ElectionResult electionResult = electionCalculation.calculateElectionResult();
 
-		assertThat(electionResult.electedCandidates,
+		assertThat(electionResult.candidatesElectedInOpenRun,
 		           containsInAnyOrder(CANDIDATE_C, CANDIDATE_E, CANDIDATE_F, CANDIDATE_I));
 	}
 
