@@ -16,7 +16,7 @@ public interface ElectionCalculationListener {
 	                      Map<Candidate, Double> votesByCandidateAfterStriking);
 
 	void voteWeightRedistributed(double excessiveFractionOfVoteWeight,
-	                             Ballot ballot, double voteWeight);
+	                             int ballotId, double voteWeight);
 
 	void voteWeightRedistributionCompleted(Map<Candidate, Double> candidateDoubleMap);
 

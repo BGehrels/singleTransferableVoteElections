@@ -205,7 +205,7 @@ public class ElectionCalculationForQualifiedGroup {
 				ballotState.reduceVoteWeight(excessiveFractionOfVoteWeight);
 
 				electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
-				                                                    ballotState.ballot, ballotState.getVoteWeight());
+				                                                    ballotState.ballotId, ballotState.getVoteWeight());
 			}
 		}
 
@@ -275,14 +275,17 @@ public class ElectionCalculationForQualifiedGroup {
 
 
 	class BallotState {
-		final Ballot ballot;
-		private double voteWeigt;
+		public int ballotId;
+		private double voteWeight;
 		private Iterator<Candidate> ballotIterator;
 		private Candidate candidateOfCurrentPreference;
 
 		public BallotState(Ballot ballot) {
-			this.ballot = ballot;
-			reset();
+			this.ballotId = ballot.id;
+			this.ballotIterator = ballot.getRankedCandidatesByElection(election).iterator();
+			proceedToNextPreference();
+
+			voteWeight = 1;
 		}
 
 		public Candidate getPreferredCandidate() {
@@ -290,7 +293,7 @@ public class ElectionCalculationForQualifiedGroup {
 		}
 
 		public double getVoteWeight() {
-			return voteWeigt;
+			return voteWeight;
 		}
 
 		public Candidate proceedToNextPreference() {
@@ -303,15 +306,9 @@ public class ElectionCalculationForQualifiedGroup {
 		}
 
 		public void reduceVoteWeight(double fractionOfExcessiveVotes) {
-			voteWeigt *= fractionOfExcessiveVotes;
+			voteWeight *= fractionOfExcessiveVotes;
 		}
 
-		public void reset() {
-			this.ballotIterator = ballot.getRankedCandidatesByElection(election).iterator();
-			proceedToNextPreference();
-
-			voteWeigt = 1;
-		}
 	}
 
 	private class CandidateState {

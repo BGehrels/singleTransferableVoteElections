@@ -44,11 +44,11 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void voteWeightRedistributed(double excessiveFractionOfVoteWeight, Ballot ballot, double voteWeight) {
+	public void voteWeightRedistributed(double excessiveFractionOfVoteWeight, int ballotId, double voteWeight) {
 		LOGGER.info(
 			"Es werden {}% der Stimmen weiterverteilt: "
 			+ "Stimmzettel {} hat nun ein verbleibendes Stimmgewicht von {}.",
-			excessiveFractionOfVoteWeight * 100, ballot.id, voteWeight);
+			excessiveFractionOfVoteWeight * 100, ballotId, voteWeight);
 	}
 
 	@Override
