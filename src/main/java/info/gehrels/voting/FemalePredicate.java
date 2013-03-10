@@ -1,17 +1,18 @@
 package info.gehrels.voting;
 
 
+import com.google.common.base.Predicate;
 
-public class FemaleCondition implements QualificationCondition {
+public class FemalePredicate implements Predicate<Candidate> {
 
 	private final ElectionCalculationListener electionCalculationListener;
 
-	public FemaleCondition(ElectionCalculationListener electionCalculationListener) {
+	public FemalePredicate(ElectionCalculationListener electionCalculationListener) {
 		this.electionCalculationListener = electionCalculationListener;
 	}
 
 	@Override
-	public boolean isQualified(Candidate candidate) {
+	public boolean apply(Candidate candidate) {
 		if (candidate.isFemale) {
 			return true;
 		} else {

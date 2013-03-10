@@ -11,36 +11,36 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class NotElectedBeforeConditionTest {
+public class NotElectedBeforePredicateTest {
 
 	public static final Candidate ALICE = new Candidate("Alice", true);
 	public static final Candidate BOB = new Candidate("Bob", true);
 	public static final Candidate EVE = new Candidate("Eve", true);
 	public static final ImmutableSet<Candidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
 	private final ElectionCalculationListener electionCalculationListener = mock(ElectionCalculationListener.class);
-	private final QualificationCondition condition = new NotElectedBeforeCondition(ELECTED_CANDIDATES,
+	private final NotElectedBeforePredicate condition = new NotElectedBeforePredicate(ELECTED_CANDIDATES,
 	                                                                               electionCalculationListener);
 
 	@Test
 	public void candidatesAreQualifiedIfTheyHaveNotBeenElectedBefore() {
-		assertThat(condition.isQualified(ALICE), is(true));
+		assertThat(condition.apply(ALICE), is(true));
 	}
 
 	@Test
 	public void doNotCallListenerWheneverCandidateIsNotQualified() {
-		condition.isQualified(ALICE);
+		condition.apply(ALICE);
 		verify(electionCalculationListener, never()).candidateNotQualified(isA(Candidate.class), anyString());
 	}
 
 
 	@Test
 	public void candidatesAreNotQualifiedIfTheyHaveBeenElectedBefore() {
-		assertThat(condition.isQualified(EVE), is(false));
+		assertThat(condition.apply(EVE), is(false));
 	}
 
 	@Test
 	public void callListenerWheneverCandidateIsNotQualified() {
-		condition.isQualified(EVE);
+		condition.apply(EVE);
 		verify(electionCalculationListener).candidateNotQualified(EVE, "The candidate has already been elected.");
 	}
 

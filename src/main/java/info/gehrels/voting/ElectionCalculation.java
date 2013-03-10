@@ -16,7 +16,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.filter;
 import static java.util.Arrays.asList;
 
 public class ElectionCalculation {
@@ -27,6 +29,7 @@ public class ElectionCalculation {
 	private final AmbiguityResolver ambiguityResolver;
 	private final ElectionCalculationListener electionCalculationListener;
 	private QuorumCalculation quorumCalculation;
+	private FemalePredicate femalePredicate;
 
 	public ElectionCalculation(Election election, ImmutableCollection<Ballot> ballots,
 	                           QuorumCalculation quorumCalculation, AmbiguityResolver ambiguityResolver,
@@ -41,10 +44,16 @@ public class ElectionCalculation {
 	}
 
 	public ElectionResult calculateElectionResult() {
+		femalePredicate = new FemalePredicate(electionCalculationListener);
+		ImmutableSet<Candidate> femaleCandidates = copyOf(filter(election.candidates, femalePredicate));
 		ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup = new ElectionCalculationForQualifiedGroup(
 			ballots);
-		ImmutableCollection<Candidate> electedFemaleCandidates = electionCalculationForQualifiedGroup.calculate(new FemaleCondition(electionCalculationListener));
-		electionCalculationForQualifiedGroup.calculate(new NotElectedBeforeCondition(electedFemaleCandidates, electionCalculationListener));
+
+		ImmutableSet<Candidate> electedFemaleCandidates = electionCalculationForQualifiedGroup.calculate(femaleCandidates);
+		NotElectedBeforePredicate notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,		                                                                                    electionCalculationListener);
+		ImmutableSet<Candidate> candidatesNotElectedBefore = copyOf(filter(election.candidates, notElectedBeforePredicate));
+
+		electionCalculationForQualifiedGroup.calculate(candidatesNotElectedBefore);
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
 		// Satzungsmäßig klarstellen, dass eigenes Quorum für Frauen und nicht Frauen.
@@ -178,7 +187,7 @@ public class ElectionCalculation {
 			}
 		}
 
-		return chooseOneOutOfManyCandidates(ImmutableSet.copyOf(weakestCandidates));
+		return chooseOneOutOfManyCandidates(copyOf(weakestCandidates));
 	}
 
 	private void redistributeExceededVoteWeight(Candidate candidate, double quorum,
@@ -229,7 +238,7 @@ public class ElectionCalculation {
 
 
 		// TODO: Ist ambiguity resolution hier überhaupt nötig?
-		return chooseOneOutOfManyCandidates(ImmutableSet.copyOf(bestCandidates));
+		return chooseOneOutOfManyCandidates(copyOf(bestCandidates));
 	}
 
 	private Candidate chooseOneOutOfManyCandidates(ImmutableSet<Candidate> candidates) {

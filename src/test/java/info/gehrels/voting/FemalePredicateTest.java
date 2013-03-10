@@ -10,36 +10,33 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class FemaleConditionTest {
-	public static final Candidate ALICE = new Candidate("Alice", true);
-	public static final Candidate BOB = new Candidate("Bob", false);
+public class FemalePredicateTest {
+	private static final Candidate ALICE = new Candidate("Alice", true);
+	private static final Candidate BOB = new Candidate("Bob", false);
 	private final ElectionCalculationListener mock = mock(ElectionCalculationListener.class);
-	private final FemaleCondition condition = new FemaleCondition(mock);
+	private final FemalePredicate condition = new FemalePredicate(mock);
 
 	@Test
 	public void femaleCandidatesAreQualified() {
-		assertThat(condition.isQualified(ALICE), is(true));
+		assertThat(condition.apply(ALICE), is(true));
 	}
 
 	@Test
 	public void doesNotReportToElectionCalculationListenerWhenCandidatesAreQualified() {
-		condition.isQualified(ALICE);
+		condition.apply(ALICE);
 
 		verify(mock, never()).candidateNotQualified(isA(Candidate.class), anyString());
 	}
 
 	@Test
 	public void nonFemaleCandidatesAreNotQualified() {
-		Candidate bob = new Candidate("Bob", false);
-		assertThat(condition.isQualified(bob), is(false));
+		assertThat(condition.apply(BOB), is(false));
 	}
 
 	@Test
 	public void reportsToElectionCalculationListenerWhenCandidatesAreNotQualified() {
-		Candidate bob = new Candidate("Bob", false);
+		condition.apply(BOB);
 
-		condition.isQualified(bob);
-
-		verify(mock).candidateNotQualified(bob, "The candidate is not female.");
+		verify(mock).candidateNotQualified(BOB, "The candidate is not female.");
 	}
 }

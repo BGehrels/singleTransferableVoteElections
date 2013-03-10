@@ -10,7 +10,7 @@ public class ElectionCalculationForQualifiedGroup {
 		this.ballots = ballots;
 	}
 
-	public ImmutableSet<Candidate> calculate(QualificationCondition femaleCondition) {
+	public ImmutableSet<Candidate> calculate(ImmutableSet<Candidate> qualifiedCandidates) {
 		return ImmutableSet.of();
 	}
 }
