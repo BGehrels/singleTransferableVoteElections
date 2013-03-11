@@ -77,10 +77,10 @@ public class IntegrationTest {
 
 	@Test
 	public void exampleByMartinWilke() {
-		ElectionCalculation electionCalculation = new ElectionCalculation(this.election, ballotImmutableList,
-		                                                                  QUORUM_CALCULATION, AMBIGUITY_RESOLVER,
+		ElectionCalculation electionCalculation = new ElectionCalculation(
+			QUORUM_CALCULATION, AMBIGUITY_RESOLVER,
 		                                                                  calculationListener);
-		ElectionResult electionResult = electionCalculation.calculateElectionResult();
+		ElectionResult electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
 
 		assertThat(electionResult.candidatesElectedInOpenRun,
 		           containsInAnyOrder(CANDIDATE_C, CANDIDATE_E, CANDIDATE_F, CANDIDATE_I));

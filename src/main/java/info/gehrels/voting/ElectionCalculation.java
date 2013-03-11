@@ -7,48 +7,56 @@ import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Sets.filter;
 
 public class ElectionCalculation {
-	private final Election election;
-	private final ImmutableCollection<Ballot> ballots;
-	private final int numberOfFemaleSeats;
-	private final int numberOfOpenSeats;
 	private final AmbiguityResolver ambiguityResolver;
 	private final ElectionCalculationListener electionCalculationListener;
-	private QuorumCalculation quorumCalculation;
+	private final QuorumCalculation quorumCalculation;
 
-	public ElectionCalculation(Election election, ImmutableCollection<Ballot> ballots,
-	                           QuorumCalculation quorumCalculation, AmbiguityResolver ambiguityResolver,
+	public ElectionCalculation(QuorumCalculation quorumCalculation, AmbiguityResolver ambiguityResolver,
 	                           ElectionCalculationListener electionCalculationListener) {
-		this.election = election;
-		this.ballots = ballots;
 		this.electionCalculationListener = electionCalculationListener;
-		this.numberOfFemaleSeats = election.numberOfFemaleExclusivePositions;
-		this.numberOfOpenSeats = election.numberOfNotFemaleExclusivePositions;
 		this.ambiguityResolver = ambiguityResolver;
 		this.quorumCalculation = quorumCalculation;
 	}
 
-	public ElectionResult calculateElectionResult() {
-		ImmutableSet<Candidate> femaleCandidates = copyOf(filter(election.candidates,
-		                                                         new FemalePredicate(electionCalculationListener)));
+	public ElectionResult calculateElectionResult(Election election, ImmutableCollection<Ballot> ballots) {
 		ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup = new ElectionCalculationForQualifiedGroup(
 			ballots, quorumCalculation, electionCalculationListener, election, ambiguityResolver);
 
-		ImmutableSet<Candidate> electedFemaleCandidates = electionCalculationForQualifiedGroup
-			.calculate(femaleCandidates, numberOfFemaleSeats);
-		NotElectedBeforePredicate notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
-		                                                                                    electionCalculationListener);
-		ImmutableSet<Candidate> candidatesNotElectedBefore = copyOf(
-			filter(election.candidates, notElectedBeforePredicate));
-
-		ImmutableSet<Candidate> candidatesElectedInOpenRun = electionCalculationForQualifiedGroup
-			.calculate(candidatesNotElectedBefore, numberOfOpenSeats);
+		ImmutableSet<Candidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
+			election, electionCalculationForQualifiedGroup);
+		ImmutableSet<Candidate> candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
+			election, electionCalculationForQualifiedGroup, electedFemaleCandidates);
 
 		return new ElectionResult(electedFemaleCandidates, candidatesElectedInOpenRun);
 	}
 
+	private ImmutableSet<Candidate> calculateElectionResultForFemaleExclusivePositions(Election election,
+	                                                                                   ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup) {
+		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
+		ImmutableSet<Candidate> femaleCandidates =
+			copyOf(
+				filter(election.candidates, femalePredicate)
+			);
+		return electionCalculationForQualifiedGroup.calculate(femaleCandidates,
+		                                                      election.numberOfFemaleExclusivePositions);
+	}
+
+	private ImmutableSet<Candidate> calculateElectionResultForNonFemaleExclusivePositions(Election election,
+	                                                                                      ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup,
+	                                                                                      ImmutableSet<Candidate> electedFemaleCandidates) {
+		NotElectedBeforePredicate notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
+		                                                                                    electionCalculationListener);
+		ImmutableSet<Candidate> candidatesNotElectedBefore =
+			copyOf(
+			  filter(election.candidates, notElectedBeforePredicate)
+			);
+
+		return electionCalculationForQualifiedGroup
+			.calculate(candidatesNotElectedBefore, election.numberOfNotFemaleExclusivePositions);
+	}
+
 
 	public static class ElectionResult {
-
 		public final ImmutableSet<Candidate> candidatesElectedInFemaleOnlyRun;
 		public final ImmutableSet<Candidate> candidatesElectedInOpenRun;
 

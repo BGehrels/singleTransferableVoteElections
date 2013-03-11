@@ -54,9 +54,12 @@ public class App {
 			.add(createBallot("IJH", combinedElectionsOnOneBallot))
 			.add(createBallot("JIHFE", combinedElectionsOnOneBallot));
 
-		new ElectionCalculation(election, ballotBuilder.build(), new QuorumCalculationImpl(1), new MyAmbiguityResolver(),
-		                        new AuditLogger())
-			.calculateElectionResult();
+		final ElectionCalculation electionCalculation = new ElectionCalculation(
+			new QuorumCalculationImpl(1),
+		                                                                        new MyAmbiguityResolver(),
+		                                                                        new AuditLogger());
+		electionCalculation
+			.calculateElectionResult(election, ballotBuilder.build());
 	}
 
 	private static Ballot createBallot(String preferences, CombinedElectionsOnOneBallot combinedElectionsOnOneBallot) {
