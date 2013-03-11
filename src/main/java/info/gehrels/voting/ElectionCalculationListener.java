@@ -6,8 +6,6 @@ import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import java.util.Map;
 
 public interface ElectionCalculationListener {
-	void quorumHasBeenCalculated(boolean b, double femaleQuorum);
-
 	void numberOfElectedPositions(int numberOfElectedCandidates, int numberOfSeatsToElect);
 
 	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
@@ -33,4 +31,6 @@ public interface ElectionCalculationListener {
 	void calculationStarted(boolean b, Election election, Map<Candidate, Double> candidateDoubleMap);
 
 	void candidateNotQualified(Candidate candidate, String reason);
+
+	void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, double quorum);
 }

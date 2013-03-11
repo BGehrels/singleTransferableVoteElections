@@ -12,8 +12,8 @@ public class AuditLogger implements ElectionCalculationListener {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public void quorumHasBeenCalculated(boolean femaleExclusive, double quorum) {
-		LOGGER.info("Das Quorum für liegt bei {}", quorum);
+	public void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, double quorum) {
+		LOGGER.info("Das Quorum liegt bei {} ({} Sitze, {} gültige Stimmen).", quorum, numberOfSeats, numberOfValidBallots);
 	}
 
 	@Override

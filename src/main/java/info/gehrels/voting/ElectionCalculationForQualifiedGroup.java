@@ -42,24 +42,24 @@ public class ElectionCalculationForQualifiedGroup {
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
 		double quorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfSeats);
-		electionCalculationListener.quorumHasBeenCalculated(true, quorum);
+		electionCalculationListener.quorumHasBeenCalculated(numberOfValidBallots, numberOfSeats, quorum);
 
 		ImmutableCollection<BallotState> ballotStates = constructBallotStates();
 		ImmutableMap<Candidate, CandidateState> candidateStates = constructCandidateStates(qualifiedCandidates);
 
-		int numberOfElectedFemaleCandidates = 0;
+		int numberOfElectedCandidates = 0;
 
 		electionCalculationListener
 			.calculationStarted(true, election, calculateVotesByCandidate(candidateStates, ballotStates));
 
-		while (notAllSeatsFilled(numberOfElectedFemaleCandidates, numberOfSeats) && anyCandidateIsHopeful(
+		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(
 			candidateStates)) {
 			Candidate winner = bestCandidateThatReachedTheQuorum(quorum, candidateStates, ballotStates);
 			if (winner != null) {
 				electionCalculationListener
 					.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), quorum);
 
-				numberOfElectedFemaleCandidates++;
+				numberOfElectedCandidates++;
 				redistributeExceededVoteWeight(winner, quorum, ballotStates
 				);
 				candidateStates.get(winner).setElected();
