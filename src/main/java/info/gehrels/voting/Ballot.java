@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableSet;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static info.gehrels.voting.HamcrestMatchers.isSubSetOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * A Ballot instance represents a physical piece of paper marked by a voter. It contains one or more areas, each
@@ -19,6 +21,8 @@ public class Ballot {
     public final ImmutableMap<Election, ImmutableSet<Candidate>> rankedCandidatesByElection;
 
     public Ballot(ImmutableSet<ElectionCandidatePreference> rankedCandidatesByElection) {
+	    validateThat(rankedCandidatesByElection, is(notNullValue()));
+
         this.id = ++ballotIdFactory;
 	    Builder<Election,ImmutableSet<Candidate>> builder = ImmutableMap.builder();
 	    for (ElectionCandidatePreference electionCandidatePreference : rankedCandidatesByElection) {
@@ -28,6 +32,8 @@ public class Ballot {
     }
 
 	public ImmutableSet<Candidate> getRankedCandidatesByElection(Election election) {
+		validateThat(election, is(notNullValue()));
+
 		ImmutableSet<Candidate> candidates = rankedCandidatesByElection.get(election);
 		if (candidates == null) {
 			// TODO: Is there a difference between not casting a vote and voting with a empty preference? It will make
@@ -43,9 +49,8 @@ public class Ballot {
 		private final ImmutableSet<Candidate> candidatePreference;
 
 		public ElectionCandidatePreference(Election election, ImmutableSet<Candidate> candidatePreference) {
-			validateThat(candidatePreference, isSubSetOf(election.candidates));
 			this.election = election;
-			this.candidatePreference = candidatePreference;
+			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.candidates));;
 		}
 
 	}

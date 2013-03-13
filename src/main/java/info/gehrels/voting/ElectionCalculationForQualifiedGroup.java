@@ -38,7 +38,7 @@ public class ElectionCalculationForQualifiedGroup {
 		this.ambiguityResolver = ambiguityResolver;
 	}
 
-	public ImmutableSet<Candidate> calculate(ImmutableSet<Candidate> qualifiedCandidates, int numberOfSeats) {
+	public ImmutableSet<Candidate> calculate(ImmutableSet<? extends Candidate> qualifiedCandidates, int numberOfSeats) {
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
 		double quorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfSeats);
@@ -88,7 +88,7 @@ public class ElectionCalculationForQualifiedGroup {
 	}
 
 	private ImmutableMap<Candidate, CandidateState> constructCandidateStates(
-		ImmutableSet<Candidate> qualifiedCandidates) {
+		ImmutableSet<? extends Candidate> qualifiedCandidates) {
 		Builder<Candidate, CandidateState> builder = ImmutableMap.builder();
 		for (Candidate candidate : qualifiedCandidates) {
 			builder.put(candidate, new CandidateState(candidate));
