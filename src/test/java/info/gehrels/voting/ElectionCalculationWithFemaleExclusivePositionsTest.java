@@ -36,8 +36,8 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	private final ElectionCalculationFactory electionCalculationFactory = mock(ElectionCalculationFactory.class);
 	private final ImmutableCollection<Ballot> ballots = ImmutableList.of(mock(Ballot.class));
 
-	private final ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroupMock =
-		mock(ElectionCalculationForQualifiedGroup.class);
+	private final STVElectionCalculation electionCalculationMock =
+		mock(STVElectionCalculation.class);
 
 	private ElectionCalculationWithFemaleExclusivePositions objectUnderTest =
 		new ElectionCalculationWithFemaleExclusivePositions(
@@ -50,7 +50,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	@Before
 	public void stubElectionCalculationFactoryToReturnElectionCalculation() {
 		stub(electionCalculationFactory.createElectionCalculation(any(Election.class), any(ImmutableCollection.class)))
-			.toReturn(electionCalculationForQualifiedGroupMock);
+			.toReturn(electionCalculationMock);
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		Matcher<ImmutableSet<Candidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_1, FEMALE_CANDIDATE_2);
-		verify(electionCalculationForQualifiedGroupMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
+		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 		// given FEMALE_CANDIDATE_1 has already been elected in the first any female exclusive run
-		stub(electionCalculationForQualifiedGroupMock.calculate(any(ImmutableSet.class), eq(1)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
 
@@ -80,7 +80,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		// Then all non elected candidates qualify for the second run.
 		Matcher<ImmutableSet<Candidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_2, CANDIDATE_E, CANDIDATE_F);
-		verify(electionCalculationForQualifiedGroupMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
+		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
 	}
 
 	@Test
@@ -89,16 +89,16 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 		// given only two female positions have been elected in the first run
-		stub(electionCalculationForQualifiedGroupMock.calculate(any(ImmutableSet.class), eq(3)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1, FEMALE_CANDIDATE_2));
 
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		// Then all non elected candidates qualify for the second run.
-		InOrder inOrder = inOrder(electionCalculationForQualifiedGroupMock);
-		inOrder.verify(electionCalculationForQualifiedGroupMock).calculate(any(ImmutableSet.class), eq(3));
-		inOrder.verify(electionCalculationForQualifiedGroupMock).calculate(any(ImmutableSet.class), eq(1));
+		InOrder inOrder = inOrder(electionCalculationMock);
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(1));
 	}
 
 	@Test
@@ -107,16 +107,16 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 		// given only two female positions have been elected in the first run
-		stub(electionCalculationForQualifiedGroupMock.calculate(any(ImmutableSet.class), eq(3)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		// Then all non elected candidates qualify for the second run.
-		InOrder inOrder = inOrder(electionCalculationForQualifiedGroupMock);
-		inOrder.verify(electionCalculationForQualifiedGroupMock).calculate(any(ImmutableSet.class), eq(3));
-		inOrder.verify(electionCalculationForQualifiedGroupMock).calculate(any(ImmutableSet.class), eq(0));
+		InOrder inOrder = inOrder(electionCalculationMock);
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0));
 	}
 
 	@Test
@@ -125,16 +125,16 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 		// given only two female positions have been elected in the first run
-		stub(electionCalculationForQualifiedGroupMock.calculate(any(ImmutableSet.class), eq(3)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
 			.toReturn(ImmutableSet.<Candidate>of());
 
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		// Then all non elected candidates qualify for the second run.
-		InOrder inOrder = inOrder(electionCalculationForQualifiedGroupMock);
-		inOrder.verify(electionCalculationForQualifiedGroupMock).calculate(any(ImmutableSet.class), eq(3));
-		inOrder.verify(electionCalculationForQualifiedGroupMock).calculate(any(ImmutableSet.class), eq(0));
+		InOrder inOrder = inOrder(electionCalculationMock);
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0));
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 	private void makeSureElectionCalculationDoesNotReturnNull() {
-		stub(electionCalculationForQualifiedGroupMock.calculate(any(ImmutableSet.class), anyInt()))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), anyInt()))
 			.toReturn(ImmutableSet.<Candidate>of());
 	}
 

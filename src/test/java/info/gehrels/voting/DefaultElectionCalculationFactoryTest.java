@@ -18,7 +18,7 @@ public class DefaultElectionCalculationFactoryTest {
 		DefaultElectionCalculationFactory factoryUnderTest =
 			new DefaultElectionCalculationFactory(quorumCalculation, electionCalculationListener, ambiguityResolver);
 
-		ElectionCalculationForQualifiedGroup electionCalculation = factoryUnderTest
+		STVElectionCalculation electionCalculation = factoryUnderTest
 			.createElectionCalculation(mock(Election.class), mock(ImmutableCollection.class));
 
 		assertThat(electionCalculation, is(notNullValue()));

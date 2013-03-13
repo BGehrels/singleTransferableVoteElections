@@ -24,31 +24,31 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		validateThat(election, is(notNullValue()));
 		validateThat(ballots, is(notNullValue()));
 
-		ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup = electionCalculationFactory
+		STVElectionCalculation electionCalculation = electionCalculationFactory
 			.createElectionCalculation(election, ballots);
 
 		ImmutableSet<Candidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
-			election, electionCalculationForQualifiedGroup);
+			election, electionCalculation);
 
 		ImmutableSet<Candidate> candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
-			election, electionCalculationForQualifiedGroup, electedFemaleCandidates);
+			election, electionCalculation, electedFemaleCandidates);
 
 		return new ElectionResult(electedFemaleCandidates, candidatesElectedInOpenRun);
 	}
 
 	private ImmutableSet<Candidate> calculateElectionResultForFemaleExclusivePositions(Election election,
-	                                                                                   ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup) {
+	                                                                                   STVElectionCalculation electionCalculation) {
 		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
 		ImmutableSet<Candidate> femaleCandidates =
 			copyOf(
 				filter(election.candidates, femalePredicate)
 			);
-		return electionCalculationForQualifiedGroup.calculate(femaleCandidates,
+		return electionCalculation.calculate(femaleCandidates,
 		                                                      election.numberOfFemaleExclusivePositions);
 	}
 
 	private ImmutableSet<Candidate> calculateElectionResultForNonFemaleExclusivePositions(Election election,
-	                                                                                      ElectionCalculationForQualifiedGroup electionCalculationForQualifiedGroup,
+	                                                                                      STVElectionCalculation electionCalculation,
 	                                                                                      ImmutableSet<Candidate> electedFemaleCandidates) {
 		int numberOfElectableNotFemaleExclusivePositions =
 			max(
@@ -64,7 +64,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 				filter(election.candidates, notElectedBeforePredicate)
 			);
 
-		return electionCalculationForQualifiedGroup
+		return electionCalculation
 			.calculate(candidatesNotElectedBefore, numberOfElectableNotFemaleExclusivePositions);
 	}
 

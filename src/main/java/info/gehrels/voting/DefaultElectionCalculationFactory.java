@@ -19,9 +19,9 @@ public class DefaultElectionCalculationFactory implements ElectionCalculationFac
 		this.ambiguityResolver = validateThat(ambiguityResolver, is(notNullValue()));
 	}
 
-	public ElectionCalculationForQualifiedGroup createElectionCalculation(Election election,
+	public STVElectionCalculation createElectionCalculation(Election election,
 	                                                                      ImmutableCollection<Ballot> ballots) {
-		return new ElectionCalculationForQualifiedGroup(ballots, quorumCalculation, electionCalculationListener, election,
+		return new STVElectionCalculation(ballots, quorumCalculation, electionCalculationListener, election,
 		                                                ambiguityResolver);
 	}
 }

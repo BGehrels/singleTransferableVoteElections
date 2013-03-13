@@ -20,17 +20,17 @@ import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 
-public class ElectionCalculationForQualifiedGroup {
+public class STVElectionCalculation {
 	private final ImmutableCollection<Ballot> ballots;
 	private final QuorumCalculation quorumCalculation;
 	private final ElectionCalculationListener electionCalculationListener;
 	private final Election election;
 	private AmbiguityResolver ambiguityResolver;
 
-	public ElectionCalculationForQualifiedGroup(ImmutableCollection<Ballot> ballots,
-	                                            QuorumCalculation quorumCalculation,
-	                                            ElectionCalculationListener electionCalculationListener,
-	                                            Election election, AmbiguityResolver ambiguityResolver) {
+	public STVElectionCalculation(ImmutableCollection<Ballot> ballots,
+	                              QuorumCalculation quorumCalculation,
+	                              ElectionCalculationListener electionCalculationListener,
+	                              Election election, AmbiguityResolver ambiguityResolver) {
 		this.ballots = ballots;
 		this.quorumCalculation = quorumCalculation;
 		this.electionCalculationListener = electionCalculationListener;
