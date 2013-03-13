@@ -50,9 +50,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-core</artifactId>
-		    <version>1.9.5</version>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.9.5</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -66,6 +66,7 @@
 
 	<build>
 		<plugins>
+			<!-- Used to configure Java language level 1.7 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -75,6 +76,23 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+
+			<!-- Used to run integration tests in the integration-test phase and fail in the verify phase, if ITs were
+			not successful -->
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- We want to publish source JARs -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -88,6 +106,9 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
+			<!-- We want to publish source Javadoc -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>

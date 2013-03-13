@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Mockito.mock;
 
-public class IntegrationTest {
+public class MartinWilkesExampleIT {
 	public static final DefaultQuorumCalculationImpl QUORUM_CALCULATION = new DefaultQuorumCalculationImpl(.001);
 	public static final AmbiguityResolver AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver();
 
@@ -39,7 +39,7 @@ public class IntegrationTest {
 	private ElectionCalculationListener calculationListener;
 	private Election election;
 
-	public IntegrationTest() {
+	public MartinWilkesExampleIT() {
 		ImmutableSet<Candidate> candidateSet = ImmutableSet.of(
 			CANDIDATE_A,
 			CANDIDATE_B,

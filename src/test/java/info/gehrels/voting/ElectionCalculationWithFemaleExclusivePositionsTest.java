@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -137,7 +138,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0));
 	}
 
-	@Test
+	@Test @Ignore
 	public void shouldReportIfNotAllNonFemaleExclusivePositionsCanBeElected() {
 	    throw new UnsupportedOperationException("unimplemented");
 	}
