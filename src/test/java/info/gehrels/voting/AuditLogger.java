@@ -17,6 +17,14 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
+	public void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats,
+	                                           int numberOfElectedFemaleExclusiveSeats,
+	                                           int numberOfOpenNonFemaleExclusiveSeats,
+	                                           int numberOfElectableNonFemaleExclusiveSeats) {
+		LOGGER.info("Es wurden nur {} von {} Frauenplätzen besetzt. Daher können auch nur {} von {} offenen Plätzen gewählt werden.", numberOfElectedFemaleExclusiveSeats, numberOfOpenFemaleExclusiveSeats, numberOfElectableNonFemaleExclusiveSeats, numberOfOpenNonFemaleExclusiveSeats);
+	}
+
+	@Override
 	public void numberOfElectedPositions(int numberOfElectedCandidates, int numberOfSeatsToElect) {
 		if (numberOfElectedCandidates < numberOfSeatsToElect) {
 			LOGGER.info("Es sind erst {} von {} Plätze sind gewählt.", numberOfElectedCandidates, numberOfSeatsToElect,
@@ -85,10 +93,8 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void calculationStarted(boolean femaleExclusivePosition, Election election,
-	                               Map<Candidate, Double> voteDistribution) {
-		LOGGER.info("Beginne die Berechnung für die {} der Wahl „{}“. Ausgangsstimmverteilung:",
-		            femaleExclusivePosition ? "Frauenplätze" : "offenen Plätze",
+	public void calculationStarted(Election election, Map<Candidate, Double> voteDistribution) {
+		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:",
 		            election.office.name);
 		dumpVoteDistribution(voteDistribution);
 	}

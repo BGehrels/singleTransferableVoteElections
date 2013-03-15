@@ -3,6 +3,7 @@ package it.gehrels.voting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver;
+import info.gehrels.voting.AuditLogger;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.DefaultElectionCalculationFactory;
@@ -18,7 +19,6 @@ import org.junit.Test;
 import static info.gehrels.voting.TestUtils.createBallot;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.Mockito.mock;
 
 public class MartinWilkesExampleIT {
 	public static final DefaultQuorumCalculationImpl QUORUM_CALCULATION = new DefaultQuorumCalculationImpl(.001);
@@ -52,7 +52,7 @@ public class MartinWilkesExampleIT {
 			CANDIDATE_I,
 			CANDIDATE_J);
 
-		election = new Election(TestUtils.OFFICE, 0, 4, candidateSet);
+		election = new Election(TestUtils.OFFICE, 10, 4, candidateSet);
 
 		ballotImmutableList = ImmutableList.of(
 			createBallot("ABDC", election),
@@ -77,7 +77,7 @@ public class MartinWilkesExampleIT {
 			createBallot("IJH", election),
 			createBallot("JIHFE", election));
 
-		calculationListener = mock(ElectionCalculationListener.class);
+		calculationListener = new AuditLogger();
 	}
 
 	@Test

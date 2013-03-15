@@ -50,7 +50,7 @@ public class STVElectionCalculation {
 		int numberOfElectedCandidates = 0;
 
 		electionCalculationListener
-			.calculationStarted(true, election, calculateVotesByCandidate(candidateStates, ballotStates));
+			.calculationStarted(election, calculateVotesByCandidate(candidateStates, ballotStates));
 
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(
 			candidateStates)) {

@@ -28,9 +28,11 @@ public interface ElectionCalculationListener {
 
 	void noCandidatesAreLeft();
 
-	void calculationStarted(boolean b, Election election, Map<Candidate, Double> candidateDoubleMap);
+	void calculationStarted(Election election, Map<Candidate, Double> candidateDoubleMap);
 
 	void candidateNotQualified(Candidate candidate, String reason);
 
 	void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, double quorum);
+
+	void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats, int numberOfElectedFemaleExclusiveSeats, int numberOfOpenNonFemaleExclusiveSeats, int numberOfElectableNonFemaleExclusiveSeats);
 }

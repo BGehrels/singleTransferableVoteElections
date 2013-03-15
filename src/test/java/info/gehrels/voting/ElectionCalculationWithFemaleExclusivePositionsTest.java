@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -34,18 +33,17 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		CANDIDATE_F
 	);
 
-	private final ElectionCalculationFactory electionCalculationFactory = mock(ElectionCalculationFactory.class);
 	private final ImmutableCollection<Ballot> ballots = ImmutableList.of(mock(Ballot.class));
 
-	private final STVElectionCalculation electionCalculationMock =
-		mock(STVElectionCalculation.class);
+	private final ElectionCalculationFactory electionCalculationFactory = mock(ElectionCalculationFactory.class);
+	private final STVElectionCalculation electionCalculationMock = mock(STVElectionCalculation.class);
+	private final ElectionCalculationListener electionCalculationListener = mock(ElectionCalculationListener.class);
 
 	private ElectionCalculationWithFemaleExclusivePositions objectUnderTest =
 		new ElectionCalculationWithFemaleExclusivePositions(
 			electionCalculationFactory,
-			mock(ElectionCalculationListener.class)
+			electionCalculationListener
 		);
-
 
 
 	@Before
@@ -107,7 +105,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		Election election = new Election(OFFICE, 3, 2, CANDIDATES);
 
 
-		// given only two female positions have been elected in the first run
+		// given only one female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
@@ -124,8 +122,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	public void ifNotAllFemalePositionsHaveBeenFilledThenNumberOfMalePositionsMayNotBecomeNegative() {
 		Election election = new Election(OFFICE, 3, 2, CANDIDATES);
 
-
-		// given only two female positions have been elected in the first run
+		// given no female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
 			.toReturn(ImmutableSet.<Candidate>of());
 
@@ -138,11 +135,19 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0));
 	}
 
-	@Test @Ignore
+	@Test
 	public void shouldReportIfNotAllNonFemaleExclusivePositionsCanBeElected() {
-	    throw new UnsupportedOperationException("unimplemented");
-	}
+		Election election = new Election(OFFICE, 1, 2, CANDIDATES);
 
+		// given no female positions have been elected in the first run
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))
+			.toReturn(ImmutableSet.<Candidate>of());
+
+
+		objectUnderTest.calculateElectionResult(election, ballots);
+
+		verify(electionCalculationListener).reducedNonFemaleExclusiveSeats(1,0,2,1);
+	}
 
 
 	private void makeSureElectionCalculationDoesNotReturnNull() {
