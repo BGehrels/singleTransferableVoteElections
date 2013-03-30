@@ -25,17 +25,20 @@ public class STVElectionCalculation {
 	private final QuorumCalculation quorumCalculation;
 	private final ElectionCalculationListener electionCalculationListener;
 	private final Election election;
-	private AmbiguityResolver ambiguityResolver;
+	private final AmbiguityResolver ambiguityResolver;
+	private final VoteWeightRedistributionMethod voteWeightRedistributionMethod;
 
 	public STVElectionCalculation(ImmutableCollection<Ballot> ballots,
 	                              QuorumCalculation quorumCalculation,
 	                              ElectionCalculationListener electionCalculationListener,
-	                              Election election, AmbiguityResolver ambiguityResolver) {
+	                              Election election, AmbiguityResolver ambiguityResolver,
+	                              VoteWeightRedistributionMethod redistributionMethod) {
 		this.ballots = ballots;
 		this.quorumCalculation = quorumCalculation;
 		this.electionCalculationListener = electionCalculationListener;
 		this.election = election;
 		this.ambiguityResolver = ambiguityResolver;
+		voteWeightRedistributionMethod = redistributionMethod;
 	}
 
 	public ImmutableSet<Candidate> calculate(ImmutableSet<? extends Candidate> qualifiedCandidates, int numberOfSeats) {
@@ -60,8 +63,7 @@ public class STVElectionCalculation {
 					.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), quorum);
 
 				numberOfElectedCandidates++;
-				redistributeExceededVoteWeight(winner, quorum, ballotStates
-				);
+				redistributeExceededVoteWeight(winner, quorum, ballotStates);
 				candidateStates.get(winner).setElected();
 				electionCalculationListener.voteWeightRedistributionCompleted(
 					calculateVotesByCandidate(candidateStates, ballotStates));
