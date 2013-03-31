@@ -32,11 +32,11 @@ public class WeightedInclusiveGregoryMethodTest {
 	public static final Ballot BALLOT_NO_VOTES = createBallot("", ELECTION);
 
 	public static final ImmutableList<BallotState> BALLOT_STATES_FIXTURE = ImmutableList.of(
-		new BallotState(BALLOT_ABCD, ELECTION),
-		new BallotState(BALLOT_BACD, ELECTION).withNextPreference().withReducedVoteWeight(0.75),
-		new BallotState(BALLOT_BCDA, ELECTION),
-		new BallotState(BALLOT_NO_VOTES, ELECTION)
-	);
+				new BallotState(BALLOT_ABCD, ELECTION),
+				new BallotState(BALLOT_BACD, ELECTION).withNextPreference().withVoteWeight(0.75),
+				new BallotState(BALLOT_BCDA, ELECTION),
+				new BallotState(BALLOT_NO_VOTES, ELECTION)
+			);
 
 	private ElectionCalculationListener mock = mock(ElectionCalculationListener.class);
 	private WeightedInclusiveGregoryMethod weightedInclusiveGregoryMethod = new WeightedInclusiveGregoryMethod(mock);

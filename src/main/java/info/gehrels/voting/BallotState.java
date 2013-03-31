@@ -40,9 +40,9 @@ public final class BallotState implements Cloneable {
 		return result;
 	}
 
-	public BallotState withReducedVoteWeight(double fractionOfExcessiveVotes) {
+	BallotState withVoteWeight(double newVoteWeight) {
 		BallotState result = this.clone();
-		result.voteWeight *= fractionOfExcessiveVotes;
+		result.voteWeight = newVoteWeight;
 		return result;
 	}
 

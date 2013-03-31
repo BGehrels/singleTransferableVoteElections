@@ -20,7 +20,7 @@ public class BallotStateTest {
 		Ballot ballot = TestUtils.createBallot("AB", ELECTION);
 		BallotState ballotState = new BallotState(ballot, ELECTION);
 
-		BallotState newBallotState = ballotState.withReducedVoteWeight(0.33);
+		BallotState newBallotState = ballotState.withVoteWeight(0.33);
 
 		assertThat(newBallotState, is(not(sameInstance(ballotState))));
 		assertThat(newBallotState.getPreferredCandidate(), is(equalTo(ballotState.getPreferredCandidate())));
