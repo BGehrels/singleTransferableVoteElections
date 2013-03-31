@@ -52,7 +52,7 @@ public class MartinWilkesExampleIT {
 			CANDIDATE_I,
 			CANDIDATE_J);
 
-		election = new Election(TestUtils.OFFICE, 10, 4, candidateSet);
+		election = new Election(TestUtils.OFFICE, 0, 4, candidateSet);
 
 		ballotImmutableList = ImmutableList.of(
 			createBallot("ABDC", election),

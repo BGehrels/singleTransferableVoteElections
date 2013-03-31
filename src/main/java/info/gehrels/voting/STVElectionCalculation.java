@@ -11,13 +11,13 @@ import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
+import static info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import static java.util.Arrays.asList;
 
 public class STVElectionCalculation {
@@ -42,13 +42,14 @@ public class STVElectionCalculation {
 	}
 
 	public ImmutableSet<Candidate> calculate(ImmutableSet<? extends Candidate> qualifiedCandidates, int numberOfSeats) {
+		VoteWeightRedistributor redistributor = voteWeightRedistributionMethod.redistributorFor();
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?
 		double quorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfSeats);
 		electionCalculationListener.quorumHasBeenCalculated(numberOfValidBallots, numberOfSeats, quorum);
 
-		ImmutableCollection<BallotState> ballotStates = constructBallotStates();
 		ImmutableMap<Candidate, CandidateState> candidateStates = constructCandidateStates(qualifiedCandidates);
+		ImmutableCollection<BallotState> ballotStates = constructBallotStates(candidateStates);
 
 		int numberOfElectedCandidates = 0;
 
@@ -63,14 +64,16 @@ public class STVElectionCalculation {
 					.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), quorum);
 
 				numberOfElectedCandidates++;
-				redistributeExceededVoteWeight(winner, quorum, ballotStates);
+				ballotStates = redistributor.redistributeExceededVoteWeight(winner, quorum, ballotStates);
 				candidateStates.get(winner).setElected();
+				ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 				electionCalculationListener.voteWeightRedistributionCompleted(
 					calculateVotesByCandidate(candidateStates, ballotStates));
 
 			} else {
 				electionCalculationListener.nobodyReachedTheQuorumYet(quorum);
 				strikeWeakestCandidate(candidateStates, ballotStates);
+				ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 			}
 		}
 
@@ -79,15 +82,27 @@ public class STVElectionCalculation {
 		return electedCandidates;
 	}
 
-	private ImmutableCollection<BallotState> constructBallotStates() {
+	private ImmutableCollection<BallotState> createBallotStatesPointingAtNextHopefulCandidate(
+		ImmutableCollection<BallotState> ballotStates,
+		ImmutableMap<Candidate, CandidateState> candidateStates) {
+		ImmutableList.Builder<BallotState> resultBuilder = ImmutableList.builder();
+		for (BallotState ballotState : ballotStates) {
+			resultBuilder.add(createBallotStatePointingAtNextHopefulCandidate(candidateStates, ballotState));
+		}
+
+		return resultBuilder.build();
+	}
+
+	private ImmutableCollection<BallotState> constructBallotStates(final Map<Candidate, CandidateState> candidateStates) {
 		ImmutableList.Builder<BallotState> builder = ImmutableList.builder();
 		return builder.addAll(transform(ballots, new Function<Ballot, BallotState>() {
 			@Override
 			public BallotState apply(Ballot ballot) {
-				return new BallotState(ballot);
+				return createBallotStatePointingAtNextHopefulCandidate(candidateStates, new BallotState(ballot, election));
 			}
 		})).build();
 	}
+
 
 	private ImmutableMap<Candidate, CandidateState> constructCandidateStates(
 		ImmutableSet<? extends Candidate> qualifiedCandidates) {
@@ -102,16 +117,16 @@ public class STVElectionCalculation {
 	                                                         Collection<BallotState> ballotStates) {
 		Map<Candidate, Double> votesByCandidateDraft = new HashMap<>();
 		for (BallotState ballotState : ballotStates) {
-			CandidateState preferredHopefulCandidate = getPreferredHopefulCandidate(candidateStates, ballotState);
+			Candidate preferredHopefulCandidate = ballotState.getPreferredCandidate();
 			if (preferredHopefulCandidate == null) {
 				continue;
 			}
 
-			Double votes = votesByCandidateDraft.get(preferredHopefulCandidate.candidate);
+			Double votes = votesByCandidateDraft.get(preferredHopefulCandidate);
 			if (votes == null) {
-				votesByCandidateDraft.put(preferredHopefulCandidate.candidate, ballotState.getVoteWeight());
+				votesByCandidateDraft.put(preferredHopefulCandidate, ballotState.getVoteWeight());
 			} else {
-				votesByCandidateDraft.put(preferredHopefulCandidate.candidate, votes + ballotState.getVoteWeight());
+				votesByCandidateDraft.put(preferredHopefulCandidate, votes + ballotState.getVoteWeight());
 			}
 		}
 
@@ -196,23 +211,6 @@ public class STVElectionCalculation {
 		return votes;
 	}
 
-	private void redistributeExceededVoteWeight(Candidate candidate, double quorum,
-	                                            Collection<BallotState> ballotStates) {
-		double votesForCandidate = calculateVotesForCandidate(candidate, ballotStates);
-		double excessiveVotes = votesForCandidate - quorum;
-		double excessiveFractionOfVoteWeight = excessiveVotes / votesForCandidate;
-
-		for (BallotState ballotState : ballotStates) {
-			if (ballotState.getPreferredCandidate() == candidate) {
-				ballotState.reduceVoteWeight(excessiveFractionOfVoteWeight);
-
-				electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
-				                                                    ballotState.ballotId, ballotState.getVoteWeight());
-			}
-		}
-
-	}
-
 	private void strikeWeakestCandidate(Map<Candidate, CandidateState> candidateStates,
 	                                    Collection<BallotState> ballotStates) {
 		Map<Candidate, Double> votesByCandidateBeforeStriking = calculateVotesByCandidate(candidateStates,
@@ -260,58 +258,25 @@ public class STVElectionCalculation {
 	}
 
 
-	private CandidateState getPreferredHopefulCandidate(Map<Candidate, CandidateState> candidateStates,
-	                                                    BallotState ballotState) {
-		Candidate preferredCandidate = ballotState.getPreferredCandidate();
+	private BallotState createBallotStatePointingAtNextHopefulCandidate(
+		Map<Candidate, CandidateState> candidateStates,	BallotState ballotState) {
+		BallotState result = ballotState;
+
+		Candidate preferredCandidate = result.getPreferredCandidate();
 		while (preferredCandidate != null) {
+
 			CandidateState candidateState = candidateStates.get(preferredCandidate);
 			if (candidateState != null && candidateState.isHopeful()) {
-				return candidateState;
+				return result;
 			}
 
-			preferredCandidate = ballotState.proceedToNextPreference();
+			result = result.withNextPreference();
+			preferredCandidate = result.getPreferredCandidate();
 		}
 
-		return null;
+		return result;
 	}
 
-
-	class BallotState {
-		public int ballotId;
-		private double voteWeight;
-		private Iterator<Candidate> ballotIterator;
-		private Candidate candidateOfCurrentPreference;
-
-		public BallotState(Ballot ballot) {
-			this.ballotId = ballot.id;
-			this.ballotIterator = ballot.getRankedCandidatesByElection(election).iterator();
-			proceedToNextPreference();
-
-			voteWeight = 1;
-		}
-
-		public Candidate getPreferredCandidate() {
-			return candidateOfCurrentPreference;
-		}
-
-		public double getVoteWeight() {
-			return voteWeight;
-		}
-
-		public Candidate proceedToNextPreference() {
-			candidateOfCurrentPreference = null;
-			if (ballotIterator.hasNext()) {
-				candidateOfCurrentPreference = ballotIterator.next();
-			}
-
-			return candidateOfCurrentPreference;
-		}
-
-		public void reduceVoteWeight(double fractionOfExcessiveVotes) {
-			voteWeight *= fractionOfExcessiveVotes;
-		}
-
-	}
 
 	private class CandidateState {
 		private final Candidate candidate;
@@ -333,6 +298,11 @@ public class STVElectionCalculation {
 
 		public void setLooser() {
 			this.looser = true;
+		}
+
+		@Override
+		public String toString() {
+			return candidate.toString() + ": " + (elected ? "" : "not ") + "elected, " + (looser ? "" : "no ") + "looser";
 		}
 	}
 

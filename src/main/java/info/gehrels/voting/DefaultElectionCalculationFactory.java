@@ -22,6 +22,7 @@ public class DefaultElectionCalculationFactory implements ElectionCalculationFac
 	public STVElectionCalculation createElectionCalculation(Election election,
 	                                                                      ImmutableCollection<Ballot> ballots) {
 		return new STVElectionCalculation(ballots, quorumCalculation, electionCalculationListener, election,
-		                                                ambiguityResolver, new WeightedInclusiveGregoryMethod());
+		                                                ambiguityResolver, new WeightedInclusiveGregoryMethod(
+			electionCalculationListener));
 	}
 }
