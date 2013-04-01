@@ -82,15 +82,13 @@ public class STVElectionCalculation {
 		return electedCandidates;
 	}
 
-	private ImmutableCollection<BallotState> createBallotStatesPointingAtNextHopefulCandidate(
-		ImmutableCollection<BallotState> ballotStates,
-		ImmutableMap<Candidate, CandidateState> candidateStates) {
-		ImmutableList.Builder<BallotState> resultBuilder = ImmutableList.builder();
-		for (BallotState ballotState : ballotStates) {
-			resultBuilder.add(createBallotStatePointingAtNextHopefulCandidate(candidateStates, ballotState));
+	private ImmutableMap<Candidate, CandidateState> constructCandidateStates(
+		ImmutableSet<? extends Candidate> qualifiedCandidates) {
+		Builder<Candidate, CandidateState> builder = ImmutableMap.builder();
+		for (Candidate candidate : qualifiedCandidates) {
+			builder.put(candidate, new CandidateState(candidate));
 		}
-
-		return resultBuilder.build();
+		return builder.build();
 	}
 
 	private ImmutableCollection<BallotState> constructBallotStates(final Map<Candidate, CandidateState> candidateStates) {
@@ -104,17 +102,8 @@ public class STVElectionCalculation {
 	}
 
 
-	private ImmutableMap<Candidate, CandidateState> constructCandidateStates(
-		ImmutableSet<? extends Candidate> qualifiedCandidates) {
-		Builder<Candidate, CandidateState> builder = ImmutableMap.builder();
-		for (Candidate candidate : qualifiedCandidates) {
-			builder.put(candidate, new CandidateState(candidate));
-		}
-		return builder.build();
-	}
-
 	private Map<Candidate, BigFraction> calculateVotesByCandidate(Map<Candidate, CandidateState> candidateStates,
-	                                                         Collection<BallotState> ballotStates) {
+	                                                              Collection<BallotState> ballotStates) {
 		Map<Candidate, BigFraction> votesByCandidateDraft = new HashMap<>();
 		for (BallotState ballotState : ballotStates) {
 			Candidate preferredHopefulCandidate = ballotState.getPreferredCandidate();
@@ -144,13 +133,13 @@ public class STVElectionCalculation {
 		return builder.build();
 	}
 
-
 	private boolean notAllSeatsFilled(int numberOfElectedCandidates, int numberOfSeatsToElect) {
 
 		boolean notAllSeatsFilled = numberOfElectedCandidates < numberOfSeatsToElect;
 		electionCalculationListener.numberOfElectedPositions(numberOfElectedCandidates, numberOfSeatsToElect);
 		return notAllSeatsFilled;
 	}
+
 
 	private boolean anyCandidateIsHopeful(ImmutableMap<Candidate, CandidateState> candidateStates) {
 		for (CandidateState candidateState : candidateStates.values()) {
@@ -185,21 +174,6 @@ public class STVElectionCalculation {
 		return chooseOneOutOfManyCandidates(copyOf(bestCandidates));
 	}
 
-	private Candidate chooseOneOutOfManyCandidates(ImmutableSet<Candidate> candidates) {
-		Candidate winner = null;
-
-		if (candidates.size() == 1) {
-			return candidates.iterator().next();
-		} else if (candidates.size() > 1) {
-			electionCalculationListener.delegatingToExternalAmbiguityResolution(candidates);
-			AmbiguityResolverResult ambiguityResolverResult = ambiguityResolver.chooseOneOfMany(candidates);
-			electionCalculationListener.externalyResolvedAmbiguity(ambiguityResolverResult);
-			winner = ambiguityResolverResult.choosenCandidate;
-		}
-
-		return winner;
-	}
-
 	private BigFraction calculateVotesForCandidate(Candidate candidate, Collection<BallotState> ballotStates) {
 		BigFraction votes = BigFraction.ZERO;
 		for (BallotState ballotState : ballotStates) {
@@ -212,9 +186,9 @@ public class STVElectionCalculation {
 	}
 
 	private ImmutableCollection<BallotState> strikeWeakestCandidate(ImmutableMap<Candidate, CandidateState> candidateStates,
-	                                                       ImmutableCollection<BallotState> ballotStates) {
+	                                                                ImmutableCollection<BallotState> ballotStates) {
 		Map<Candidate, BigFraction> votesByCandidateBeforeStriking = calculateVotesByCandidate(candidateStates,
-		                                                                                  ballotStates);
+		                                                                                       ballotStates);
 
 		Candidate weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
 
@@ -232,6 +206,43 @@ public class STVElectionCalculation {
 		return ballotStates;
 	}
 
+	private ImmutableCollection<BallotState> createBallotStatesPointingAtNextHopefulCandidate(
+		ImmutableCollection<BallotState> ballotStates,
+		ImmutableMap<Candidate, CandidateState> candidateStates) {
+		ImmutableList.Builder<BallotState> resultBuilder = ImmutableList.builder();
+		for (BallotState ballotState : ballotStates) {
+			resultBuilder.add(createBallotStatePointingAtNextHopefulCandidate(candidateStates, ballotState));
+		}
+
+		return resultBuilder.build();
+	}
+
+	private ImmutableSet<Candidate> getElectedCandidates(ImmutableMap<Candidate, CandidateState> candidateStates) {
+		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
+
+		for (CandidateState candidateState : candidateStates.values()) {
+			if (candidateState.elected) {
+				builder.add(candidateState.candidate);
+			}
+		}
+		return builder.build();
+	}
+
+	private Candidate chooseOneOutOfManyCandidates(ImmutableSet<Candidate> candidates) {
+		Candidate winner = null;
+
+		if (candidates.size() == 1) {
+			return candidates.iterator().next();
+		} else if (candidates.size() > 1) {
+			electionCalculationListener.delegatingToExternalAmbiguityResolution(candidates);
+			AmbiguityResolverResult ambiguityResolverResult = ambiguityResolver.chooseOneOfMany(candidates);
+			electionCalculationListener.externalyResolvedAmbiguity(ambiguityResolverResult);
+			winner = ambiguityResolverResult.choosenCandidate;
+		}
+
+		return winner;
+	}
+
 	private Candidate calculateWeakestCandidate(Map<Candidate, BigFraction> votesByCandidate) {
 		BigFraction numberOfVotesOfBestCandidate = new BigFraction(Integer.MAX_VALUE, 1);
 		//TODO: Hier sollten eigentlich 0-Kandidierende noch aufgeführt werden, solange sie nicht bereits gedroppd sind.
@@ -246,17 +257,6 @@ public class STVElectionCalculation {
 		}
 
 		return chooseOneOutOfManyCandidates(copyOf(weakestCandidates));
-	}
-
-	private ImmutableSet<Candidate> getElectedCandidates(ImmutableMap<Candidate, CandidateState> candidateStates) {
-		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
-
-		for (CandidateState candidateState : candidateStates.values()) {
-			if (candidateState.elected) {
-				builder.add(candidateState.candidate);
-			}
-		}
-		return builder.build();
 	}
 
 
