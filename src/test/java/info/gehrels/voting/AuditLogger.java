@@ -2,6 +2,7 @@ package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +13,8 @@ public class AuditLogger implements ElectionCalculationListener {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, double quorum) {
-		LOGGER.info("Das Quorum liegt bei {} ({} Sitze, {} gültige Stimmen).", quorum, numberOfSeats, numberOfValidBallots);
+	public void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, BigFraction quorum) {
+		LOGGER.info("Das Quorum liegt bei {} ({} Sitze, {} gültige Stimmen).", quorum.doubleValue(), numberOfSeats, numberOfValidBallots);
 	}
 
 	@Override
@@ -44,23 +45,23 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void candidateDropped(Map<Candidate, Double> votesByCandidateBeforeStriking, String name,
-	                             double weakestVoteCount, Map<Candidate, Double> votesByCandidateAfterStriking) {
-		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", name, weakestVoteCount);
+	public void candidateDropped(Map<Candidate,BigFraction> votesByCandidateBeforeStriking, String name,
+	                             BigFraction weakestVoteCount, Map<Candidate, BigFraction> votesByCandidateAfterStriking) {
+		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", name, weakestVoteCount.doubleValue());
 		LOGGER.info("Neue Stimmverteilung:");
 		dumpVoteDistribution(votesByCandidateAfterStriking);
 	}
 
 	@Override
-	public void voteWeightRedistributed(double excessiveFractionOfVoteWeight, int ballotId, double voteWeight) {
+	public void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, int ballotId, BigFraction voteWeight) {
 		LOGGER.info(
-			"Es werden {}% der Stimmen weiterverteilt: "
-			+ "Stimmzettel {} hat nun ein verbleibendes Stimmgewicht von {}.",
-			excessiveFractionOfVoteWeight * 100, ballotId, voteWeight);
+			"Es werden {} % der Stimmen weiterverteilt: "
+			+ "Stimmzettel {} hat nun ein verbleibendes Stimmgewicht von {} %.",
+			excessiveFractionOfVoteWeight.multiply(100).doubleValue(), ballotId, voteWeight.multiply(100).doubleValue());
 	}
 
 	@Override
-	public void voteWeightRedistributionCompleted(Map<Candidate, Double> votesByCandidate) {
+	public void voteWeightRedistributionCompleted(Map<Candidate, BigFraction> votesByCandidate) {
 		LOGGER.info("Neue Stimmverteilung:");
 		dumpVoteDistribution(votesByCandidate);
 	}
@@ -77,14 +78,14 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void candidateIsElected(Candidate winner, double numberOfVotes, double quorum) {
+	public void candidateIsElected(Candidate winner, BigFraction numberOfVotes, BigFraction quorum) {
 		LOGGER.info("{} hat mit {} Stimmen das Quorum von {} Stimmen erreicht und ist gewählt.", winner.name,
-		            numberOfVotes, quorum);
+		            numberOfVotes.doubleValue(), quorum.doubleValue());
 	}
 
 	@Override
-	public void nobodyReachedTheQuorumYet(double quorum) {
-		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum von {} Stimmen erreicht:", quorum);
+	public void nobodyReachedTheQuorumYet(BigFraction quorum) {
+		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum von {} Stimmen erreicht:", quorum.doubleValue());
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void calculationStarted(Election election, Map<Candidate, Double> voteDistribution) {
+	public void calculationStarted(Election election, Map<Candidate, BigFraction> voteDistribution) {
 		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:",
 		            election.office.name);
 		dumpVoteDistribution(voteDistribution);
@@ -104,9 +105,9 @@ public class AuditLogger implements ElectionCalculationListener {
 		LOGGER.info("{} kann in diesem Wahlgang nicht antreten, Grund: {}", candidate.name, reason);
 	}
 
-	private void dumpVoteDistribution(Map<Candidate, Double> votesByCandidate) {
-		for (Entry<Candidate, Double> candidateDoubleEntry : votesByCandidate.entrySet()) {
-			LOGGER.info("\t{}: {} Stimmen", candidateDoubleEntry.getKey().name, candidateDoubleEntry.getValue());
+	private void dumpVoteDistribution(Map<Candidate, BigFraction> votesByCandidate) {
+		for (Entry<Candidate, BigFraction> candidateDoubleEntry : votesByCandidate.entrySet()) {
+			LOGGER.info("\t{}: {} Stimmen", candidateDoubleEntry.getKey().name, candidateDoubleEntry.getValue().doubleValue());
 		}
 	}
 }

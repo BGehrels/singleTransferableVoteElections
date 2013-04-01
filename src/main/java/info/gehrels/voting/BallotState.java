@@ -1,6 +1,7 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
@@ -9,7 +10,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public final class BallotState implements Cloneable {
 	public final ImmutableList<Candidate> rankedCandidatesByElection;
 	public final Ballot ballot;
-	private double voteWeight;
+	private BigFraction voteWeight;
 	private int currentPositionInRankedCandidatesList = 0;
 
 	public BallotState(Ballot ballot, Election election) {
@@ -19,7 +20,7 @@ public final class BallotState implements Cloneable {
 		this.ballot = ballot;
 		rankedCandidatesByElection = ballot.getRankedCandidatesByElection(election).asList();
 
-		voteWeight = 1;
+		voteWeight = BigFraction.ONE;
 	}
 
 	public Candidate getPreferredCandidate() {
@@ -30,7 +31,7 @@ public final class BallotState implements Cloneable {
 		return rankedCandidatesByElection.asList().get(currentPositionInRankedCandidatesList);
 	}
 
-	public double getVoteWeight() {
+	public BigFraction getVoteWeight() {
 		return voteWeight;
 	}
 
@@ -40,7 +41,7 @@ public final class BallotState implements Cloneable {
 		return result;
 	}
 
-	BallotState withVoteWeight(double newVoteWeight) {
+	BallotState withVoteWeight(BigFraction newVoteWeight) {
 		BallotState result = this.clone();
 		result.voteWeight = newVoteWeight;
 		return result;

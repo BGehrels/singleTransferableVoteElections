@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class WeightedInclusiveGregoryMethodTest {
 
 	public static final ImmutableList<BallotState> BALLOT_STATES_FIXTURE = ImmutableList.of(
 				new BallotState(BALLOT_ABCD, ELECTION),
-				new BallotState(BALLOT_BACD, ELECTION).withNextPreference().withVoteWeight(0.75),
+				new BallotState(BALLOT_BACD, ELECTION).withNextPreference().withVoteWeight(BigFraction.THREE_QUARTERS),
 				new BallotState(BALLOT_BCDA, ELECTION),
 				new BallotState(BALLOT_NO_VOTES, ELECTION)
 			);
@@ -46,11 +47,11 @@ public class WeightedInclusiveGregoryMethodTest {
 		VoteWeightRedistributor voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
 
 		ImmutableCollection<BallotState> ballotStates = voteWeightRedistributor
-			.redistributeExceededVoteWeight(CANDIDATE_A, 0.875, BALLOT_STATES_FIXTURE);
+			.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7,8), BALLOT_STATES_FIXTURE);
 
 		assertThat(ballotStates, hasItems(
-			aBallotState(allOf(withBallot(BALLOT_ABCD), withVoteWeight(0.5))),
-			aBallotState(allOf(withBallot(BALLOT_BACD), withVoteWeight(0.375)))
+			aBallotState(allOf(withBallot(BALLOT_ABCD), withVoteWeight(BigFraction.ONE_HALF))),
+			aBallotState(allOf(withBallot(BALLOT_BACD), withVoteWeight(new BigFraction(3,8))))
 		));
 	}
 
@@ -58,10 +59,10 @@ public class WeightedInclusiveGregoryMethodTest {
 	public void reportsEachVoteWeightRedistribution() {
 		VoteWeightRedistributor voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
 
-		voteWeightRedistributor.redistributeExceededVoteWeight(CANDIDATE_A, 0.875, BALLOT_STATES_FIXTURE);
+		voteWeightRedistributor.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7,8), BALLOT_STATES_FIXTURE);
 
-		verify(mock).voteWeightRedistributed(0.5, BALLOT_ABCD.id, 0.5);
-		verify(mock).voteWeightRedistributed(0.5, BALLOT_BACD.id, 0.375);
+		verify(mock).voteWeightRedistributed(BigFraction.ONE_HALF, BALLOT_ABCD.id, BigFraction.ONE_HALF);
+		verify(mock).voteWeightRedistributed(BigFraction.ONE_HALF, BALLOT_BACD.id, new BigFraction(3,8));
 	}
 
 
@@ -70,11 +71,11 @@ public class WeightedInclusiveGregoryMethodTest {
 		VoteWeightRedistributor voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
 
 		ImmutableCollection<BallotState> ballotStates = voteWeightRedistributor
-			.redistributeExceededVoteWeight(CANDIDATE_A, 1.0, BALLOT_STATES_FIXTURE);
+			.redistributeExceededVoteWeight(CANDIDATE_A, BigFraction.ONE, BALLOT_STATES_FIXTURE);
 
 		assertThat(ballotStates, hasItems(
-			aBallotState(allOf(withBallot(BALLOT_BCDA), withVoteWeight(1))),
-			aBallotState(allOf(withBallot(BALLOT_NO_VOTES), withVoteWeight(1)))
+			aBallotState(allOf(withBallot(BALLOT_BCDA), withVoteWeight(BigFraction.ONE))),
+			aBallotState(allOf(withBallot(BALLOT_NO_VOTES), withVoteWeight(BigFraction.ONE)))
 		));
 	}
 
@@ -88,11 +89,11 @@ public class WeightedInclusiveGregoryMethodTest {
 		};
 	}
 
-	private Matcher<BallotState> withVoteWeight(double voteWeight) {
-		return new FeatureMatcher<BallotState, Double>(is(equalTo(voteWeight)), "with vote weight", "vote weight") {
+	private Matcher<BallotState> withVoteWeight(BigFraction voteWeight) {
+		return new FeatureMatcher<BallotState, BigFraction>(is(equalTo(voteWeight)), "with vote weight", "vote weight") {
 
 			@Override
-			protected Double featureValueOf(BallotState ballotState) {
+			protected BigFraction featureValueOf(BallotState ballotState) {
 				return ballotState.getVoteWeight();
 			}
 		};

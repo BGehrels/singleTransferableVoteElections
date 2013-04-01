@@ -14,6 +14,7 @@ import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
 import info.gehrels.voting.TestUtils;
 import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
 import static info.gehrels.voting.TestUtils.createBallot;
@@ -21,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public class MartinWilkesExampleIT {
-	public static final DefaultQuorumCalculationImpl QUORUM_CALCULATION = new DefaultQuorumCalculationImpl(.001);
+	public static final DefaultQuorumCalculationImpl QUORUM_CALCULATION = new DefaultQuorumCalculationImpl(new BigFraction(1, 1000));
 	public static final AmbiguityResolver AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver();
 
 	public static final Candidate CANDIDATE_A = new Candidate("A", true);

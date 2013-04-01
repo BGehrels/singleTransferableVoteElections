@@ -3,6 +3,7 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Collection;
 
@@ -20,17 +21,17 @@ public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionM
 
 	private class VoteWeightRedistributor implements VoteWeightRedistributionMethod.VoteWeightRedistributor {
 		@Override
-		public ImmutableList<BallotState> redistributeExceededVoteWeight(Candidate winner, double quorum,
+		public ImmutableList<BallotState> redistributeExceededVoteWeight(Candidate winner, BigFraction quorum,
 		                                                                       ImmutableCollection<BallotState> ballotStates) {
 			Builder<BallotState> resultBuilder = ImmutableList.builder();
 
-			double votesForCandidate = calculateVotesForCandidate(winner, ballotStates);
-			double excessiveVotes = votesForCandidate - quorum;
-			double excessiveFractionOfVoteWeight = excessiveVotes / votesForCandidate;
+			BigFraction votesForCandidate = calculateVotesForCandidate(winner, ballotStates);
+			BigFraction excessiveVotes = votesForCandidate.subtract(quorum);
+			BigFraction excessiveFractionOfVoteWeight = excessiveVotes.divide(votesForCandidate);
 
 			for (BallotState ballotState : ballotStates) {
 				if (ballotState.getPreferredCandidate() == winner) {
-					double newVoteWeight = ballotState.getVoteWeight() * excessiveFractionOfVoteWeight;
+					BigFraction newVoteWeight = ballotState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
 					BallotState newBallotState = ballotState.withVoteWeight(newVoteWeight);
 					electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
 					                                                    newBallotState.ballot.id,
@@ -45,11 +46,11 @@ public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionM
 
 		}
 
-		private double calculateVotesForCandidate(Candidate candidate, Collection<BallotState> ballotStates) {
-			double votes = 0;
+		private BigFraction calculateVotesForCandidate(Candidate candidate, Collection<BallotState> ballotStates) {
+			BigFraction votes = BigFraction.ZERO;
 			for (BallotState ballotState : ballotStates) {
 				if (ballotState.getPreferredCandidate() == candidate) {
-					votes += ballotState.getVoteWeight();
+					votes= votes.add(ballotState.getVoteWeight());
 				}
 			}
 

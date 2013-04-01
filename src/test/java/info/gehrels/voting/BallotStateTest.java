@@ -1,6 +1,7 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,12 +21,12 @@ public class BallotStateTest {
 		Ballot ballot = TestUtils.createBallot("AB", ELECTION);
 		BallotState ballotState = new BallotState(ballot, ELECTION);
 
-		BallotState newBallotState = ballotState.withVoteWeight(0.33);
+		BallotState newBallotState = ballotState.withVoteWeight(BigFraction.ONE_THIRD);
 
 		assertThat(newBallotState, is(not(sameInstance(ballotState))));
 		assertThat(newBallotState.getPreferredCandidate(), is(equalTo(ballotState.getPreferredCandidate())));
 		assertThat(newBallotState.getVoteWeight(), is(not(equalTo(ballotState.getVoteWeight()))));
-		assertThat(newBallotState.getVoteWeight(), is(equalTo(0.33)));
+		assertThat(newBallotState.getVoteWeight(), is(equalTo(BigFraction.ONE_THIRD)));
 	}
 
 	@Test

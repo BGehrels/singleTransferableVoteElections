@@ -1,19 +1,23 @@
 package info.gehrels.voting;
 
+import org.apache.commons.math3.fraction.BigFraction;
+
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
 public class DefaultQuorumCalculationImpl implements QuorumCalculation {
 
-	private final double surplus;
+	private final BigFraction surplus;
 
-	public DefaultQuorumCalculationImpl(double surplus) {
-		this.surplus = validateThat(surplus, is(greaterThan(0.0)));
+	public DefaultQuorumCalculationImpl(BigFraction surplus) {
+		this.surplus = validateThat(surplus, is(greaterThan(BigFraction.ZERO)));
 	}
 
 	@Override
-	public double calculateQuorum(int numberOfValidBallots, int numberOfSeats) {
-		return numberOfValidBallots / (numberOfSeats + 1.0) + surplus;
+	public BigFraction calculateQuorum(int numberOfValidBallots, int numberOfSeats) {
+		return new BigFraction(numberOfValidBallots, (numberOfSeats + 1)).add(surplus);
 	}
+
+
 }
