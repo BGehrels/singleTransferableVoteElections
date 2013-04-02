@@ -66,7 +66,8 @@ public class STVElectionCalculation {
 
 				numberOfElectedCandidates++;
 				ballotStates = redistributor.redistributeExceededVoteWeight(winner, quorum, ballotStates);
-				candidateStates.get(winner).setElected();
+				CandidateState newCandidateState = candidateStates.get(winner).asElected();
+				candidateStates.put(winner, newCandidateState);
 				ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 				electionCalculationListener.voteWeightRedistributionCompleted(
 					calculateVotesByCandidate(candidateStates, ballotStates));
@@ -193,7 +194,8 @@ public class STVElectionCalculation {
 		Candidate weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
 
 		// TODO: Mehrdeutigkeiten bei Schwächsten Kandidaten extern auswählen lassen
-		candidateStates.get(weakestCandidate).setLooser();
+		CandidateState newState = candidateStates.get(weakestCandidate).asLooser();
+		candidateStates.put(weakestCandidate,newState);
 		ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 
 		Map<Candidate, BigFraction> votesByCandidateAfterStriking = calculateVotesByCandidate(candidateStates, ballotStates);
@@ -221,8 +223,8 @@ public class STVElectionCalculation {
 		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
 
 		for (CandidateState candidateState : candidateStates.values()) {
-			if (candidateState.elected) {
-				builder.add(candidateState.candidate);
+			if (candidateState.isElected()) {
+				builder.add(candidateState.getCandidate());
 			}
 		}
 		return builder.build();
@@ -277,35 +279,6 @@ public class STVElectionCalculation {
 		}
 
 		return result;
-	}
-
-
-	private class CandidateState {
-		private final Candidate candidate;
-		private boolean elected = false;
-		private boolean looser = false;
-
-
-		public CandidateState(Candidate candidate) {
-			this.candidate = candidate;
-		}
-
-		public boolean isHopeful() {
-			return !elected && !looser;
-		}
-
-		public void setElected() {
-			this.elected = true;
-		}
-
-		public void setLooser() {
-			this.looser = true;
-		}
-
-		@Override
-		public String toString() {
-			return candidate.toString() + ": " + (elected ? "" : "not ") + "elected, " + (looser ? "" : "no ") + "looser";
-		}
 	}
 
 
