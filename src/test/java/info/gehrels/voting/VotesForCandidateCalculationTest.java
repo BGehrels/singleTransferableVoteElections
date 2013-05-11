@@ -6,11 +6,11 @@ import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
-import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesForCandidate;
+import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class VotesByCandidateCalculationTest {
+public class VotesForCandidateCalculationTest {
 
 	public static final Candidate PIVOT_CANDIDATE = new Candidate("pivotCandidate", true);
 	public static final Candidate OTHER_CANDIDATE = new Candidate("otherCandidate", true);
@@ -49,7 +49,8 @@ public class VotesByCandidateCalculationTest {
 	public void candidateHasHalfOfAVoteIfTheOnlyBallotHas50PercentVoteWeightAndShowsHerOnTop() {
 		BigFraction numberOfVotes = calculateVotesForCandidate(PIVOT_CANDIDATE,
 		                                                       ImmutableList.of(
-			                                                       ballotStatePreferring(PIVOT_CANDIDATE).withVoteWeight(BigFraction.ONE_HALF)
+			                                                       ballotStatePreferring(PIVOT_CANDIDATE).withVoteWeight(
+				                                                       BigFraction.ONE_HALF)
 		                                                       )
 		);
 		assertThat(numberOfVotes, is(BigFraction.ONE_HALF));

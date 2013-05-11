@@ -19,7 +19,7 @@ import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
 import static info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
-import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesForCandidate;
+import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 import static java.util.Arrays.asList;
 
 public class STVElectionCalculation {
@@ -104,8 +104,8 @@ public class STVElectionCalculation {
 	}
 
 
-	private Map<Candidate, BigFraction> calculateVotesByCandidate(Map<Candidate, CandidateState> candidateStates,
-	                                                              Collection<BallotState> ballotStates) {
+	private static Map<Candidate, BigFraction> calculateVotesByCandidate(Map<Candidate, CandidateState> candidateStates,
+	                                                              ImmutableCollection<BallotState> ballotStates) {
 		Map<Candidate, BigFraction> votesByCandidateDraft = new HashMap<>();
 		for (BallotState ballotState : ballotStates) {
 			Candidate preferredHopefulCandidate = ballotState.getPreferredCandidate();

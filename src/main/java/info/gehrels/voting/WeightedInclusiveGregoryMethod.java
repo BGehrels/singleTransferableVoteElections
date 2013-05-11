@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesForCandidate;
+import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 
 public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionMethod {
 	private final ElectionCalculationListener electionCalculationListener;
