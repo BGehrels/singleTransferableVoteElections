@@ -19,6 +19,7 @@ import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
 import static info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesForCandidate;
 import static java.util.Arrays.asList;
 
 public class STVElectionCalculation {
@@ -173,17 +174,6 @@ public class STVElectionCalculation {
 
 		// TODO: Ist ambiguity resolution hier überhaupt nötig?
 		return chooseOneOutOfManyCandidates(copyOf(bestCandidates));
-	}
-
-	private BigFraction calculateVotesForCandidate(Candidate candidate, Collection<BallotState> ballotStates) {
-		BigFraction votes = BigFraction.ZERO;
-		for (BallotState ballotState : ballotStates) {
-			if (ballotState.getPreferredCandidate() == candidate) {
-				votes = votes.add(ballotState.getVoteWeight());
-			}
-		}
-
-		return votes;
 	}
 
 	private ImmutableCollection<BallotState> strikeWeakestCandidate(ImmutableMap<Candidate, CandidateState> candidateStates,

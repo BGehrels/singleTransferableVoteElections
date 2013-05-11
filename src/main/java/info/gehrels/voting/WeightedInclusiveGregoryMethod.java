@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.Collection;
+import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesForCandidate;
 
 public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionMethod {
 	private final ElectionCalculationListener electionCalculationListener;
@@ -46,15 +46,5 @@ public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionM
 
 		}
 
-		private BigFraction calculateVotesForCandidate(Candidate candidate, Collection<BallotState> ballotStates) {
-			BigFraction votes = BigFraction.ZERO;
-			for (BallotState ballotState : ballotStates) {
-				if (ballotState.getPreferredCandidate() == candidate) {
-					votes= votes.add(ballotState.getVoteWeight());
-				}
-			}
-
-			return votes;
-		}
 	}
 }
