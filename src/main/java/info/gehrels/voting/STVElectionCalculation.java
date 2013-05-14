@@ -11,7 +11,6 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -56,7 +55,8 @@ public class STVElectionCalculation {
 		int numberOfElectedCandidates = 0;
 
 		electionCalculationListener
-			.calculationStarted(election, calculateVotesByCandidate(candidateStates, ballotStates));
+			.calculationStarted(election, VotesByCandidateCalculation
+				.calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates));
 
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(
 			candidateStates)) {
@@ -71,7 +71,8 @@ public class STVElectionCalculation {
 				candidateStates.put(winner, newCandidateState);
 				ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 				electionCalculationListener.voteWeightRedistributionCompleted(
-					calculateVotesByCandidate(candidateStates, ballotStates));
+					VotesByCandidateCalculation
+						.calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates));
 
 			} else {
 				electionCalculationListener.nobodyReachedTheQuorumYet(quorum);
@@ -104,32 +105,12 @@ public class STVElectionCalculation {
 	}
 
 
-	private static Map<Candidate, BigFraction> calculateVotesByCandidate(Map<Candidate, CandidateState> candidateStates,
-	                                                              ImmutableCollection<BallotState> ballotStates) {
-		Map<Candidate, BigFraction> votesByCandidateDraft = new HashMap<>();
-		for (BallotState ballotState : ballotStates) {
-			Candidate preferredHopefulCandidate = ballotState.getPreferredCandidate();
-			if (preferredHopefulCandidate == null) {
-				continue;
+	private ImmutableSet<Candidate> hopefulCandidates(Map<Candidate, CandidateState> candidateStates) {
+		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
+		for (Entry<Candidate, CandidateState> entry : candidateStates.entrySet()) {
+			if (entry.getValue() != null && entry.getValue().isHopeful()) {
+				builder.add(entry.getValue().getCandidate());
 			}
-
-			BigFraction votes = votesByCandidateDraft.get(preferredHopefulCandidate);
-			if (votes == null) {
-				votesByCandidateDraft.put(preferredHopefulCandidate, ballotState.getVoteWeight());
-			} else {
-				votesByCandidateDraft.put(preferredHopefulCandidate, votes.add(ballotState.getVoteWeight()));
-			}
-		}
-
-		Builder<Candidate, BigFraction> builder = ImmutableMap.builder();
-		for (Candidate candidate : candidateStates.keySet()) {
-			CandidateState candidateState = candidateStates.get(candidate);
-			if (candidateState != null && !candidateState.isHopeful()) {
-				continue;
-			}
-
-			BigFraction votes = votesByCandidateDraft.get(candidate);
-			builder.put(candidate, votes == null ? BigFraction.ZERO : votes);
 		}
 
 		return builder.build();
@@ -157,7 +138,10 @@ public class STVElectionCalculation {
 	private Candidate bestCandidateThatReachedTheQuorum(BigFraction quorum,
 	                                                    ImmutableMap<Candidate, CandidateState> candidateStates,
 	                                                    ImmutableCollection<BallotState> ballotStates) {
-		Map<Candidate, BigFraction> votesByCandidate = calculateVotesByCandidate(candidateStates, ballotStates);
+		Map<Candidate, BigFraction> votesByCandidate = VotesByCandidateCalculation
+			.calculateVotesByCandidate(hopefulCandidates(candidateStates),
+			                           ballotStates
+			);
 		BigFraction numberOfVotesOfBestCandidate = BigFraction.MINUS_ONE;
 		Collection<Candidate> bestCandidates = newArrayList();
 		for (Entry<Candidate, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
@@ -178,8 +162,9 @@ public class STVElectionCalculation {
 
 	private ImmutableCollection<BallotState> strikeWeakestCandidate(ImmutableMap<Candidate, CandidateState> candidateStates,
 	                                                                ImmutableCollection<BallotState> ballotStates) {
-		Map<Candidate, BigFraction> votesByCandidateBeforeStriking = calculateVotesByCandidate(candidateStates,
-		                                                                                       ballotStates);
+		Map<Candidate, BigFraction> votesByCandidateBeforeStriking = VotesByCandidateCalculation
+			.calculateVotesByCandidate(
+				hopefulCandidates(candidateStates), ballotStates);
 
 		Candidate weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
 
@@ -188,7 +173,11 @@ public class STVElectionCalculation {
 		candidateStates.put(weakestCandidate,newState);
 		ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 
-		Map<Candidate, BigFraction> votesByCandidateAfterStriking = calculateVotesByCandidate(candidateStates, ballotStates);
+		Map<Candidate, BigFraction> votesByCandidateAfterStriking = VotesByCandidateCalculation
+			.calculateVotesByCandidate(hopefulCandidates(
+				candidateStates),
+			                           ballotStates
+			);
 
 		electionCalculationListener.candidateDropped(
 			votesByCandidateBeforeStriking,
