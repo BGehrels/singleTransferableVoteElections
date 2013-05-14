@@ -3,14 +3,13 @@ package info.gehrels.voting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -18,6 +17,7 @@ import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
 import static info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesByCandidate;
 import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 import static java.util.Arrays.asList;
 
@@ -49,14 +49,14 @@ public class STVElectionCalculation {
 		BigFraction quorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfSeats);
 		electionCalculationListener.quorumHasBeenCalculated(numberOfValidBallots, numberOfSeats, quorum);
 
-		ImmutableMap<Candidate, CandidateState> candidateStates = constructCandidateStates(qualifiedCandidates);
+		Map<Candidate, CandidateState> candidateStates = constructCandidateStates(qualifiedCandidates);
 		ImmutableCollection<BallotState> ballotStates = constructBallotStates(candidateStates);
 
 		int numberOfElectedCandidates = 0;
 
 		electionCalculationListener
-			.calculationStarted(election, VotesByCandidateCalculation
-				.calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates));
+			.calculationStarted(election,
+			                    calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates));
 
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(
 			candidateStates)) {
@@ -71,8 +71,7 @@ public class STVElectionCalculation {
 				candidateStates.put(winner, newCandidateState);
 				ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 				electionCalculationListener.voteWeightRedistributionCompleted(
-					VotesByCandidateCalculation
-						.calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates));
+					calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates));
 
 			} else {
 				electionCalculationListener.nobodyReachedTheQuorumYet(quorum);
@@ -85,21 +84,23 @@ public class STVElectionCalculation {
 		return electedCandidates;
 	}
 
-	private ImmutableMap<Candidate, CandidateState> constructCandidateStates(
+	private Map<Candidate, CandidateState> constructCandidateStates(
 		ImmutableSet<? extends Candidate> qualifiedCandidates) {
-		Builder<Candidate, CandidateState> builder = ImmutableMap.builder();
+		Map<Candidate, CandidateState> candidateStates = new HashMap<>();
 		for (Candidate candidate : qualifiedCandidates) {
-			builder.put(candidate, new CandidateState(candidate));
+			candidateStates.put(candidate, new CandidateState(candidate));
 		}
-		return builder.build();
+		return candidateStates;
 	}
 
-	private ImmutableCollection<BallotState> constructBallotStates(final Map<Candidate, CandidateState> candidateStates) {
+	private ImmutableCollection<BallotState> constructBallotStates(
+		final Map<Candidate, CandidateState> candidateStates) {
 		ImmutableList.Builder<BallotState> builder = ImmutableList.builder();
 		return builder.addAll(transform(ballots, new Function<Ballot, BallotState>() {
 			@Override
 			public BallotState apply(Ballot ballot) {
-				return createBallotStatePointingAtNextHopefulCandidate(candidateStates, new BallotState(ballot, election));
+				return createBallotStatePointingAtNextHopefulCandidate(candidateStates,
+				                                                       new BallotState(ballot, election));
 			}
 		})).build();
 	}
@@ -117,14 +118,13 @@ public class STVElectionCalculation {
 	}
 
 	private boolean notAllSeatsFilled(int numberOfElectedCandidates, int numberOfSeatsToElect) {
-
 		boolean notAllSeatsFilled = numberOfElectedCandidates < numberOfSeatsToElect;
 		electionCalculationListener.numberOfElectedPositions(numberOfElectedCandidates, numberOfSeatsToElect);
 		return notAllSeatsFilled;
 	}
 
 
-	private boolean anyCandidateIsHopeful(ImmutableMap<Candidate, CandidateState> candidateStates) {
+	private boolean anyCandidateIsHopeful(Map<Candidate, CandidateState> candidateStates) {
 		for (CandidateState candidateState : candidateStates.values()) {
 			if (candidateState.isHopeful()) {
 				return true;
@@ -136,17 +136,15 @@ public class STVElectionCalculation {
 	}
 
 	private Candidate bestCandidateThatReachedTheQuorum(BigFraction quorum,
-	                                                    ImmutableMap<Candidate, CandidateState> candidateStates,
+	                                                    Map<Candidate, CandidateState> candidateStates,
 	                                                    ImmutableCollection<BallotState> ballotStates) {
-		Map<Candidate, BigFraction> votesByCandidate = VotesByCandidateCalculation
-			.calculateVotesByCandidate(hopefulCandidates(candidateStates),
-			                           ballotStates
-			);
+		Map<Candidate, BigFraction> votesByCandidate =
+			calculateVotesByCandidate(hopefulCandidates(candidateStates), ballotStates);
 		BigFraction numberOfVotesOfBestCandidate = BigFraction.MINUS_ONE;
 		Collection<Candidate> bestCandidates = newArrayList();
 		for (Entry<Candidate, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
 			if (votesForCandidate.getValue().compareTo(quorum) >= 0) {
-				if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate) > 0 ) {
+				if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate) > 0) {
 					numberOfVotesOfBestCandidate = votesForCandidate.getValue();
 					bestCandidates = new ArrayList<>(asList(votesForCandidate.getKey()));
 				} else if (votesForCandidate.getValue().equals(numberOfVotesOfBestCandidate)) {
@@ -160,23 +158,23 @@ public class STVElectionCalculation {
 		return chooseOneOutOfManyCandidates(copyOf(bestCandidates));
 	}
 
-	private ImmutableCollection<BallotState> strikeWeakestCandidate(ImmutableMap<Candidate, CandidateState> candidateStates,
+	private ImmutableCollection<BallotState> strikeWeakestCandidate(Map<Candidate, CandidateState> candidateStates,
 	                                                                ImmutableCollection<BallotState> ballotStates) {
-		Map<Candidate, BigFraction> votesByCandidateBeforeStriking = VotesByCandidateCalculation
-			.calculateVotesByCandidate(
+		Map<Candidate, BigFraction> votesByCandidateBeforeStriking =
+			calculateVotesByCandidate(
 				hopefulCandidates(candidateStates), ballotStates);
 
 		Candidate weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
 
 		// TODO: Mehrdeutigkeiten bei Schwächsten Kandidaten extern auswählen lassen
 		CandidateState newState = candidateStates.get(weakestCandidate).asLooser();
-		candidateStates.put(weakestCandidate,newState);
+		candidateStates.put(weakestCandidate, newState);
 		ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 
-		Map<Candidate, BigFraction> votesByCandidateAfterStriking = VotesByCandidateCalculation
-			.calculateVotesByCandidate(hopefulCandidates(
+		Map<Candidate, BigFraction> votesByCandidateAfterStriking =
+			calculateVotesByCandidate(hopefulCandidates(
 				candidateStates),
-			                           ballotStates
+			                          ballotStates
 			);
 
 		electionCalculationListener.candidateDropped(
@@ -189,7 +187,7 @@ public class STVElectionCalculation {
 
 	private ImmutableCollection<BallotState> createBallotStatesPointingAtNextHopefulCandidate(
 		ImmutableCollection<BallotState> ballotStates,
-		ImmutableMap<Candidate, CandidateState> candidateStates) {
+		Map<Candidate, CandidateState> candidateStates) {
 		ImmutableList.Builder<BallotState> resultBuilder = ImmutableList.builder();
 		for (BallotState ballotState : ballotStates) {
 			resultBuilder.add(createBallotStatePointingAtNextHopefulCandidate(candidateStates, ballotState));
@@ -198,7 +196,7 @@ public class STVElectionCalculation {
 		return resultBuilder.build();
 	}
 
-	private ImmutableSet<Candidate> getElectedCandidates(ImmutableMap<Candidate, CandidateState> candidateStates) {
+	private ImmutableSet<Candidate> getElectedCandidates(Map<Candidate, CandidateState> candidateStates) {
 		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
 
 		for (CandidateState candidateState : candidateStates.values()) {
@@ -229,7 +227,7 @@ public class STVElectionCalculation {
 		//TODO: Hier sollten eigentlich 0-Kandidierende noch aufgeführt werden, solange sie nicht bereits gedroppd sind.
 		Collection<Candidate> weakestCandidates = newArrayList();
 		for (Entry<Candidate, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
-			if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate)< 0) {
+			if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate) < 0) {
 				numberOfVotesOfBestCandidate = votesForCandidate.getValue();
 				weakestCandidates = new ArrayList<>(asList(votesForCandidate.getKey()));
 			} else if (votesForCandidate.getValue().equals(numberOfVotesOfBestCandidate)) {
@@ -242,7 +240,7 @@ public class STVElectionCalculation {
 
 
 	private BallotState createBallotStatePointingAtNextHopefulCandidate(
-		Map<Candidate, CandidateState> candidateStates,	BallotState ballotState) {
+		Map<Candidate, CandidateState> candidateStates, BallotState ballotState) {
 		BallotState result = ballotState;
 
 		Candidate preferredCandidate = result.getPreferredCandidate();
