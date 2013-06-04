@@ -74,6 +74,7 @@ public class STVElectionCalculationStepTest {
 
 	private final STVElectionCalculationStep step = new STVElectionCalculationStep(electionCalculationListenerMock,
 	                                                                               ambiguityResolverMock);
+	public static final CandidateStates CANDIDATE_STATES = new CandidateStates(ImmutableSet.of(A, B, C));
 
 	@Test
 	public void marksOneCandidateAsWinnerAndRedistributesVoteWeightIfExactlyOneCandidateReachedTheQuorum() {
@@ -83,13 +84,12 @@ public class STVElectionCalculationStepTest {
 			stateFor(ACGH_BALLOT),
 			stateFor(BC_BALLOT)
 		);
-		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B, C));
 
 		when(redistributorMock.redistributeExceededVoteWeight(A, THREE, ballotStates))
 			.thenReturn(stubRedistributionResult);
 
 		ElectionStepResult electionStepResult = step
-			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, candidateStates);
+			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, THREE);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted((Map<Candidate, BigFraction>) argThat(
@@ -127,13 +127,12 @@ public class STVElectionCalculationStepTest {
 			stateFor(ACGH_BALLOT),
 			stateFor(BC_BALLOT)
 		);
-		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B, C));
 
 		when(redistributorMock.redistributeExceededVoteWeight(A, ONE, ballotStates))
 			.thenReturn(stubRedistributionResult);
 
 		ElectionStepResult electionStepResult = step
-			.declareWinnerOrStrikeCandidate(ONE, ballotStates, redistributorMock, 1, candidateStates);
+			.declareWinnerOrStrikeCandidate(ONE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, ONE);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted((Map<Candidate, BigFraction>) argThat(
@@ -171,7 +170,6 @@ public class STVElectionCalculationStepTest {
 			stateFor(BA_BALLOT),
 			stateFor(BC_BALLOT)
 		);
-		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B, C));
 
 		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(A, B)))
 			.thenReturn(new AmbiguityResolverResult(B, "Fixed as Mock"));
@@ -181,7 +179,7 @@ public class STVElectionCalculationStepTest {
 
 
 		ElectionStepResult electionStepResult = step
-			.declareWinnerOrStrikeCandidate(TWO, ballotStates, redistributorMock, 1, candidateStates);
+			.declareWinnerOrStrikeCandidate(TWO, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).candidateIsElected(B, TWO, TWO);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted((Map<Candidate, BigFraction>) argThat(
@@ -222,10 +220,9 @@ public class STVElectionCalculationStepTest {
 			stateFor(ACGH_BALLOT),
 			stateFor(BC_BALLOT)
 		);
-		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B, C));
 
 		ElectionStepResult electionStepResult = step
-			.declareWinnerOrStrikeCandidate(FIVE, ballotStates, redistributorMock, 1, candidateStates);
+			.declareWinnerOrStrikeCandidate(FIVE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(FIVE);
 
@@ -277,13 +274,12 @@ public class STVElectionCalculationStepTest {
 			stateFor(BA_BALLOT),
 			stateFor(CA_BALLOT)
 		);
-		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B, C));
 
 		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(B,C)))
 			.thenReturn(new AmbiguityResolverResult(B, "arbitrary message"));
 
 		ElectionStepResult electionStepResult = step
-			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, candidateStates);
+			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(THREE);
 
