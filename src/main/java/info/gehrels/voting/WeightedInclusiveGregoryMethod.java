@@ -34,7 +34,7 @@ public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionM
 					BigFraction newVoteWeight = ballotState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
 					BallotState newBallotState = ballotState.withVoteWeight(newVoteWeight);
 					electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
-					                                                    newBallotState.ballot.id,
+					                                                    newBallotState.getBallotId(),
 					                                                    newBallotState.getVoteWeight());
 					resultBuilder.add(newBallotState);
 				} else {

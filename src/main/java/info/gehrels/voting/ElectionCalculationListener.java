@@ -3,7 +3,6 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.apache.commons.math3.fraction.Fraction;
 
 import java.util.Map;
 
@@ -13,7 +12,7 @@ public interface ElectionCalculationListener {
 	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
 
 	void candidateDropped(
-		Map<Candidate,BigFraction> votesByCandidateBeforeStriking, String name, BigFraction weakestVoteCount,
+		Map<Candidate,BigFraction> votesByCandidateBeforeStriking, Candidate candidate, BigFraction weakestVoteCount,
 	                      Map<Candidate, BigFraction> votesByCandidateAfterStriking);
 
 	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight,
@@ -25,7 +24,7 @@ public interface ElectionCalculationListener {
 
 	void externalyResolvedAmbiguity(AmbiguityResolverResult winner);
 
-	void candidateIsElected(Candidate winner, BigFraction v, BigFraction femaleQuorum);
+	void candidateIsElected(Candidate winner, BigFraction numberOfVotes, BigFraction quorum);
 
 	void nobodyReachedTheQuorumYet(BigFraction quorum);
 

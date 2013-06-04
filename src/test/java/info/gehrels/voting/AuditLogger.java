@@ -45,9 +45,9 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void candidateDropped(Map<Candidate,BigFraction> votesByCandidateBeforeStriking, String name,
+	public void candidateDropped(Map<Candidate,BigFraction> votesByCandidateBeforeStriking, Candidate candidate,
 	                             BigFraction weakestVoteCount, Map<Candidate, BigFraction> votesByCandidateAfterStriking) {
-		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", name, weakestVoteCount.doubleValue());
+		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name, weakestVoteCount.doubleValue());
 		LOGGER.info("Neue Stimmverteilung:");
 		dumpVoteDistribution(votesByCandidateAfterStriking);
 	}

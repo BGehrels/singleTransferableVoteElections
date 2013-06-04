@@ -53,7 +53,7 @@ public class VotesByCandidateCalculationTest {
 				createBallotStateFor(CANDIDATE_JOHN, CANDIDATE_MARTA),
 				createBallotStateFor(CANDIDATE_MARTA, CANDIDATE_JOHN),
 				createBallotStateFor(),
-				createBallotStateFor(CANDIDATE_MARTA, CANDIDATE_PETER).withNextPreference()
+				createBallotStateFor(CANDIDATE_PETER, CANDIDATE_MARTA)
 			)
 		);
 
@@ -70,9 +70,9 @@ public class VotesByCandidateCalculationTest {
 		Map<Candidate, BigFraction> votesByCandidate =
 			calculateVotesByCandidate(ALL_CANDIDATES, ImmutableList.of(
 				createBallotStateFor(CANDIDATE_JOHN, CANDIDATE_MARTA),
-				createBallotStateFor(CANDIDATE_MARTA, CANDIDATE_JOHN).withNextPreference().withVoteWeight(BigFraction.ONE_FIFTH),
+				createBallotStateFor(CANDIDATE_JOHN, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_FIFTH),
 				createBallotStateFor(),
-				createBallotStateFor(CANDIDATE_MARTA, CANDIDATE_PETER).withNextPreference().withVoteWeight(BigFraction.ONE_THIRD)
+				createBallotStateFor(CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_THIRD)
 			)
 		);
 
