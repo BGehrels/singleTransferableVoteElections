@@ -1,11 +1,9 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.Test;
 
+import static info.gehrels.voting.CandidateStateMatchers.candidateStateFor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -96,25 +94,6 @@ public class CandidateStatesTest {
 	public void returnsAllCandidateStatesInArbitraryOrder() {
 		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B));
 		assertThat(candidateStates, is(containsInAnyOrder(candidateStateFor(A), candidateStateFor(B))));
-	}
-
-	private Matcher<CandidateState> candidateStateFor(final Candidate candidate) {
-		return new TypeSafeDiagnosingMatcher<CandidateState>() {
-			@Override
-			protected boolean matchesSafely(CandidateState candidateState, Description description) {
-				if (candidateState.getCandidate() != candidate) {
-					description.appendText("a candidate state for ").appendValue(candidateState);
-					return false;
-				}
-
-				return true;
-			}
-
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("a candidateState for ").appendValue(candidate);
-			}
-		};
 	}
 
 

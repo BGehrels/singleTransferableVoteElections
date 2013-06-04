@@ -10,10 +10,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class MapMatchers {
-	static <K, V> Matcher<Entry<? super K, ? super V>> anEntry(final K key, final V value) {
-		return new TypeSafeDiagnosingMatcher<Entry<? super K, ? super V>>() {
+	static <K, V> Matcher<Entry<? extends K, ? extends V>> anEntry(final K key, final V value) {
+		return new TypeSafeDiagnosingMatcher<Entry<? extends K, ? extends V>>() {
 			@Override
-			protected boolean matchesSafely(Entry<? super K, ? super V> actual, Description mismatchDescription) {
+			protected boolean matchesSafely(Entry<? extends K, ? extends V> actual, Description mismatchDescription) {
 				if (!actual.getKey().equals(key)) {
 					mismatchDescription.appendText("key was ").appendValue(key);
 					return false;
@@ -34,7 +34,7 @@ public class MapMatchers {
 		};
 	}
 
-	static <K, V> Matcher<Map<K, V>> aMap(Matcher<? super Map<K, V>> subMatcher) {
+	static <K, V> Matcher<Map<K, V>> aMap(Matcher<Map<K, V>> subMatcher) {
 		return new DelegatingMatcher<>(subMatcher, "a Map");
 	}
 

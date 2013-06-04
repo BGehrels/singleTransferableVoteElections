@@ -64,4 +64,23 @@ public class CandidateStateMatchers {
 			}
 		};
 	}
+
+	static Matcher<CandidateState> candidateStateFor(final Candidate candidate) {
+		return new TypeSafeDiagnosingMatcher<CandidateState>() {
+			@Override
+			protected boolean matchesSafely(CandidateState candidateState, Description description) {
+				if (candidateState.getCandidate() != candidate) {
+					description.appendText("a candidate state for ").appendValue(candidateState);
+					return false;
+				}
+
+				return true;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("a candidateState for ").appendValue(candidate);
+			}
+		};
+	}
 }

@@ -6,11 +6,9 @@ import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.STVElectionCalculationStep.ElectionStepResult;
 import info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import static info.gehrels.voting.BallotStateMatchers.aBallotState;
 import static info.gehrels.voting.BallotStateMatchers.withPreferredCandidate;
@@ -228,7 +226,7 @@ public class STVElectionCalculationStepTest {
 
 		verify(electionCalculationListenerMock).candidateDropped(
 			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
+				containsInAnyOrder(
 					anEntry(A, THREE),
 					anEntry(B, ONE),
 					anEntry(C, ZERO)
@@ -236,7 +234,7 @@ public class STVElectionCalculationStepTest {
 			eq(C),
 			eq(ZERO),
 			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
+				containsInAnyOrder(
 					anEntry(A, THREE),
 					anEntry(B, ONE)
 				))))));
@@ -285,7 +283,7 @@ public class STVElectionCalculationStepTest {
 
 		verify(electionCalculationListenerMock).candidateDropped(
 			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
+				containsInAnyOrder(
 					anEntry(A, TWO),
 					anEntry(B, ONE),
 					anEntry(C, ONE)
@@ -293,7 +291,7 @@ public class STVElectionCalculationStepTest {
 			eq(B),
 			eq(ONE),
 			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
+				containsInAnyOrder(
 					anEntry(A, THREE),
 					anEntry(C, ONE)
 				))))));
