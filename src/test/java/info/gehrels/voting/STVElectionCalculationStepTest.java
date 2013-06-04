@@ -1,23 +1,28 @@
 package info.gehrels.voting;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.STVElectionCalculationStep.ElectionStepResult;
 import info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.hamcrest.Description;
-import org.hamcrest.FeatureMatcher;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
+import static info.gehrels.voting.BallotStateMatchers.aBallotState;
+import static info.gehrels.voting.BallotStateMatchers.withPreferredCandidate;
+import static info.gehrels.voting.BallotStateMatchers.withVoteWeight;
+import static info.gehrels.voting.CandidateStateMatchers.withElectedCandidate;
+import static info.gehrels.voting.CandidateStateMatchers.withLooser;
+import static info.gehrels.voting.ElectionStepResultMatchers.anElectionStepResult;
+import static info.gehrels.voting.ElectionStepResultMatchers.withBallotStates;
+import static info.gehrels.voting.ElectionStepResultMatchers.withCandidateStates;
+import static info.gehrels.voting.ElectionStepResultMatchers.withNumberOfElectedCandidates;
+import static info.gehrels.voting.MapMatchers.aMap;
+import static info.gehrels.voting.MapMatchers.anEntry;
 import static org.apache.commons.math3.fraction.BigFraction.FOUR_FIFTHS;
 import static org.apache.commons.math3.fraction.BigFraction.ONE;
 import static org.apache.commons.math3.fraction.BigFraction.ONE_FIFTH;
@@ -225,7 +230,7 @@ public class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(FIVE);
 
 		verify(electionCalculationListenerMock).candidateDropped(
-			argThat(is(aMap(STVElectionCalculationStepTest.<Candidate, BigFraction>withEntries(
+			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
 				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
 					anEntry(A, THREE),
 					anEntry(B, ONE),
@@ -233,7 +238,7 @@ public class STVElectionCalculationStepTest {
 				))))),
 			eq(C),
 			eq(ZERO),
-			argThat(is(aMap(STVElectionCalculationStepTest.<Candidate, BigFraction>withEntries(
+			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
 				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
 					anEntry(A, THREE),
 					anEntry(B, ONE)
@@ -274,7 +279,8 @@ public class STVElectionCalculationStepTest {
 		);
 		CandidateStates candidateStates = new CandidateStates(ImmutableSet.of(A, B, C));
 
-		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(B,C))).thenReturn(new AmbiguityResolverResult(B, "arbitrary message"));
+		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(B,C)))
+			.thenReturn(new AmbiguityResolverResult(B, "arbitrary message"));
 
 		ElectionStepResult electionStepResult = step
 			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, candidateStates);
@@ -282,7 +288,7 @@ public class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(THREE);
 
 		verify(electionCalculationListenerMock).candidateDropped(
-			argThat(is(aMap(STVElectionCalculationStepTest.<Candidate, BigFraction>withEntries(
+			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
 				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
 					anEntry(A, TWO),
 					anEntry(B, ONE),
@@ -290,7 +296,7 @@ public class STVElectionCalculationStepTest {
 				))))),
 			eq(B),
 			eq(ONE),
-			argThat(is(aMap(STVElectionCalculationStepTest.<Candidate, BigFraction>withEntries(
+			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
 				Matchers.<Entry<Candidate, BigFraction>>containsInAnyOrder(
 					anEntry(A, THREE),
 					anEntry(C, ONE)
@@ -320,178 +326,6 @@ public class STVElectionCalculationStepTest {
 		))));
 	}
 
-	private Matcher<CandidateStates> withLooser(final Candidate a) {
-		return new TypeSafeDiagnosingMatcher<CandidateStates>() {
-			@Override
-			protected boolean matchesSafely(CandidateStates candidateStates, Description description) {
-				CandidateState candidateState = candidateStates.getCandidateState(a);
-				if (candidateState == null) {
-					description.appendText("candidate ").appendValue(a).appendText(" had no state");
-					return false;
-				}
-
-				if (candidateState.isElected()) {
-					description.appendText("candidate ").appendValue(a).appendText(" is is elected");
-					return false;
-				}
-
-				if (candidateState.isHopeful()) {
-					description.appendText("candidate ").appendValue(a).appendText(" is is still hopeful");
-					return false;
-				}
-
-				return true;
-			}
-
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("with looser candidate ").appendValue(a);
-			}
-		};
-	}
-
-	private <K, V> Matcher<Entry<? super K, ? super V>> anEntry(final K key, final V value) {
-		return new TypeSafeDiagnosingMatcher<Entry<? super K, ? super V>>() {
-			@Override
-			protected boolean matchesSafely(Entry<? super K, ? super V> actual, Description mismatchDescription) {
-				if (!actual.getKey().equals(key)) {
-					mismatchDescription.appendText("key was ").appendValue(key);
-					return false;
-				}
-
-				if (!actual.getValue().equals(value)) {
-					mismatchDescription.appendText("value was ").appendValue(value);
-					return false;
-				}
-
-				return true;
-			}
-
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("an entry ").appendValue(key + "=" + value);
-			}
-		};
-	}
-
-	private Matcher<CandidateStates> withElectedCandidate(final Candidate a) {
-		return new TypeSafeDiagnosingMatcher<CandidateStates>() {
-			@Override
-			protected boolean matchesSafely(CandidateStates candidateStates, Description description) {
-				CandidateState candidateState = candidateStates.getCandidateState(a);
-				if (candidateState == null) {
-					description.appendText("candidate ").appendValue(a).appendText(" had no state");
-					return false;
-				}
-
-				if (candidateState.isLooser()) {
-					description.appendText("candidate ").appendValue(a).appendText(" is is a looser");
-					return false;
-				}
-
-				if (candidateState.isHopeful()) {
-					description.appendText("candidate ").appendValue(a).appendText(" is is still hopeful");
-					return false;
-				}
-
-				return true;
-			}
-
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("with elected candidate ").appendValue(a);
-			}
-		};
-	}
-
-	private Matcher<ElectionStepResult> withNumberOfElectedCandidates(Matcher<Integer> subMatcher) {
-		return new FeatureMatcher<ElectionStepResult, Integer>(subMatcher, "with number of elected candidates",
-		                                                       "number of elected candidates") {
-
-			@Override
-			protected Integer featureValueOf(ElectionStepResult electionStepResult) {
-				return electionStepResult.newNumberOfElectedCandidates;
-			}
-		};
-	}
-
-	private Matcher<? super ElectionStepResult> withBallotStates(
-		Matcher<? super ImmutableCollection<BallotState>> subMatcher) {
-		return new FeatureMatcher<ElectionStepResult, ImmutableCollection<BallotState>>(subMatcher,
-		                                                                                "with ballot states",
-		                                                                                "ballot states") {
-
-			@Override
-			protected ImmutableCollection<BallotState> featureValueOf(ElectionStepResult electionStepResult) {
-				return electionStepResult.newBallotStates;
-			}
-		};
-	}
-
-	private FeatureMatcher<ElectionStepResult, CandidateStates> withCandidateStates(
-		final Matcher<CandidateStates> candidateStatesMatcher) {
-		return new FeatureMatcher<ElectionStepResult, CandidateStates>(candidateStatesMatcher, "with candidateStates",
-		                                                               "") {
-			@Override
-			protected CandidateStates featureValueOf(ElectionStepResult actual) {
-				return actual.newCandidateStates;
-			}
-		};
-	}
-
-	private TypeSafeDiagnosingMatcher<ElectionStepResult> anElectionStepResult(
-		final Matcher<ElectionStepResult> subMatcher) {
-		return new DelegatingMatcher<>(subMatcher, "an election step result");
-	}
-
-	private Matcher<? super BallotState> withVoteWeight(Matcher<? super BigFraction> bigFractionMatcher) {
-		return new FeatureMatcher<BallotState, BigFraction>(bigFractionMatcher, "with vote weight", "vote Weight") {
-			@Override
-			protected BigFraction featureValueOf(BallotState actual) {
-				return actual.getVoteWeight();
-			}
-		};
-	}
-
-	private Matcher<BallotState> withPreferredCandidate(Matcher<? super Candidate> subMatcher) {
-		return new FeatureMatcher<BallotState, Candidate>(subMatcher, "with preferred candidate",
-		                                                  "prefered candidate") {
-			@Override
-			protected Candidate featureValueOf(BallotState actual) {
-				return actual.getPreferredCandidate();
-			}
-		};
-	}
-
-	private Matcher<BallotState> aBallotState(Matcher<? super BallotState> stateMatcher) {
-		return new DelegatingMatcher<>(stateMatcher, "a ballot state");
-	}
-
-
-	private static class DelegatingMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
-		private final Matcher<? super T> subMatcher;
-		private String descriptionText;
-
-		public DelegatingMatcher(Matcher<? super T> subMatcher, String descriptionText) {
-			this.subMatcher = subMatcher;
-			this.descriptionText = descriptionText;
-		}
-
-		@Override
-		protected boolean matchesSafely(T item, Description mismatchDescription) {
-			if (!subMatcher.matches(item)) {
-				subMatcher.describeMismatch(item, mismatchDescription);
-				return false;
-			}
-
-			return true;
-		}
-
-		@Override
-		public void describeTo(Description description) {
-			description.appendText(descriptionText + " ").appendDescriptionOf(subMatcher);
-		}
-	}
 
 	private static BallotState stateFor(Ballot ballot) {
 		return new BallotState(ballot, ELECTION);
@@ -499,20 +333,6 @@ public class STVElectionCalculationStepTest {
 
 	private static Ballot createBallot(String preference) {
 		return TestUtils.createBallot(preference, ELECTION);
-	}
-
-	private static <K, V> Matcher<Map<K, V>> aMap(Matcher<? super Map<K, V>> subMatcher) {
-		return new DelegatingMatcher<>(subMatcher, "a Map");
-	}
-
-	private static <K, V> FeatureMatcher<Map<K, V>, Set<Entry<K, V>>> withEntries(
-		Matcher<? super Set<Entry<K, V>>> subMatcher) {
-		return new FeatureMatcher<Map<K, V>, Set<Entry<K, V>>>(subMatcher, "with entries", "entries") {
-			@Override
-			protected Set<Entry<K, V>> featureValueOf(Map<K, V> actual) {
-				return actual.entrySet();
-			}
-		};
 	}
 
 }
