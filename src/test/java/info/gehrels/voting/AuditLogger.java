@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AuditLogger<T extends Candidate> implements ElectionCalculationListener<T> {
+public class AuditLogger implements ElectionCalculationWithFemaleExclusivePositionsListener {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override
@@ -40,18 +40,18 @@ public class AuditLogger<T extends Candidate> implements ElectionCalculationList
 	}
 
 	@Override
-	public void electedCandidates(ImmutableSet<T> electedCandidates) {
+	public void electedCandidates(ImmutableSet<GenderedCandidate> electedCandidates) {
 		LOGGER.info("======================================");
 		LOGGER.info("Gewählt sind: ");
-		for (Candidate electedCandidate : electedCandidates) {
+		for (GenderedCandidate electedCandidate : electedCandidates) {
 			LOGGER.info("\t{}", electedCandidate.name);
 		}
 	}
 
 	@Override
-	public  void candidateDropped(Map<T, BigFraction> votesByCandidateBeforeStriking,
-	                              T candidate, BigFraction weakestVoteCount,
-	                             Map<T, BigFraction> votesByCandidateAfterStriking) {
+	public  void candidateDropped(Map<GenderedCandidate, BigFraction> votesByCandidateBeforeStriking,
+	                              GenderedCandidate candidate, BigFraction weakestVoteCount,
+	                             Map<GenderedCandidate, BigFraction> votesByCandidateAfterStriking) {
 
 		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name,
 		            weakestVoteCount.doubleValue());
@@ -70,24 +70,24 @@ public class AuditLogger<T extends Candidate> implements ElectionCalculationList
 	}
 
 	@Override
-	public void voteWeightRedistributionCompleted(Map<T, BigFraction> votesByCandidate) {
+	public void voteWeightRedistributionCompleted(Map<GenderedCandidate, BigFraction> votesByCandidate) {
 		LOGGER.info("Neue Stimmverteilung:");
 		dumpVoteDistribution(votesByCandidate);
 	}
 
 	@Override
-	public void delegatingToExternalAmbiguityResolution(ImmutableSet<T> bestCandidates) {
+	public void delegatingToExternalAmbiguityResolution(ImmutableSet<GenderedCandidate> bestCandidates) {
 		LOGGER.info("Mehrere Stimmgleiche Kandidierende: {}. Delegiere an externes Auswahlverfahren.", bestCandidates);
 	}
 
 	@Override
-	public void externalyResolvedAmbiguity(AmbiguityResolverResult<T> ambiguityResolverResult) {
+	public void externalyResolvedAmbiguity(AmbiguityResolverResult<GenderedCandidate> ambiguityResolverResult) {
 		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.chosenCandidate.name,
 		            ambiguityResolverResult.auditLog);
 	}
 
 	@Override
-	public void candidateIsElected(Candidate winner, BigFraction numberOfVotes, BigFraction quorum) {
+	public void candidateIsElected(GenderedCandidate winner, BigFraction numberOfVotes, BigFraction quorum) {
 		LOGGER.info("{} hat mit {} Stimmen das Quorum von {} Stimmen erreicht und ist gewählt.", winner.name,
 		            numberOfVotes.doubleValue(), quorum.doubleValue());
 	}
@@ -104,14 +104,14 @@ public class AuditLogger<T extends Candidate> implements ElectionCalculationList
 	}
 
 	@Override
-	public void calculationStarted(Election<T> election, Map<T, BigFraction> voteDistribution) {
+	public void calculationStarted(Election<GenderedCandidate> election, Map<GenderedCandidate, BigFraction> voteDistribution) {
 		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:",
 		            election.office.name);
 		dumpVoteDistribution(voteDistribution);
 	}
 
 	@Override
-	public void candidateNotQualified(Candidate candidate, String reason) {
+	public void candidateNotQualified(GenderedCandidate candidate, String reason) {
 		LOGGER.info("{} kann in diesem Wahlgang nicht antreten, Grund: {}", candidate.name, reason);
 	}
 

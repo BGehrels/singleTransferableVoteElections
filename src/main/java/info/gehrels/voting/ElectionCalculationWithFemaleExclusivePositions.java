@@ -12,11 +12,11 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class ElectionCalculationWithFemaleExclusivePositions {
 	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory;
-	private final ElectionCalculationListener<GenderedCandidate> electionCalculationListener;
+	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener;
 
 	// TODO: Validate, that Ballots without a female vote are invalid (are they?)
 	public ElectionCalculationWithFemaleExclusivePositions(ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory,
-	                                                       ElectionCalculationListener<GenderedCandidate> electionCalculationListener) {
+	                                                       ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));
 		this.electionCalculationFactory = validateThat(electionCalculationFactory, is(notNullValue()));
 	}
@@ -65,7 +65,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 			                                                           numberOfElectableNotFemaleExclusivePositions);
 		}
 
-		NotElectedBeforePredicate<GenderedCandidate> notElectedBeforePredicate = new NotElectedBeforePredicate<>(electedFemaleCandidates,
+		NotElectedBeforePredicate notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
 		                                                                                    electionCalculationListener);
 		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
 			copyOf(

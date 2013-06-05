@@ -33,11 +33,5 @@ public interface ElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
 
 	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> candidateDoubleMap);
 
-	void candidateNotQualified(CANDIDATE_TYPE candidate, String reason);
-
 	void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, BigFraction quorum);
-
-	void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats, int numberOfElectedFemaleExclusiveSeats,
-	                                    int numberOfOpenNonFemaleExclusiveSeats,
-	                                    int numberOfElectableNonFemaleExclusiveSeats);
 }

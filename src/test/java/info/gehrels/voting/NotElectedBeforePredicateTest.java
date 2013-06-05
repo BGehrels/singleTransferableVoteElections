@@ -13,13 +13,14 @@ import static org.mockito.Mockito.verify;
 
 public class NotElectedBeforePredicateTest {
 
-	public static final Candidate ALICE = new Candidate("Alice");
-	public static final Candidate BOB = new Candidate("Bob");
-	public static final Candidate EVE = new Candidate("Eve");
-	public static final ImmutableSet<Candidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
-	private final ElectionCalculationListener<Candidate> electionCalculationListener = mock(ElectionCalculationListener.class);
-	private final NotElectedBeforePredicate<Candidate> condition = new NotElectedBeforePredicate<>(ELECTED_CANDIDATES,
-	                                                                               electionCalculationListener);
+	public static final GenderedCandidate ALICE = new GenderedCandidate("Alice", true);
+	public static final GenderedCandidate BOB = new GenderedCandidate("Bob", false);
+	public static final GenderedCandidate EVE = new GenderedCandidate("Eve", true);
+	public static final ImmutableSet<GenderedCandidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
+	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener = mock(
+		ElectionCalculationWithFemaleExclusivePositionsListener.class);
+	private final NotElectedBeforePredicate condition = new NotElectedBeforePredicate(ELECTED_CANDIDATES,
+	                                                                                    electionCalculationListener);
 
 	@Test
 	public void candidatesAreQualifiedIfTheyHaveNotBeenElectedBefore() {
@@ -29,7 +30,7 @@ public class NotElectedBeforePredicateTest {
 	@Test
 	public void doNotCallListenerWheneverCandidateIsNotQualified() {
 		condition.apply(ALICE);
-		verify(electionCalculationListener, never()).candidateNotQualified(isA(Candidate.class), anyString());
+		verify(electionCalculationListener, never()).candidateNotQualified(isA(GenderedCandidate.class), anyString());
 	}
 
 

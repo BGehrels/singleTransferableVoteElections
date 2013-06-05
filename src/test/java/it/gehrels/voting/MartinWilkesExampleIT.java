@@ -8,9 +8,9 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.DefaultElectionCalculationFactory;
 import info.gehrels.voting.DefaultQuorumCalculationImpl;
 import info.gehrels.voting.Election;
-import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
+import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositionsListener;
 import info.gehrels.voting.GenderedCandidate;
 import info.gehrels.voting.TestUtils;
 import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
@@ -37,7 +37,7 @@ public class MartinWilkesExampleIT {
 	public static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
 
 	private ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
-	private ElectionCalculationListener<GenderedCandidate> calculationListener;
+	private ElectionCalculationWithFemaleExclusivePositionsListener calculationListener;
 	private Election<GenderedCandidate> election;
 
 	public MartinWilkesExampleIT() {
@@ -78,7 +78,7 @@ public class MartinWilkesExampleIT {
 			createBallot("IJH", election),
 			createBallot("JIHFE", election));
 
-		calculationListener = new AuditLogger<>();
+		calculationListener = new AuditLogger();
 	}
 
 	@Test

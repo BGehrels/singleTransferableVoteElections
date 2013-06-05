@@ -33,11 +33,15 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		CANDIDATE_F
 	);
 
-	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots = ImmutableList.of((Ballot<GenderedCandidate>) mock(Ballot.class));
+	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots = ImmutableList
+		.of((Ballot<GenderedCandidate>) mock(Ballot.class));
 
-	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory = mock(ElectionCalculationFactory.class);
-	private final STVElectionCalculation<GenderedCandidate> electionCalculationMock = mock(STVElectionCalculation.class);
-	private final ElectionCalculationListener<GenderedCandidate> electionCalculationListener = mock(ElectionCalculationListener.class);
+	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory = mock(
+		ElectionCalculationFactory.class);
+	private final STVElectionCalculation<GenderedCandidate> electionCalculationMock = mock(
+		STVElectionCalculation.class);
+	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener = mock(
+		ElectionCalculationWithFemaleExclusivePositionsListener.class);
 
 	private ElectionCalculationWithFemaleExclusivePositions objectUnderTest =
 		new ElectionCalculationWithFemaleExclusivePositions(
@@ -146,7 +150,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
-		verify(electionCalculationListener).reducedNonFemaleExclusiveSeats(1,0,2,1);
+		verify(electionCalculationListener).reducedNonFemaleExclusiveSeats(1, 0, 2, 1);
 	}
 
 
