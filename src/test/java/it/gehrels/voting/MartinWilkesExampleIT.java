@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.AuditLogger;
 import info.gehrels.voting.Ballot;
+import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
 import info.gehrels.voting.STVElectionCalculationFactory;
-import info.gehrels.voting.DefaultQuorumCalculationImpl;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
@@ -21,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public class MartinWilkesExampleIT {
-	public static final DefaultQuorumCalculationImpl QUORUM_CALCULATION = new DefaultQuorumCalculationImpl(new BigFraction(1, 1000));
+	public static final NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum QUORUM_CALCULATION = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(new BigFraction(1, 1000));
 	public static final AmbiguityResolver<GenderedCandidate> AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver<>();
 
 	public static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);

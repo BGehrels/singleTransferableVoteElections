@@ -6,11 +6,11 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
-public class DefaultQuorumCalculationImpl implements QuorumCalculation {
+public class NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum implements QuorumCalculation {
 
 	private final BigFraction surplus;
 
-	public DefaultQuorumCalculationImpl(BigFraction surplus) {
+	public NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(BigFraction surplus) {
 		this.surplus = validateThat(surplus, is(greaterThan(BigFraction.ZERO)));
 	}
 
