@@ -10,7 +10,6 @@ import info.gehrels.voting.DefaultQuorumCalculationImpl;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
-import info.gehrels.voting.ElectionCalculationWithFemaleExclusivePositionsListener;
 import info.gehrels.voting.GenderedCandidate;
 import info.gehrels.voting.TestUtils;
 import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
@@ -37,7 +36,7 @@ public class MartinWilkesExampleIT {
 	public static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
 
 	private ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
-	private ElectionCalculationWithFemaleExclusivePositionsListener calculationListener;
+	private AuditLogger auditLogger;
 	private Election<GenderedCandidate> election;
 
 	public MartinWilkesExampleIT() {
@@ -78,15 +77,15 @@ public class MartinWilkesExampleIT {
 			createBallot("IJH", election),
 			createBallot("JIHFE", election));
 
-		calculationListener = new AuditLogger();
+		auditLogger = new AuditLogger();
 	}
 
 	@Test
 	public void exampleByMartinWilke() {
 		ElectionCalculationWithFemaleExclusivePositions electionCalculation = new ElectionCalculationWithFemaleExclusivePositions(
 			new DefaultElectionCalculationFactory<>(QUORUM_CALCULATION,
-			                                      calculationListener,
-			                                      AMBIGUITY_RESOLVER), calculationListener);
+			                                        auditLogger,
+			                                      AMBIGUITY_RESOLVER), auditLogger);
 		ElectionResult electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
 
 		assertThat(electionResult.candidatesElectedInOpenRun,

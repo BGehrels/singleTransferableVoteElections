@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AuditLogger implements ElectionCalculationWithFemaleExclusivePositionsListener {
+public class AuditLogger implements ElectionCalculationWithFemaleExclusivePositionsListener, ElectionCalculationListener<GenderedCandidate> {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override

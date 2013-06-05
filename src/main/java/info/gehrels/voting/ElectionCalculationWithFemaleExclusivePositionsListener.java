@@ -1,6 +1,6 @@
 package info.gehrels.voting;
 
-public interface ElectionCalculationWithFemaleExclusivePositionsListener extends ElectionCalculationListener<GenderedCandidate> {
+public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 
 
 	void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats, int numberOfElectedFemaleExclusiveSeats,
