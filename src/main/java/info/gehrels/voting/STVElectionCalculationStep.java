@@ -173,13 +173,13 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			AmbiguityResolverResult<CANDIDATE_TYPE> ambiguityResolverResult = ambiguityResolver
 				.chooseOneOfMany(candidates);
 			electionCalculationListener.externalyResolvedAmbiguity(ambiguityResolverResult);
-			winner = ambiguityResolverResult.choosenCandidate;
+			winner = ambiguityResolverResult.chosenCandidate;
 		}
 
 		return winner;
 	}
 
-	public static class ElectionStepResult<CANDIDATE_TYPE> {
+	public static class ElectionStepResult<CANDIDATE_TYPE extends Candidate> {
 		public final CandidateStates<CANDIDATE_TYPE> newCandidateStates;
 		public final ImmutableCollection<BallotState<CANDIDATE_TYPE>> newBallotStates;
 		public final int newNumberOfElectedCandidates;
@@ -192,7 +192,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		}
 	}
 
-	private class State<CANDIDATE_TYPE> {
+	private class State<CANDIDATE_TYPE extends Candidate> {
 		private final CandidateStates<CANDIDATE_TYPE> candidateStates;
 		private final ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates;
 

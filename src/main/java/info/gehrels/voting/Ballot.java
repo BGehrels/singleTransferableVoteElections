@@ -14,24 +14,24 @@ import static org.hamcrest.Matchers.notNullValue;
  * designated to one Election. In each of the areas, the voter may have expressed his preference between
  * one or more Candidates, represented by a ElectionCandidatePreference.
  */
-public class Ballot<CANDIDATE_TYPE> {
+public class Ballot<CANDIDATE_TYPE extends Candidate> {
     private static int ballotIdFactory = 0;
 
     public final int id;
-    public final ImmutableMap<Election, ImmutableSet<CANDIDATE_TYPE>> rankedCandidatesByElection;
+    public final ImmutableMap<Election<CANDIDATE_TYPE>, ImmutableSet<CANDIDATE_TYPE>> rankedCandidatesByElection;
 
     public Ballot(ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
 	    validateThat(rankedCandidatesByElection, is(notNullValue()));
 
         this.id = ++ballotIdFactory;
-	    Builder<Election,ImmutableSet<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
+	    Builder<Election<CANDIDATE_TYPE>,ImmutableSet<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
 	    for (ElectionCandidatePreference<CANDIDATE_TYPE> electionCandidatePreference : rankedCandidatesByElection) {
 		    builder.put(electionCandidatePreference.election, electionCandidatePreference.candidatePreference);
 	    }
 	    this.rankedCandidatesByElection = builder.build();
     }
 
-	public ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election election) {
+	public ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election<CANDIDATE_TYPE> election) {
 		validateThat(election, is(notNullValue()));
 
 		ImmutableSet<CANDIDATE_TYPE> candidates = rankedCandidatesByElection.get(election);
@@ -44,11 +44,11 @@ public class Ballot<CANDIDATE_TYPE> {
 		return candidates;
 	}
 
-	public static class ElectionCandidatePreference<CANDIDATE_TYPE> {
-		private final Election election;
+	public static class ElectionCandidatePreference<CANDIDATE_TYPE extends Candidate> {
+		private final Election<CANDIDATE_TYPE> election;
 		private final ImmutableSet<CANDIDATE_TYPE> candidatePreference;
 
-		public ElectionCandidatePreference(Election election, ImmutableSet<CANDIDATE_TYPE> candidatePreference) {
+		public ElectionCandidatePreference(Election<CANDIDATE_TYPE> election, ImmutableSet<CANDIDATE_TYPE> candidatePreference) {
 			this.election = election;
 			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.candidates));
 		}

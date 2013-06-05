@@ -67,7 +67,7 @@ public class STVElectionCalculationStepTest {
 	);
 	public static final BigFraction FIVE = new BigFraction(5);
 
-	private final ElectionCalculationListener electionCalculationListenerMock = mock(ElectionCalculationListener.class);
+	private final ElectionCalculationListener<Candidate> electionCalculationListenerMock = mock(ElectionCalculationListener.class);
 	private final AmbiguityResolver<Candidate> ambiguityResolverMock = mock(AmbiguityResolver.class);
 	private final VoteWeightRedistributor<Candidate> redistributorMock = mock(VoteWeightRedistributor.class);
 
@@ -173,7 +173,7 @@ public class STVElectionCalculationStepTest {
 		);
 
 		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(A, B)))
-			.thenReturn(new AmbiguityResolverResult(B, "Fixed as Mock"));
+			.thenReturn(new AmbiguityResolverResult<>(B, "Fixed as Mock"));
 
 		when(redistributorMock.redistributeExceededVoteWeight(B, TWO, ballotStates))
 			.thenReturn(stubRedistributionResult);

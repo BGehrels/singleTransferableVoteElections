@@ -26,27 +26,27 @@ public class WeightedInclusiveGregoryMethodTest {
 	public static final Candidate CANDIDATE_C = new Candidate("C");
 	public static final Candidate CANDIDATE_D = new Candidate("D");
 
-	public static final Election<?> ELECTION = new Election<Candidate>(OFFICE, 0, 1,
+	public static final Election<Candidate> ELECTION = new Election<>(OFFICE, 0, 1,
 	                                                     ImmutableSet
 		                                                     .of(CANDIDATE_A, CANDIDATE_B, CANDIDATE_C, CANDIDATE_D));
-	public static final Ballot<?> BALLOT_ABCD = createBallot("ABCD", ELECTION);
-	public static final Ballot<?> BALLOT_ACD = createBallot("ACD", ELECTION);
-	public static final Ballot<?> BALLOT_BCDA = createBallot("BCDA", ELECTION);
-	public static final Ballot<?> BALLOT_NO_VOTES = createBallot("", ELECTION);
+	public static final Ballot<Candidate> BALLOT_ABCD = createBallot("ABCD", ELECTION);
+	public static final Ballot<Candidate> BALLOT_ACD = createBallot("ACD", ELECTION);
+	public static final Ballot<Candidate> BALLOT_BCDA = createBallot("BCDA", ELECTION);
+	public static final Ballot<Candidate> BALLOT_NO_VOTES = createBallot("", ELECTION);
 
-	public static final ImmutableList<BallotState<?>> BALLOT_STATES_FIXTURE = ImmutableList.of(
+	public static final ImmutableList<BallotState<Candidate>> BALLOT_STATES_FIXTURE = ImmutableList.of(
 		new BallotState<>(BALLOT_ABCD, ELECTION),
 		new BallotState<>(BALLOT_ACD, ELECTION).withVoteWeight(BigFraction.THREE_QUARTERS),
 		new BallotState<>(BALLOT_BCDA, ELECTION),
 		new BallotState<>(BALLOT_NO_VOTES, ELECTION)
 	);
 
-	private ElectionCalculationListener mock = mock(ElectionCalculationListener.class);
-	private WeightedInclusiveGregoryMethod<?> weightedInclusiveGregoryMethod = new WeightedInclusiveGregoryMethod<>(mock);
+	private ElectionCalculationListener<Candidate> mock = mock(ElectionCalculationListener.class);
+	private WeightedInclusiveGregoryMethod<Candidate> weightedInclusiveGregoryMethod = new WeightedInclusiveGregoryMethod<>(mock);
 
 	@Test
 	public void reducesVoteWeightOfThoseBallotsThatHadTheElectedCandidateAsCurrentPreferredCandidate() {
-		VoteWeightRedistributor voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
+		VoteWeightRedistributor<Candidate> voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
 
 		ImmutableCollection<BallotState<Candidate>> ballotStates = voteWeightRedistributor
 			.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), BALLOT_STATES_FIXTURE);
@@ -67,7 +67,7 @@ public class WeightedInclusiveGregoryMethodTest {
 
 	@Test
 	public void reportsEachVoteWeightRedistribution() {
-		VoteWeightRedistributor voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
+		VoteWeightRedistributor<Candidate> voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
 
 		voteWeightRedistributor
 			.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), BALLOT_STATES_FIXTURE);
@@ -79,7 +79,7 @@ public class WeightedInclusiveGregoryMethodTest {
 
 	@Test
 	public void doesNotReduceVoteWeightOfThoseBallotsThatDidNotHaveTheElectedCandidateAsCurrentPreferredCandidate() {
-		VoteWeightRedistributor voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
+		VoteWeightRedistributor<Candidate> voteWeightRedistributor = weightedInclusiveGregoryMethod.redistributorFor();
 
 		ImmutableCollection<BallotState<Candidate>> ballotStates = voteWeightRedistributor
 			.redistributeExceededVoteWeight(CANDIDATE_A, BigFraction.ONE, BALLOT_STATES_FIXTURE);

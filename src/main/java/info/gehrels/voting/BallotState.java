@@ -7,13 +7,13 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public final class BallotState<CANDIDATE_TYPE> {
+public final class BallotState<CANDIDATE_TYPE extends Candidate> {
 	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
 	private final int ballotId;
 	private final BigFraction voteWeight;
 	private final int currentPositionInRankedCandidatesList;
 
-	public BallotState(Ballot<CANDIDATE_TYPE> ballot, Election election) {
+	public BallotState(Ballot<CANDIDATE_TYPE> ballot, Election<CANDIDATE_TYPE> election) {
 		validateThat(ballot, is(notNullValue()));
 		validateThat(election, is(notNullValue()));
 

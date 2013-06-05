@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 public class FemalePredicateTest {
 	private static final GenderedCandidate ALICE = new GenderedCandidate("Alice", true);
 	private static final GenderedCandidate BOB = new GenderedCandidate("Bob", false);
-	private final ElectionCalculationListener mock = mock(ElectionCalculationListener.class);
+	private final ElectionCalculationListener<GenderedCandidate> mock = mock(ElectionCalculationListener.class);
 	private final FemalePredicate condition = new FemalePredicate(mock);
 
 	@Test
@@ -25,7 +25,7 @@ public class FemalePredicateTest {
 	public void doesNotReportToElectionCalculationListenerWhenCandidatesAreQualified() {
 		condition.apply(ALICE);
 
-		verify(mock, never()).candidateNotQualified(isA(Candidate.class), anyString());
+		verify(mock, never()).candidateNotQualified(isA(GenderedCandidate.class), anyString());
 	}
 
 	@Test

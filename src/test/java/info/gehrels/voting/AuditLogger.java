@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AuditLogger implements ElectionCalculationListener<Candidate> {
+public class AuditLogger<T extends Candidate> implements ElectionCalculationListener<T> {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override
@@ -40,7 +40,7 @@ public class AuditLogger implements ElectionCalculationListener<Candidate> {
 	}
 
 	@Override
-	public void electedCandidates(ImmutableSet<Candidate> electedCandidates) {
+	public void electedCandidates(ImmutableSet<T> electedCandidates) {
 		LOGGER.info("======================================");
 		LOGGER.info("Gewählt sind: ");
 		for (Candidate electedCandidate : electedCandidates) {
@@ -49,9 +49,9 @@ public class AuditLogger implements ElectionCalculationListener<Candidate> {
 	}
 
 	@Override
-	public  void candidateDropped(Map<Candidate, BigFraction> votesByCandidateBeforeStriking,
-	                              Candidate candidate, BigFraction weakestVoteCount,
-	                             Map<Candidate, BigFraction> votesByCandidateAfterStriking) {
+	public  void candidateDropped(Map<T, BigFraction> votesByCandidateBeforeStriking,
+	                              T candidate, BigFraction weakestVoteCount,
+	                             Map<T, BigFraction> votesByCandidateAfterStriking) {
 
 		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name,
 		            weakestVoteCount.doubleValue());
@@ -70,19 +70,19 @@ public class AuditLogger implements ElectionCalculationListener<Candidate> {
 	}
 
 	@Override
-	public void voteWeightRedistributionCompleted(Map<Candidate, BigFraction> votesByCandidate) {
+	public void voteWeightRedistributionCompleted(Map<T, BigFraction> votesByCandidate) {
 		LOGGER.info("Neue Stimmverteilung:");
 		dumpVoteDistribution(votesByCandidate);
 	}
 
 	@Override
-	public void delegatingToExternalAmbiguityResolution(ImmutableSet<Candidate> bestCandidates) {
+	public void delegatingToExternalAmbiguityResolution(ImmutableSet<T> bestCandidates) {
 		LOGGER.info("Mehrere Stimmgleiche Kandidierende: {}. Delegiere an externes Auswahlverfahren.", bestCandidates);
 	}
 
 	@Override
-	public void externalyResolvedAmbiguity(AmbiguityResolverResult ambiguityResolverResult) {
-		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.choosenCandidate.name,
+	public void externalyResolvedAmbiguity(AmbiguityResolverResult<T> ambiguityResolverResult) {
+		LOGGER.info("externes Auswahlverfahren ergab: {}. ({})", ambiguityResolverResult.chosenCandidate.name,
 		            ambiguityResolverResult.auditLog);
 	}
 
@@ -104,7 +104,7 @@ public class AuditLogger implements ElectionCalculationListener<Candidate> {
 	}
 
 	@Override
-	public void calculationStarted(Election<Candidate> election, Map<Candidate, BigFraction> voteDistribution) {
+	public void calculationStarted(Election<T> election, Map<T, BigFraction> voteDistribution) {
 		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:",
 		            election.office.name);
 		dumpVoteDistribution(voteDistribution);

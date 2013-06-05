@@ -12,11 +12,11 @@ public interface AmbiguityResolver<CANDIDATE_TYPE extends Candidate> {
     AmbiguityResolverResult<CANDIDATE_TYPE> chooseOneOfMany(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
 
 	class AmbiguityResolverResult<CANDIDATE_TYPE extends Candidate> {
-		public final CANDIDATE_TYPE choosenCandidate;
+		public final CANDIDATE_TYPE chosenCandidate;
 		public final String auditLog;
 
-		public AmbiguityResolverResult(CANDIDATE_TYPE choosenCandidate, String auditLog) {
-			this.choosenCandidate = validateThat(choosenCandidate, is(not(nullValue())));
+		public AmbiguityResolverResult(CANDIDATE_TYPE chosenCandidate, String auditLog) {
+			this.chosenCandidate = validateThat(chosenCandidate, is(not(nullValue())));
 			this.auditLog = validateThat(auditLog, not(isEmptyOrNullString()));
 		}
 	}

@@ -9,9 +9,9 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class FemalePredicate implements Predicate<GenderedCandidate> {
 
-	private final ElectionCalculationListener electionCalculationListener;
+	private final ElectionCalculationListener<GenderedCandidate> electionCalculationListener;
 
-	public FemalePredicate(ElectionCalculationListener electionCalculationListener) {
+	public FemalePredicate(ElectionCalculationListener<GenderedCandidate> electionCalculationListener) {
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));
 	}
 

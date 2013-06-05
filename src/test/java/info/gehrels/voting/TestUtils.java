@@ -31,7 +31,7 @@ public class TestUtils {
 
 	public static class JustTakeTheFirstOneAmbiguityResolver<T extends Candidate> implements AmbiguityResolver<T> {
 		@Override
-		public AmbiguityResolverResult<T> chooseOneOfMany(ImmutableSet <T> bestCandidates) {
+		public AmbiguityResolverResult<T> chooseOneOfMany(ImmutableSet<T> bestCandidates) {
 			return new AmbiguityResolverResult<>(bestCandidates.iterator().next(),
 			                                   "Habe ganz primitiv das erste Element der Menge genommen");
 		}

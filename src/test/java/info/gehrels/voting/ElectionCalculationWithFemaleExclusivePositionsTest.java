@@ -35,9 +35,9 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots = ImmutableList.of((Ballot<GenderedCandidate>) mock(Ballot.class));
 
-	private final ElectionCalculationFactory electionCalculationFactory = mock(ElectionCalculationFactory.class);
-	private final STVElectionCalculation electionCalculationMock = mock(STVElectionCalculation.class);
-	private final ElectionCalculationListener electionCalculationListener = mock(ElectionCalculationListener.class);
+	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory = mock(ElectionCalculationFactory.class);
+	private final STVElectionCalculation<GenderedCandidate> electionCalculationMock = mock(STVElectionCalculation.class);
+	private final ElectionCalculationListener<GenderedCandidate> electionCalculationListener = mock(ElectionCalculationListener.class);
 
 	private ElectionCalculationWithFemaleExclusivePositions objectUnderTest =
 		new ElectionCalculationWithFemaleExclusivePositions(
@@ -56,17 +56,17 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	public void allAndOnlyFemaleCandidatesQualifyForFemaleOnlyPositions() {
 		makeSureElectionCalculationDoesNotReturnNull();
 
-		Election<GenderedCandidate> election = new Election<GenderedCandidate>(OFFICE, 2, 0, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<>(OFFICE, 2, 0, CANDIDATES);
 		objectUnderTest.calculateElectionResult(election, ballots);
 
-		Matcher<ImmutableSet<Candidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
+		Matcher<ImmutableSet<GenderedCandidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_1, FEMALE_CANDIDATE_2);
 		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
 	}
 
 	@Test
 	public void onlyNotElectedCanidatesQualifyForOpenPositions() {
-		Election election = new Election<GenderedCandidate>(OFFICE, 1, 2, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<>(OFFICE, 1, 2, CANDIDATES);
 
 
 		// given FEMALE_CANDIDATE_1 has already been elected in the first any female exclusive run
@@ -77,14 +77,14 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		// Then all non elected candidates qualify for the second run.
-		Matcher<ImmutableSet<Candidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
+		Matcher<ImmutableSet<GenderedCandidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_2, CANDIDATE_E, CANDIDATE_F);
 		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
 	}
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenOnlyALesserNumberOfOpenPositionsAreAvailable() {
-		Election election = new Election<>(OFFICE, 3, 2, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
 
 
 		// given only two female positions have been elected in the first run
@@ -102,7 +102,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenItCanAlsoHappenThatNoMalePositionsCanBeElected() {
-		Election election = new Election(OFFICE, 3, 2, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
 
 
 		// given only one female positions have been elected in the first run
@@ -120,11 +120,11 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenNumberOfMalePositionsMayNotBecomeNegative() {
-		Election election = new Election(OFFICE, 3, 2, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
 
 		// given no female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
-			.toReturn(ImmutableSet.<Candidate>of());
+			.toReturn(ImmutableSet.<GenderedCandidate>of());
 
 
 		objectUnderTest.calculateElectionResult(election, ballots);
@@ -137,11 +137,11 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void shouldReportIfNotAllNonFemaleExclusivePositionsCanBeElected() {
-		Election election = new Election(OFFICE, 1, 2, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<>(OFFICE, 1, 2, CANDIDATES);
 
 		// given no female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))
-			.toReturn(ImmutableSet.<Candidate>of());
+			.toReturn(ImmutableSet.<GenderedCandidate>of());
 
 
 		objectUnderTest.calculateElectionResult(election, ballots);
@@ -152,7 +152,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	private void makeSureElectionCalculationDoesNotReturnNull() {
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), anyInt()))
-			.toReturn(ImmutableSet.<Candidate>of());
+			.toReturn(ImmutableSet.<GenderedCandidate>of());
 	}
 
 

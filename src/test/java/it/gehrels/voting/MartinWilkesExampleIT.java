@@ -37,7 +37,7 @@ public class MartinWilkesExampleIT {
 	public static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
 
 	private ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
-	private ElectionCalculationListener calculationListener;
+	private ElectionCalculationListener<GenderedCandidate> calculationListener;
 	private Election<GenderedCandidate> election;
 
 	public MartinWilkesExampleIT() {
@@ -78,7 +78,7 @@ public class MartinWilkesExampleIT {
 			createBallot("IJH", election),
 			createBallot("JIHFE", election));
 
-		calculationListener = new AuditLogger();
+		calculationListener = new AuditLogger<>();
 	}
 
 	@Test

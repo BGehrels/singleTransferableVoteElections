@@ -7,10 +7,10 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 
-public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributionMethod {
-	private final ElectionCalculationListener electionCalculationListener;
+public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributionMethod<CANDIDATE_TYPE> {
+	private final ElectionCalculationListener<?> electionCalculationListener;
 
-	public WeightedInclusiveGregoryMethod(ElectionCalculationListener electionCalculationListener) {
+	public WeightedInclusiveGregoryMethod(ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener) {
 		this.electionCalculationListener = electionCalculationListener;
 	}
 

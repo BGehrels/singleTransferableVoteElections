@@ -46,7 +46,7 @@ public class BallotStateMatchers {
 		return new FeatureMatcher<BallotState<?>, Integer>(is(ballotId), "with ballot id", "ballot id") {
 
 			@Override
-			protected Integer featureValueOf(BallotState ballotState) {
+			protected Integer featureValueOf(BallotState<?> ballotState) {
 				return ballotState.getBallotId();
 			}
 		};

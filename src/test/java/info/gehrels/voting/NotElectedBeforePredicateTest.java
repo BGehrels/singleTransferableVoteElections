@@ -17,8 +17,8 @@ public class NotElectedBeforePredicateTest {
 	public static final Candidate BOB = new Candidate("Bob");
 	public static final Candidate EVE = new Candidate("Eve");
 	public static final ImmutableSet<Candidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
-	private final ElectionCalculationListener electionCalculationListener = mock(ElectionCalculationListener.class);
-	private final NotElectedBeforePredicate condition = new NotElectedBeforePredicate(ELECTED_CANDIDATES,
+	private final ElectionCalculationListener<Candidate> electionCalculationListener = mock(ElectionCalculationListener.class);
+	private final NotElectedBeforePredicate<Candidate> condition = new NotElectedBeforePredicate<>(ELECTED_CANDIDATES,
 	                                                                               electionCalculationListener);
 
 	@Test

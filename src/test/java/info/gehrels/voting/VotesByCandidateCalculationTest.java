@@ -27,7 +27,7 @@ public class VotesByCandidateCalculationTest {
 	public static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
 		.of(CANDIDATE_PETER, CANDIDATE_JOHN, CANDIDATE_MARTA);
 
-	public static final Election ELECTION = new Election(new Office("arbitraryOfiice"), 1, 1, ALL_CANDIDATES);
+	public static final Election<Candidate> ELECTION = new Election<>(new Office("arbitraryOfiice"), 1, 1, ALL_CANDIDATES);
 
 	@Test
 	public void returnsEmtpyMapIfCandidateSetAndBallotStatesAreEmpty() {
@@ -85,8 +85,9 @@ public class VotesByCandidateCalculationTest {
 	}
 
 	private BallotState<Candidate> createBallotStateFor(Candidate... candidates) {
-		return new BallotState(new Ballot(ImmutableSet.of(new ElectionCandidatePreference(
-			ELECTION, ImmutableSet.copyOf(candidates)))), ELECTION);
+		return new BallotState<>(new Ballot<>(ImmutableSet.of(new ElectionCandidatePreference<>(
+			ELECTION, ImmutableSet.copyOf(candidates)))), ELECTION
+		);
 	}
 
 
