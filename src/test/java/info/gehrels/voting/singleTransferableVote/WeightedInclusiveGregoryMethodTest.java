@@ -1,16 +1,22 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculationListener;
+import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import info.gehrels.voting.singleTransferableVote.BallotState;
+import info.gehrels.voting.singleTransferableVote.WeightedInclusiveGregoryMethod;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import static info.gehrels.voting.BallotStateMatchers.aBallotState;
-import static info.gehrels.voting.BallotStateMatchers.withBallotId;
-import static info.gehrels.voting.BallotStateMatchers.withVoteWeight;
+import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.aBallotState;
+import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withBallotId;
+import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withVoteWeight;
 import static info.gehrels.voting.TestUtils.OFFICE;
 import static info.gehrels.voting.TestUtils.createBallot;
 import static org.apache.commons.math3.fraction.BigFraction.ONE_HALF;

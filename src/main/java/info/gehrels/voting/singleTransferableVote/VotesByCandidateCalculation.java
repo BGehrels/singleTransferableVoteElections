@@ -1,9 +1,10 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.Candidate;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.HashMap;

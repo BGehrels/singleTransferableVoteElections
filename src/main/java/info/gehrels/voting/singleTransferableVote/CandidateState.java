@@ -1,4 +1,4 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;

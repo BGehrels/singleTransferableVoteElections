@@ -1,4 +1,4 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;

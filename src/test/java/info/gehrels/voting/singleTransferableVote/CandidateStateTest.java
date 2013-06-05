@@ -1,5 +1,7 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.singleTransferableVote.CandidateState;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -1,4 +1,4 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;

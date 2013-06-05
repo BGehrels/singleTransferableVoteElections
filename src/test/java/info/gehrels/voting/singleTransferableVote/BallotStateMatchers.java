@@ -1,5 +1,8 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.DelegatingMatcher;
+import info.gehrels.voting.singleTransferableVote.BallotState;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;

@@ -1,6 +1,7 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
+import info.gehrels.voting.Candidate;
 import org.apache.commons.math3.fraction.BigFraction;
 
 public interface VoteWeightRedistributionMethod<CANDIDATE_TYPE extends Candidate> {

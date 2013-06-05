@@ -1,6 +1,11 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
+import info.gehrels.voting.AmbiguityResolver;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculationListener;
+import info.gehrels.voting.QuorumCalculation;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

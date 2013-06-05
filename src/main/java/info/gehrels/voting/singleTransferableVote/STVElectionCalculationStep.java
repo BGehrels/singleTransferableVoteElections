@@ -1,10 +1,13 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
-import info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.ElectionCalculationListener;
+import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
@@ -15,8 +18,6 @@ import java.util.Map.Entry;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesByCandidate;
-import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -57,7 +58,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	                                                    ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates,
 	                                                    CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidate =
-			calculateVotesByCandidate(candidateStates.getHopefulCandidates(), ballotStates);
+			VotesByCandidateCalculation.calculateVotesByCandidate(candidateStates.getHopefulCandidates(), ballotStates);
 		BigFraction numberOfVotesOfBestCandidate = BigFraction.MINUS_ONE;
 		Collection<CANDIDATE_TYPE> bestCandidates = newArrayList();
 		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
@@ -84,7 +85,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	                                                                                               CANDIDATE_TYPE winner,
 	                                                                                               CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		electionCalculationListener
-			.candidateIsElected(winner, calculateVotesForCandidate(winner, ballotStates), quorum);
+			.candidateIsElected(winner, VotesForCandidateCalculation.calculateVotesForCandidate(winner, ballotStates), quorum);
 
 		int newNumberOfElectedCandidates = numberOfElectedCandidates + 1;
 		ballotStates = redistributor.redistributeExceededVoteWeight(winner, quorum, ballotStates);
@@ -94,7 +95,8 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			ballotStates, newCandidateStates);
 
 		electionCalculationListener.voteWeightRedistributionCompleted(
-			calculateVotesByCandidate(newCandidateStates.getHopefulCandidates(), newBallotStates));
+			VotesByCandidateCalculation
+				.calculateVotesByCandidate(newCandidateStates.getHopefulCandidates(), newBallotStates));
 
 		return new ElectionStepResult<>(newBallotStates, newNumberOfElectedCandidates,
 		                                              newCandidateStates);
@@ -115,8 +117,9 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates,
 		CandidateStates<CANDIDATE_TYPE> candidateStates) {
 
-		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateBeforeStriking = calculateVotesByCandidate(
-			candidateStates.getHopefulCandidates(), ballotStates);
+		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateBeforeStriking = VotesByCandidateCalculation
+			.calculateVotesByCandidate(
+				candidateStates.getHopefulCandidates(), ballotStates);
 
 		CANDIDATE_TYPE weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
 
@@ -125,7 +128,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking =
-			calculateVotesByCandidate(candidateStates.getHopefulCandidates(), ballotStates);
+			VotesByCandidateCalculation.calculateVotesByCandidate(candidateStates.getHopefulCandidates(), ballotStates);
 
 		electionCalculationListener.candidateDropped(
 			votesByCandidateBeforeStriking,

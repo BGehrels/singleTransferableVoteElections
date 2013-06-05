@@ -1,5 +1,8 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.singleTransferableVote.CandidateState;
+import info.gehrels.voting.singleTransferableVote.CandidateStates;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;

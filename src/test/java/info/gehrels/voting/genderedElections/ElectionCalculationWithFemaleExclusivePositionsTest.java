@@ -1,8 +1,12 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculation;
+import info.gehrels.voting.ElectionCalculationFactory;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
 import info.gehrels.voting.genderedElections.GenderedCandidate;

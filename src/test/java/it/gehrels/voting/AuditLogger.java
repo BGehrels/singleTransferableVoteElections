@@ -1,7 +1,10 @@
-package info.gehrels.voting;
+package it.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
 import org.apache.commons.math3.fraction.BigFraction;

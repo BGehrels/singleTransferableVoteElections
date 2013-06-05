@@ -1,7 +1,9 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
-import info.gehrels.voting.STVElectionCalculationStep.ElectionStepResult;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.DelegatingMatcher;
+import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 

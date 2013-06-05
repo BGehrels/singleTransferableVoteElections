@@ -1,12 +1,17 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Ballot.ElectionCandidatePreference;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.Office;
+import info.gehrels.voting.singleTransferableVote.BallotState;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
-import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
+import static info.gehrels.voting.singleTransferableVote.VotesForCandidateCalculation.calculateVotesForCandidate;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 

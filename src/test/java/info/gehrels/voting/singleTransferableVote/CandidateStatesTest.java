@@ -1,9 +1,10 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.Candidate;
 import org.junit.Test;
 
-import static info.gehrels.voting.CandidateStateMatchers.candidateStateFor;
+import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.candidateStateFor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;

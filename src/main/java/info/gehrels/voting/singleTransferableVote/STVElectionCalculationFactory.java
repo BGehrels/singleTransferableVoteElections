@@ -1,12 +1,20 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
+import info.gehrels.voting.AmbiguityResolver;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculationFactory;
+import info.gehrels.voting.ElectionCalculationListener;
+import info.gehrels.voting.QuorumCalculation;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class STVElectionCalculationFactory<CANDIDATE_TYPE extends Candidate> implements ElectionCalculationFactory<CANDIDATE_TYPE> {
+public class STVElectionCalculationFactory<CANDIDATE_TYPE extends Candidate> implements
+	ElectionCalculationFactory<CANDIDATE_TYPE> {
 	private final QuorumCalculation quorumCalculation;
 	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver;

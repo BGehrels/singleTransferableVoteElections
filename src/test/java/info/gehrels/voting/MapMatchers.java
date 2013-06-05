@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class MapMatchers {
-	static <K, V> Matcher<Entry<? extends K, ? extends V>> anEntry(final K key, final V value) {
+	public static <K, V> Matcher<Entry<? extends K, ? extends V>> anEntry(final K key, final V value) {
 		return new TypeSafeDiagnosingMatcher<Entry<? extends K, ? extends V>>() {
 			@Override
 			protected boolean matchesSafely(Entry<? extends K, ? extends V> actual, Description mismatchDescription) {
@@ -34,11 +34,11 @@ public class MapMatchers {
 		};
 	}
 
-	static <K, V> Matcher<Map<K, V>> aMap(Matcher<Map<K, V>> subMatcher) {
+	public static <K, V> Matcher<Map<K, V>> aMap(Matcher<Map<K, V>> subMatcher) {
 		return new DelegatingMatcher<>(subMatcher, "a Map");
 	}
 
-	static <K, V> FeatureMatcher<Map<K, V>, Set<Entry<K, V>>> withEntries(
+	public static <K, V> FeatureMatcher<Map<K, V>, Set<Entry<K, V>>> withEntries(
 		Matcher<? super Set<Entry<K, V>>> subMatcher) {
 		return new FeatureMatcher<Map<K, V>, Set<Entry<K, V>>>(subMatcher, "with entries", "entries") {
 			@Override

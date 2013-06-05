@@ -1,13 +1,16 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.ElectionCalculationListener;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
+import static info.gehrels.voting.singleTransferableVote.VotesForCandidateCalculation.calculateVotesForCandidate;
 
-public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributionMethod<CANDIDATE_TYPE> {
+public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> implements
+	VoteWeightRedistributionMethod<CANDIDATE_TYPE> {
 	private final ElectionCalculationListener<?> electionCalculationListener;
 
 	public WeightedInclusiveGregoryMethod(ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener) {

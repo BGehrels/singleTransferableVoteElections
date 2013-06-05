@@ -1,5 +1,6 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
+import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 

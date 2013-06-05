@@ -1,5 +1,6 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
+import info.gehrels.voting.Candidate;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Collection;

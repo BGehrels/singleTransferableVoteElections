@@ -1,27 +1,35 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
-import info.gehrels.voting.STVElectionCalculationStep.ElectionStepResult;
-import info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculationListener;
+import info.gehrels.voting.MapMatchers;
+import info.gehrels.voting.Office;
+import info.gehrels.voting.TestUtils;
+import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
+import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.util.Map;
 
-import static info.gehrels.voting.BallotStateMatchers.aBallotState;
-import static info.gehrels.voting.BallotStateMatchers.withPreferredCandidate;
-import static info.gehrels.voting.BallotStateMatchers.withVoteWeight;
-import static info.gehrels.voting.CandidateStateMatchers.withElectedCandidate;
-import static info.gehrels.voting.CandidateStateMatchers.withLooser;
-import static info.gehrels.voting.ElectionStepResultMatchers.anElectionStepResult;
-import static info.gehrels.voting.ElectionStepResultMatchers.withBallotStates;
-import static info.gehrels.voting.ElectionStepResultMatchers.withCandidateStates;
-import static info.gehrels.voting.ElectionStepResultMatchers.withNumberOfElectedCandidates;
 import static info.gehrels.voting.MapMatchers.aMap;
 import static info.gehrels.voting.MapMatchers.anEntry;
+import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.aBallotState;
+import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withPreferredCandidate;
+import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withVoteWeight;
+import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;
+import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withLooser;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.anElectionStepResult;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withBallotStates;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withCandidateStates;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withNumberOfElectedCandidates;
 import static org.apache.commons.math3.fraction.BigFraction.FOUR_FIFTHS;
 import static org.apache.commons.math3.fraction.BigFraction.ONE;
 import static org.apache.commons.math3.fraction.BigFraction.ONE_FIFTH;

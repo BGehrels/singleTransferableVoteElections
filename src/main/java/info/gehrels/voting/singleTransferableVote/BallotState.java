@@ -1,6 +1,9 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableList;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;

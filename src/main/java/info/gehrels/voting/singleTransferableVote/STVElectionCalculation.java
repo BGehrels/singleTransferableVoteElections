@@ -1,16 +1,22 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import info.gehrels.voting.STVElectionCalculationStep.ElectionStepResult;
+import info.gehrels.voting.AmbiguityResolver;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculation;
+import info.gehrels.voting.ElectionCalculationListener;
+import info.gehrels.voting.QuorumCalculation;
+import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import static com.google.common.collect.Collections2.transform;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
-import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesByCandidate;
+import static info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -59,8 +65,9 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 
 		electionCalculationListener
 			.calculationStarted(election,
-			                    calculateVotesByCandidate(candidateStates.getHopefulCandidates(),
-			                                              ballotStates));
+			                    VotesByCandidateCalculation
+				                    .calculateVotesByCandidate(candidateStates.getHopefulCandidates(),
+				                                               ballotStates));
 
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {
 			ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep.declareWinnerOrStrikeCandidate(quorum,

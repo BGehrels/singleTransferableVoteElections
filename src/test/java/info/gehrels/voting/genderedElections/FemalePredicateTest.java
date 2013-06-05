@@ -1,4 +1,4 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
 
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
 import info.gehrels.voting.genderedElections.FemalePredicate;
