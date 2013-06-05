@@ -1,6 +1,9 @@
 package info.gehrels.voting;
 
-final class CandidateState<CANDIDATE_TYPE> implements Cloneable {
+import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
+import static org.hamcrest.Matchers.is;
+
+final class CandidateState<CANDIDATE_TYPE> {
 	private final CANDIDATE_TYPE candidate;
 	private boolean elected = false;
 	private boolean looser = false;
@@ -8,6 +11,12 @@ final class CandidateState<CANDIDATE_TYPE> implements Cloneable {
 
 	public CandidateState(CANDIDATE_TYPE candidate) {
 		this.candidate = candidate;
+	}
+
+	private CandidateState(CANDIDATE_TYPE candidate, boolean elected, boolean looser) {
+		this.candidate = candidate;
+		this.elected = elected;
+		this.looser = looser;
 	}
 
 	public CANDIDATE_TYPE getCandidate() {
@@ -27,24 +36,13 @@ final class CandidateState<CANDIDATE_TYPE> implements Cloneable {
 	}
 
 	public CandidateState<CANDIDATE_TYPE> asElected() {
-		CandidateState<CANDIDATE_TYPE> result = this.clone();
-		result.elected = true;
-		return result;
+		validateThat("Candidate " + candidate + " may not already be a looser", this.looser, is(false));
+		return new CandidateState<>(this.candidate, true, false);
 	}
 
 	public CandidateState<CANDIDATE_TYPE> asLooser() {
-		CandidateState<CANDIDATE_TYPE> result = this.clone();
-		result.looser = true;
-		return result;
-	}
-
-	@Override
-	protected CandidateState<CANDIDATE_TYPE> clone()  {
-		try {
-			return (CandidateState<CANDIDATE_TYPE>) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new IllegalStateException(e);
-		}
+		validateThat("Candidate " + candidate + " may not already be elected", this.elected, is(false));
+		return new CandidateState<>(candidate, false, true);
 	}
 
 	@Override

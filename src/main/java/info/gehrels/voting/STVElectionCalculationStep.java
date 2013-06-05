@@ -24,10 +24,10 @@ import static org.hamcrest.Matchers.nullValue;
 
 public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 
-	private final ElectionCalculationListener electionCalculationListener;
+	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver;
 
-	public STVElectionCalculationStep(ElectionCalculationListener electionCalculationListener,
+	public STVElectionCalculationStep(ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
 	                                  AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver) {
 		this.ambiguityResolver = validateThat(ambiguityResolver, is(not(nullValue())));
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(not(nullValue())));

@@ -14,14 +14,14 @@ import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesByCa
 public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> {
 	private final ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots;
 	private final QuorumCalculation quorumCalculation;
-	private final ElectionCalculationListener electionCalculationListener;
+	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final Election<CANDIDATE_TYPE> election;
 	private final VoteWeightRedistributionMethod<CANDIDATE_TYPE> voteWeightRedistributionMethod;
 	private final STVElectionCalculationStep<CANDIDATE_TYPE> electionStep;
 
 	public STVElectionCalculation(ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots,
 	                              QuorumCalculation quorumCalculation,
-	                              ElectionCalculationListener electionCalculationListener,
+	                              ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
 	                              Election<CANDIDATE_TYPE> election, AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver,
 	                              VoteWeightRedistributionMethod<CANDIDATE_TYPE> redistributionMethod) {
 		this.ballots = ballots;
