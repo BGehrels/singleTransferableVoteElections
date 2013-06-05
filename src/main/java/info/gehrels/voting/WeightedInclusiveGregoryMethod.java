@@ -15,7 +15,7 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 	}
 
 	@Override
-	public VoteWeightRedistributor<CANDIDATE_TYPE> redistributorFor() {
+	public final VoteWeightRedistributor<CANDIDATE_TYPE> redistributorFor() {
 		return new VoteWeightRedistributor<>();
 	}
 

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<CANDIDATE_TYPE>> {
+final class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<CANDIDATE_TYPE>> {
 	private final ImmutableMap<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> candidateStates;
 
 	public CandidateStates(ImmutableSet<CANDIDATE_TYPE> candidates) {

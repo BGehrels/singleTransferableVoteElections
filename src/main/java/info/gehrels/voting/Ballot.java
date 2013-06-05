@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static info.gehrels.voting.HamcrestMatchers.isSubSetOf;
+import static info.gehrels.voting.SetMatchers.isSubSetOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -31,7 +31,7 @@ public class Ballot<CANDIDATE_TYPE extends Candidate> {
 	    this.rankedCandidatesByElection = builder.build();
     }
 
-	public ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election<CANDIDATE_TYPE> election) {
+	public final ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election<CANDIDATE_TYPE> election) {
 		validateThat(election, is(notNullValue()));
 
 		ImmutableSet<CANDIDATE_TYPE> candidates = rankedCandidatesByElection.get(election);

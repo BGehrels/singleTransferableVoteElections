@@ -8,10 +8,15 @@ import info.gehrels.voting.STVElectionCalculationStep.ElectionStepResult;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import static com.google.common.collect.Collections2.transform;
+import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static info.gehrels.voting.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import static info.gehrels.voting.VotesByCandidateCalculation.calculateVotesByCandidate;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
-public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> {
+public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements ElectionCalculation<CANDIDATE_TYPE> {
 	private final ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots;
 	private final QuorumCalculation quorumCalculation;
 	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
@@ -24,16 +29,23 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> {
 	                              ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
 	                              Election<CANDIDATE_TYPE> election, AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver,
 	                              VoteWeightRedistributionMethod<CANDIDATE_TYPE> redistributionMethod) {
-		this.ballots = ballots;
-		this.quorumCalculation = quorumCalculation;
+		this.ballots = validateThat(ballots, is(not(nullValue())));
+		this.quorumCalculation = validateThat(quorumCalculation, is(not(nullValue())));
+		this.election = validateThat(election, is(not(nullValue())));
+		this.voteWeightRedistributionMethod = validateThat(redistributionMethod, is(not(nullValue())));
+		this.electionStep = new STVElectionCalculationStep<>(
+			validateThat(electionCalculationListener, is(not(nullValue()))),
+		    validateThat(ambiguityResolver, is(not(nullValue())))
+		);
 		this.electionCalculationListener = electionCalculationListener;
-		this.election = election;
-		this.voteWeightRedistributionMethod = redistributionMethod;
-		this.electionStep = new STVElectionCalculationStep<>(electionCalculationListener, ambiguityResolver);
 	}
 
-	public ImmutableSet<CANDIDATE_TYPE> calculate(
+	@Override
+	public final ImmutableSet<CANDIDATE_TYPE> calculate(
 		ImmutableSet<CANDIDATE_TYPE> qualifiedCandidates, int numberOfSeats) {
+		validateThat(qualifiedCandidates, is(not(nullValue())));
+		validateThat(numberOfSeats, is(greaterThanOrEqualTo(0)));
+
 		VoteWeightRedistributor<CANDIDATE_TYPE> redistributor = voteWeightRedistributionMethod.redistributorFor();
 		int numberOfValidBallots = ballots.size();
 		// Runden oder nicht runden?

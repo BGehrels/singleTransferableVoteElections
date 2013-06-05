@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-public class HamcrestMatchers {
+public final class SetMatchers {
 	public static  <SUPERSET extends Collection<?>, SUBSET extends Collection<?>> Matcher<SUBSET> isSubSetOf(final SUPERSET potentialSuperset) {
 		validateThat(potentialSuperset, is(not(nullValue())));
 

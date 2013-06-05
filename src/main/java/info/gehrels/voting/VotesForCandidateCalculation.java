@@ -4,7 +4,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Collection;
 
-public class VotesForCandidateCalculation {
+public final class VotesForCandidateCalculation {
 	static <CANDIDATE_TYPE extends Candidate> BigFraction calculateVotesForCandidate(CANDIDATE_TYPE candidate, Collection<BallotState<CANDIDATE_TYPE>> ballotStates) {
 		BigFraction votes = BigFraction.ZERO;
 		for (BallotState<CANDIDATE_TYPE> ballotState : ballotStates) {

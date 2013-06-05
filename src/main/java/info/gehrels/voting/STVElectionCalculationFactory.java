@@ -20,7 +20,7 @@ public class STVElectionCalculationFactory<CANDIDATE_TYPE extends Candidate> imp
 	}
 
 	@Override
-	public STVElectionCalculation<CANDIDATE_TYPE> createElectionCalculation(Election<CANDIDATE_TYPE> election,
+	public final STVElectionCalculation<CANDIDATE_TYPE> createElectionCalculation(Election<CANDIDATE_TYPE> election,
 	                                                                      ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots) {
 		return new STVElectionCalculation<>(ballots, quorumCalculation, electionCalculationListener, election,
 		                                                ambiguityResolver, new WeightedInclusiveGregoryMethod<>(

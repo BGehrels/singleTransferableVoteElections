@@ -7,7 +7,7 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public final class BallotState<CANDIDATE_TYPE extends Candidate> {
+final class BallotState<CANDIDATE_TYPE extends Candidate> {
 	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
 	private final int ballotId;
 	private final BigFraction voteWeight;
@@ -32,7 +32,7 @@ public final class BallotState<CANDIDATE_TYPE extends Candidate> {
 		this.currentPositionInRankedCandidatesList = currentPositionInRankedCandidatesList;
 	}
 
-	public BallotState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	public final BallotState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		BallotState<CANDIDATE_TYPE> result = this;
 
 		CANDIDATE_TYPE preferredCandidate = result.getPreferredCandidate();
@@ -49,7 +49,7 @@ public final class BallotState<CANDIDATE_TYPE extends Candidate> {
 		return result;
 	}
 
-	public CANDIDATE_TYPE getPreferredCandidate() {
+	public final CANDIDATE_TYPE getPreferredCandidate() {
 		if (currentPositionInRankedCandidatesList >= rankedCandidates.size()) {
 			return null;
 		}
@@ -57,7 +57,7 @@ public final class BallotState<CANDIDATE_TYPE extends Candidate> {
 		return rankedCandidates.asList().get(currentPositionInRankedCandidatesList);
 	}
 
-	public BigFraction getVoteWeight() {
+	public final BigFraction getVoteWeight() {
 		return voteWeight;
 	}
 

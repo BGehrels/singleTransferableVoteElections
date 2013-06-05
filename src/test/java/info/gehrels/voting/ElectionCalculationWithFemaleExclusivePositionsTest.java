@@ -41,8 +41,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory = mock(
 		ElectionCalculationFactory.class);
-	private final STVElectionCalculation<GenderedCandidate> electionCalculationMock = mock(
-		STVElectionCalculation.class);
+	private final ElectionCalculation<GenderedCandidate> electionCalculationMock = mock(ElectionCalculation.class);
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener = mock(
 		ElectionCalculationWithFemaleExclusivePositionsListener.class);
 
@@ -92,7 +91,6 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenOnlyALesserNumberOfOpenPositionsAreAvailable() {
 		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
-
 
 		// given only two female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))

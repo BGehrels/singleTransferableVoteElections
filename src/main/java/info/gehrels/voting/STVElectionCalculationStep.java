@@ -33,7 +33,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(not(nullValue())));
 	}
 
-	public ElectionStepResult<CANDIDATE_TYPE> declareWinnerOrStrikeCandidate(BigFraction quorum,
+	public final ElectionStepResult<CANDIDATE_TYPE> declareWinnerOrStrikeCandidate(BigFraction quorum,
 	                                                         ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates,
 	                                                         VoteWeightRedistributor<CANDIDATE_TYPE> redistributor,
 	                                                         int numberOfElectedCandidates,

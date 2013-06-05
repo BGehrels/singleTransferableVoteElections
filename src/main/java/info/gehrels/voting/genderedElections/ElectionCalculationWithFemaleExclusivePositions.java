@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.ElectionCalculationFactory;
-import info.gehrels.voting.STVElectionCalculation;
 
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Sets.filter;
@@ -19,18 +19,20 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener;
 
 	// TODO: Validate, that Ballots without a female vote are invalid (are they?)
-	public ElectionCalculationWithFemaleExclusivePositions(ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory,
-	                                                       ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
+	public ElectionCalculationWithFemaleExclusivePositions(
+		ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory,
+		ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));
 		this.electionCalculationFactory = validateThat(electionCalculationFactory, is(notNullValue()));
 	}
 
-	public ElectionResult calculateElectionResult(Election<GenderedCandidate> election, ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
+	public ElectionResult calculateElectionResult(Election<GenderedCandidate> election,
+	                                              ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
 		validateThat(election, is(notNullValue()));
 		validateThat(ballots, is(notNullValue()));
 
-		STVElectionCalculation<GenderedCandidate> electionCalculation = electionCalculationFactory
-			.createElectionCalculation(election, ballots);
+		ElectionCalculation<GenderedCandidate> electionCalculation =
+			electionCalculationFactory.createElectionCalculation(election, ballots);
 
 		ImmutableSet<GenderedCandidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
 			election, electionCalculation);
@@ -41,8 +43,8 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		return new ElectionResult(electedFemaleCandidates, candidatesElectedInOpenRun);
 	}
 
-	private ImmutableSet<GenderedCandidate> calculateElectionResultForFemaleExclusivePositions(Election<GenderedCandidate> election,
-	                                                                                   STVElectionCalculation<GenderedCandidate> electionCalculation) {
+	private ImmutableSet<GenderedCandidate> calculateElectionResultForFemaleExclusivePositions(
+		Election<GenderedCandidate> election, ElectionCalculation<GenderedCandidate> electionCalculation) {
 		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
 		ImmutableSet<GenderedCandidate> femaleCandidates =
 			copyOf(
@@ -52,9 +54,10 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		                                     election.numberOfFemaleExclusivePositions);
 	}
 
-	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(Election<GenderedCandidate> election,
-	                                                                                      STVElectionCalculation<GenderedCandidate> electionCalculation,
-	                                                                                      ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
+	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
+		Election<GenderedCandidate> election,
+		ElectionCalculation<GenderedCandidate> electionCalculation,
+		ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
 		int numberOfElectableNotFemaleExclusivePositions =
 			max(
 				0,

@@ -9,7 +9,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VotesByCandidateCalculation {
+public final class VotesByCandidateCalculation {
 	static <CANDIDATE_TYPE extends Candidate> Map<CANDIDATE_TYPE, BigFraction> calculateVotesByCandidate(ImmutableSet<CANDIDATE_TYPE> candidates,
 	                                                             ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates) {
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateDraft = new HashMap<>();
