@@ -9,32 +9,32 @@ import static org.hamcrest.Matchers.sameInstance;
 
 public class CandidateStateTest {
 
-	public static final Candidate ARBITRARY_CANDIDATE = new Candidate("Adam", false);
+	public static final Candidate ARBITRARY_CANDIDATE = new Candidate("Adam");
 
 	@Test
 	public void hasNotALooserAndNotElectedAsInitialState() {
-		CandidateState initialState = new CandidateState(ARBITRARY_CANDIDATE);
+		CandidateState<?> initialState = new CandidateState<>(ARBITRARY_CANDIDATE);
 		assertThat(initialState.isLooser(), is(false));
 		assertThat(initialState.isElected(), is(false));
 	}
 
 	@Test
 	public void returnsCandidate() {
-		CandidateState state = new CandidateState(ARBITRARY_CANDIDATE);
+		CandidateState<Candidate> state = new CandidateState<>(ARBITRARY_CANDIDATE);
 		assertThat(state.getCandidate(), is(ARBITRARY_CANDIDATE));
 	}
 
 	@Test
 	public void isInitiallyHopefull() {
-		CandidateState state = new CandidateState(ARBITRARY_CANDIDATE);
+		CandidateState<?> state = new CandidateState<>(ARBITRARY_CANDIDATE);
 		assertThat(state.isHopeful(), is(true));
 	}
 
 
 	@Test
 	public void createsNewStateAsElectedCandidate() {
-		CandidateState initialState = new CandidateState(ARBITRARY_CANDIDATE);
-		CandidateState electedState = initialState.asElected();
+		CandidateState<Candidate> initialState = new CandidateState<>(ARBITRARY_CANDIDATE);
+		CandidateState<Candidate> electedState = initialState.asElected();
 
 		assertThat(electedState, is(not(sameInstance(initialState))));
 		assertThat(electedState.isElected(), is(true));
@@ -43,14 +43,14 @@ public class CandidateStateTest {
 
 	@Test
 	public void winnersAreNotHopful() {
-		CandidateState state = new CandidateState(ARBITRARY_CANDIDATE).asElected();
+		CandidateState<?> state = new CandidateState<>(ARBITRARY_CANDIDATE).asElected();
 		assertThat(state.isHopeful(), is(false));
 	}
 
 	@Test
 	public void createsNewStateAsLooserCandidate() {
-		CandidateState initialState = new CandidateState(ARBITRARY_CANDIDATE);
-		CandidateState looserState = initialState.asLooser();
+		CandidateState<Candidate> initialState = new CandidateState<>(ARBITRARY_CANDIDATE);
+		CandidateState<Candidate> looserState = initialState.asLooser();
 
 		assertThat(looserState, is(not(sameInstance(initialState))));
 		assertThat(looserState.isLooser(), is(true));
@@ -59,7 +59,7 @@ public class CandidateStateTest {
 
 	@Test
 	public void loosersAreNotHopeful() {
-		CandidateState state = new CandidateState(ARBITRARY_CANDIDATE).asLooser();
+		CandidateState<?> state = new CandidateState<>(ARBITRARY_CANDIDATE).asLooser();
 		assertThat(state.isHopeful(), is(false));
 	}
 

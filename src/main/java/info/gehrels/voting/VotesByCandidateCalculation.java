@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VotesByCandidateCalculation {
-	static Map<Candidate, BigFraction> calculateVotesByCandidate(ImmutableSet<Candidate> candidates,
-	                                                             ImmutableCollection<BallotState> ballotStates) {
-		Map<Candidate, BigFraction> votesByCandidateDraft = new HashMap<>();
-		for (BallotState ballotState : ballotStates) {
-			Candidate preferredHopefulCandidate = ballotState.getPreferredCandidate();
+	static <CANDIDATE_TYPE extends Candidate> Map<CANDIDATE_TYPE, BigFraction> calculateVotesByCandidate(ImmutableSet<CANDIDATE_TYPE> candidates,
+	                                                             ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates) {
+		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateDraft = new HashMap<>();
+		for (BallotState<CANDIDATE_TYPE> ballotState : ballotStates) {
+			CANDIDATE_TYPE preferredHopefulCandidate = ballotState.getPreferredCandidate();
 			if (preferredHopefulCandidate == null) {
 				continue;
 			}
@@ -27,8 +27,8 @@ public class VotesByCandidateCalculation {
 			}
 		}
 
-		Builder<Candidate, BigFraction> builder = ImmutableMap.builder();
-		for (Candidate candidate : candidates) {
+		Builder<CANDIDATE_TYPE, BigFraction> builder = ImmutableMap.builder();
+		for (CANDIDATE_TYPE candidate : candidates) {
 			BigFraction votes = votesByCandidateDraft.get(candidate);
 			builder.put(candidate, votes == null ? BigFraction.ZERO : votes);
 		}

@@ -11,14 +11,14 @@ import static org.hamcrest.Matchers.notNullValue;
  * An Election is defined by one or more Candidates running for an Office. It also defines, how many Candidates may at
  * most be successful.
  */
-public class Election {
+public class Election<CANDIDATE_TYPE extends Candidate> {
 	public final Office office;
 	public final int numberOfFemaleExclusivePositions;
 	public final int numberOfNotFemaleExclusivePositions;
-	public final ImmutableSet<Candidate> candidates;
+	public final ImmutableSet<CANDIDATE_TYPE> candidates;
 
 	public Election(Office office, int numberOfFemaleExclusivePositions, int numberOfNotFemaleExclusivePositions,
-	                ImmutableSet<Candidate> candidates) {
+	                ImmutableSet<CANDIDATE_TYPE> candidates) {
 		this.office = validateThat(office, is(notNullValue()));
 		this.numberOfFemaleExclusivePositions = validateThat(numberOfFemaleExclusivePositions,
 		                                                     is(greaterThanOrEqualTo(0)));

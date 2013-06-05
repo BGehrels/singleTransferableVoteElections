@@ -13,9 +13,9 @@ import static org.mockito.Mockito.verify;
 
 public class NotElectedBeforePredicateTest {
 
-	public static final Candidate ALICE = new Candidate("Alice", true);
-	public static final Candidate BOB = new Candidate("Bob", true);
-	public static final Candidate EVE = new Candidate("Eve", true);
+	public static final Candidate ALICE = new Candidate("Alice");
+	public static final Candidate BOB = new Candidate("Bob");
+	public static final Candidate EVE = new Candidate("Eve");
 	public static final ImmutableSet<Candidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
 	private final ElectionCalculationListener electionCalculationListener = mock(ElectionCalculationListener.class);
 	private final NotElectedBeforePredicate condition = new NotElectedBeforePredicate(ELECTED_CANDIDATES,

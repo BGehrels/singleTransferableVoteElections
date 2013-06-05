@@ -18,11 +18,11 @@ import static org.hamcrest.Matchers.is;
 
 public class VotesByCandidateCalculationTest {
 
-	public static final ImmutableList<BallotState> EMPTY_BALLOT_LIST = ImmutableList.of();
+	public static final ImmutableList<BallotState<Candidate>> EMPTY_BALLOT_LIST = ImmutableList.of();
 	public static final ImmutableSet<Candidate> EMPTY_CANDIDATE_SET = ImmutableSet.of();
-	public static final Candidate CANDIDATE_PETER = new Candidate("Peter", true);
-	public static final Candidate CANDIDATE_JOHN = new Candidate("John", false);
-	public static final Candidate CANDIDATE_MARTA = new Candidate("Marta", true);
+	public static final Candidate CANDIDATE_PETER = new Candidate("Peter");
+	public static final Candidate CANDIDATE_JOHN = new Candidate("John");
+	public static final Candidate CANDIDATE_MARTA = new Candidate("Marta");
 
 	public static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
 		.of(CANDIDATE_PETER, CANDIDATE_JOHN, CANDIDATE_MARTA);
@@ -84,7 +84,7 @@ public class VotesByCandidateCalculationTest {
 		));
 	}
 
-	private BallotState createBallotStateFor(Candidate... candidates) {
+	private BallotState<Candidate> createBallotStateFor(Candidate... candidates) {
 		return new BallotState(new Ballot(ImmutableSet.of(new ElectionCandidatePreference(
 			ELECTION, ImmutableSet.copyOf(candidates)))), ELECTION);
 	}

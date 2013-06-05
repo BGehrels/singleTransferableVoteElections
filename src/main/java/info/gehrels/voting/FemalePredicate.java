@@ -7,7 +7,7 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class FemalePredicate implements Predicate<Candidate> {
+public class FemalePredicate implements Predicate<GenderedCandidate> {
 
 	private final ElectionCalculationListener electionCalculationListener;
 
@@ -16,7 +16,7 @@ public class FemalePredicate implements Predicate<Candidate> {
 	}
 
 	@Override
-	public boolean apply(Candidate candidate) {
+	public boolean apply(GenderedCandidate candidate) {
 		if (candidate.isFemale) {
 			return true;
 		} else {

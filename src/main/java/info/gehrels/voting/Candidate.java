@@ -9,15 +9,13 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
  */
 public class Candidate {
     public final String name;
-    public final boolean isFemale;
 
-    public Candidate(String name, boolean female) {
+	public Candidate(String name) {
 	    this.name = validateThat(name, not(isEmptyOrNullString()));
-        this.isFemale = female;
     }
 
 	@Override
 	public String toString() {
-		return name + (isFemale ? " (♀)": "");
+		return this.name;
 	}
 }

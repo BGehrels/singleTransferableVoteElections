@@ -17,31 +17,34 @@ public class ElectionStepResultMatchers {
 		};
 	}
 
-	static Matcher<ElectionStepResult> withBallotStates(Matcher<? super ImmutableCollection<BallotState>> subMatcher) {
-		return new FeatureMatcher<ElectionStepResult, ImmutableCollection<BallotState>>(subMatcher,
-		                                                                                "with ballot states",
-		                                                                                "ballot states") {
+	static Matcher<ElectionStepResult<Candidate>> withBallotStates(
+		Matcher<? super ImmutableCollection<BallotState<Candidate>>> subMatcher) {
+		return new FeatureMatcher<ElectionStepResult<Candidate>, ImmutableCollection<BallotState<Candidate>>>(
+			subMatcher,
+			"with ballot states",
+			"ballot states") {
 
 			@Override
-			protected ImmutableCollection<BallotState> featureValueOf(ElectionStepResult electionStepResult) {
+			protected ImmutableCollection<BallotState<Candidate>> featureValueOf(
+				ElectionStepResult electionStepResult) {
 				return electionStepResult.newBallotStates;
 			}
 		};
 	}
 
-	static Matcher<ElectionStepResult> withCandidateStates(
-		final Matcher<CandidateStates> candidateStatesMatcher) {
-		return new FeatureMatcher<ElectionStepResult, CandidateStates>(candidateStatesMatcher, "with candidateStates",
-		                                                               "") {
+	static <CANDIDATE_TYPE> Matcher<ElectionStepResult<CANDIDATE_TYPE>> withCandidateStates(
+		final Matcher<CandidateStates<CANDIDATE_TYPE>> candidateStatesMatcher) {
+		return new FeatureMatcher<ElectionStepResult<CANDIDATE_TYPE>, CandidateStates<CANDIDATE_TYPE>>(candidateStatesMatcher, "with candidateStates",
+		                                                              "") {
 			@Override
-			protected CandidateStates featureValueOf(ElectionStepResult actual) {
+			protected CandidateStates<CANDIDATE_TYPE> featureValueOf(ElectionStepResult<CANDIDATE_TYPE> actual) {
 				return actual.newCandidateStates;
 			}
 		};
 	}
 
-	static Matcher<ElectionStepResult> anElectionStepResult(
-		final Matcher<ElectionStepResult> subMatcher) {
+	static <T extends Candidate> Matcher<ElectionStepResult<T>> anElectionStepResult(
+		final Matcher<ElectionStepResult<T>> subMatcher) {
 		return new DelegatingMatcher<>(subMatcher, "an election step result");
 	}
 }

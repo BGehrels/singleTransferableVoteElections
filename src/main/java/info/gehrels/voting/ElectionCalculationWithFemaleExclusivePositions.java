@@ -11,35 +11,36 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class ElectionCalculationWithFemaleExclusivePositions {
-	private final ElectionCalculationFactory electionCalculationFactory;
-	private final ElectionCalculationListener electionCalculationListener;
+	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory;
+	private final ElectionCalculationListener<GenderedCandidate> electionCalculationListener;
 
-	public ElectionCalculationWithFemaleExclusivePositions(ElectionCalculationFactory electionCalculationFactory,
-	                                                       ElectionCalculationListener electionCalculationListener) {
+	// TODO: Validate, that Ballots without a female vote are invalid (are they?)
+	public ElectionCalculationWithFemaleExclusivePositions(ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory,
+	                                                       ElectionCalculationListener<GenderedCandidate> electionCalculationListener) {
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));
 		this.electionCalculationFactory = validateThat(electionCalculationFactory, is(notNullValue()));
 	}
 
-	public ElectionResult calculateElectionResult(Election election, ImmutableCollection<Ballot> ballots) {
+	public ElectionResult calculateElectionResult(Election<GenderedCandidate> election, ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
 		validateThat(election, is(notNullValue()));
 		validateThat(ballots, is(notNullValue()));
 
-		STVElectionCalculation electionCalculation = electionCalculationFactory
+		STVElectionCalculation<GenderedCandidate> electionCalculation = electionCalculationFactory
 			.createElectionCalculation(election, ballots);
 
-		ImmutableSet<Candidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
+		ImmutableSet<GenderedCandidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
 			election, electionCalculation);
 
-		ImmutableSet<Candidate> candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
+		ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
 			election, electionCalculation, electedFemaleCandidates);
 
 		return new ElectionResult(electedFemaleCandidates, candidatesElectedInOpenRun);
 	}
 
-	private ImmutableSet<Candidate> calculateElectionResultForFemaleExclusivePositions(Election election,
-	                                                                                   STVElectionCalculation electionCalculation) {
+	private ImmutableSet<GenderedCandidate> calculateElectionResultForFemaleExclusivePositions(Election<GenderedCandidate> election,
+	                                                                                   STVElectionCalculation<GenderedCandidate> electionCalculation) {
 		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
-		ImmutableSet<Candidate> femaleCandidates =
+		ImmutableSet<GenderedCandidate> femaleCandidates =
 			copyOf(
 				filter(election.candidates, femalePredicate)
 			);
@@ -47,9 +48,9 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		                                     election.numberOfFemaleExclusivePositions);
 	}
 
-	private ImmutableSet<Candidate> calculateElectionResultForNonFemaleExclusivePositions(Election election,
-	                                                                                      STVElectionCalculation electionCalculation,
-	                                                                                      ImmutableSet<Candidate> electedFemaleCandidates) {
+	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(Election<GenderedCandidate> election,
+	                                                                                      STVElectionCalculation<GenderedCandidate> electionCalculation,
+	                                                                                      ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
 		int numberOfElectableNotFemaleExclusivePositions =
 			max(
 				0,
@@ -64,9 +65,9 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 			                                                           numberOfElectableNotFemaleExclusivePositions);
 		}
 
-		NotElectedBeforePredicate notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
+		NotElectedBeforePredicate<GenderedCandidate> notElectedBeforePredicate = new NotElectedBeforePredicate<>(electedFemaleCandidates,
 		                                                                                    electionCalculationListener);
-		ImmutableSet<Candidate> candidatesNotElectedBefore =
+		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
 			copyOf(
 				filter(election.candidates, notElectedBeforePredicate)
 			);
@@ -77,11 +78,11 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 
 
 	public static class ElectionResult {
-		public final ImmutableSet<Candidate> candidatesElectedInFemaleOnlyRun;
-		public final ImmutableSet<Candidate> candidatesElectedInOpenRun;
+		public final ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun;
+		public final ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun;
 
-		private ElectionResult(ImmutableSet<Candidate> candidatesElectedInFemaleOnlyRun,
-		                       ImmutableSet<Candidate> candidatesElectedInOpenRun) {
+		private ElectionResult(ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun,
+		                       ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun) {
 
 			this.candidatesElectedInFemaleOnlyRun = candidatesElectedInFemaleOnlyRun;
 			this.candidatesElectedInOpenRun = candidatesElectedInOpenRun;

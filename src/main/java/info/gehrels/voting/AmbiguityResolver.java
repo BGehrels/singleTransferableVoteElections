@@ -8,14 +8,14 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-public interface AmbiguityResolver {
-    AmbiguityResolverResult chooseOneOfMany(ImmutableSet<Candidate> bestCandidates);
+public interface AmbiguityResolver<CANDIDATE_TYPE extends Candidate> {
+    AmbiguityResolverResult<CANDIDATE_TYPE> chooseOneOfMany(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
 
-	class AmbiguityResolverResult {
-		public final Candidate choosenCandidate;
+	class AmbiguityResolverResult<CANDIDATE_TYPE extends Candidate> {
+		public final CANDIDATE_TYPE choosenCandidate;
 		public final String auditLog;
 
-		public AmbiguityResolverResult(Candidate choosenCandidate, String auditLog) {
+		public AmbiguityResolverResult(CANDIDATE_TYPE choosenCandidate, String auditLog) {
 			this.choosenCandidate = validateThat(choosenCandidate, is(not(nullValue())));
 			this.auditLog = validateThat(auditLog, not(isEmptyOrNullString()));
 		}

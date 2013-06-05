@@ -2,14 +2,13 @@ package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableCollection;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.apache.commons.math3.fraction.Fraction;
 
-public interface VoteWeightRedistributionMethod {
-	VoteWeightRedistributor redistributorFor();
+public interface VoteWeightRedistributionMethod<CANDIDATE_TYPE extends Candidate> {
+	VoteWeightRedistributor<CANDIDATE_TYPE> redistributorFor();
 
-	public interface VoteWeightRedistributor {
+	public interface VoteWeightRedistributor<CANDIDATE_TYPE> {
 
-		ImmutableCollection<BallotState> redistributeExceededVoteWeight(Candidate winner, BigFraction quorum,
-		                                                                ImmutableCollection<BallotState> ballotStates);
+		ImmutableCollection<BallotState<CANDIDATE_TYPE>> redistributeExceededVoteWeight(CANDIDATE_TYPE winner, BigFraction quorum,
+		                                                                ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates);
 	}
 }

@@ -7,7 +7,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import static info.gehrels.voting.VotesForCandidateCalculation.calculateVotesForCandidate;
 
-public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionMethod {
+public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributionMethod {
 	private final ElectionCalculationListener electionCalculationListener;
 
 	public WeightedInclusiveGregoryMethod(ElectionCalculationListener electionCalculationListener) {
@@ -15,24 +15,24 @@ public class WeightedInclusiveGregoryMethod implements VoteWeightRedistributionM
 	}
 
 	@Override
-	public VoteWeightRedistributor redistributorFor() {
-		return new VoteWeightRedistributor();
+	public VoteWeightRedistributor<CANDIDATE_TYPE> redistributorFor() {
+		return new VoteWeightRedistributor<>();
 	}
 
-	private class VoteWeightRedistributor implements VoteWeightRedistributionMethod.VoteWeightRedistributor {
+	private class VoteWeightRedistributor<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributionMethod.VoteWeightRedistributor<CANDIDATE_TYPE> {
 		@Override
-		public ImmutableList<BallotState> redistributeExceededVoteWeight(Candidate winner, BigFraction quorum,
-		                                                                       ImmutableCollection<BallotState> ballotStates) {
-			Builder<BallotState> resultBuilder = ImmutableList.builder();
+		public ImmutableList<BallotState<CANDIDATE_TYPE>> redistributeExceededVoteWeight(CANDIDATE_TYPE winner, BigFraction quorum,
+		                                                                       ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates) {
+			Builder<BallotState<CANDIDATE_TYPE>> resultBuilder = ImmutableList.builder();
 
 			BigFraction votesForCandidate = calculateVotesForCandidate(winner, ballotStates);
 			BigFraction excessiveVotes = votesForCandidate.subtract(quorum);
 			BigFraction excessiveFractionOfVoteWeight = excessiveVotes.divide(votesForCandidate);
 
-			for (BallotState ballotState : ballotStates) {
+			for (BallotState<CANDIDATE_TYPE> ballotState : ballotStates) {
 				if (ballotState.getPreferredCandidate() == winner) {
 					BigFraction newVoteWeight = ballotState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
-					BallotState newBallotState = ballotState.withVoteWeight(newVoteWeight);
+					BallotState<CANDIDATE_TYPE> newBallotState = ballotState.withVoteWeight(newVoteWeight);
 					electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
 					                                                    newBallotState.getBallotId(),
 					                                                    newBallotState.getVoteWeight());

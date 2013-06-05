@@ -6,35 +6,38 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Map;
 
-public interface ElectionCalculationListener {
+public interface ElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
 	void numberOfElectedPositions(int numberOfElectedCandidates, int numberOfSeatsToElect);
 
-	void electedCandidates(ImmutableSet<Candidate> electedCandidates);
+	void electedCandidates(ImmutableSet<CANDIDATE_TYPE> electedCandidates);
 
 	void candidateDropped(
-		Map<Candidate,BigFraction> votesByCandidateBeforeStriking, Candidate candidate, BigFraction weakestVoteCount,
-	                      Map<Candidate, BigFraction> votesByCandidateAfterStriking);
+		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateBeforeStriking, CANDIDATE_TYPE candidate,
+		BigFraction weakestVoteCount,
+		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking);
 
 	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight,
 	                             int ballotId, BigFraction voteWeight);
 
-	void voteWeightRedistributionCompleted(Map<Candidate, BigFraction> candidateDoubleMap);
+	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> candidateDoubleMap);
 
-	void delegatingToExternalAmbiguityResolution(ImmutableSet<Candidate> bestCandidates);
+	void delegatingToExternalAmbiguityResolution(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
 
-	void externalyResolvedAmbiguity(AmbiguityResolverResult winner);
+	void externalyResolvedAmbiguity(AmbiguityResolverResult<CANDIDATE_TYPE> winner);
 
-	void candidateIsElected(Candidate winner, BigFraction numberOfVotes, BigFraction quorum);
+	void candidateIsElected(CANDIDATE_TYPE winner, BigFraction numberOfVotes, BigFraction quorum);
 
 	void nobodyReachedTheQuorumYet(BigFraction quorum);
 
 	void noCandidatesAreLeft();
 
-	void calculationStarted(Election election, Map<Candidate, BigFraction> candidateDoubleMap);
+	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> candidateDoubleMap);
 
-	void candidateNotQualified(Candidate candidate, String reason);
+	void candidateNotQualified(CANDIDATE_TYPE candidate, String reason);
 
 	void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, BigFraction quorum);
 
-	void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats, int numberOfElectedFemaleExclusiveSeats, int numberOfOpenNonFemaleExclusiveSeats, int numberOfElectableNonFemaleExclusiveSeats);
+	void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats, int numberOfElectedFemaleExclusiveSeats,
+	                                    int numberOfOpenNonFemaleExclusiveSeats,
+	                                    int numberOfElectableNonFemaleExclusiveSeats);
 }

@@ -8,42 +8,42 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 public class BallotStateMatchers {
-	static Matcher<BallotState> withPreferredCandidate(Matcher<? super Candidate> subMatcher) {
-		return new FeatureMatcher<BallotState, Candidate>(subMatcher, "with preferred candidate",
+	static <CANDIDATE_TYPE extends Candidate> Matcher<BallotState<CANDIDATE_TYPE>> withPreferredCandidate(Matcher<? super CANDIDATE_TYPE> subMatcher) {
+		return new FeatureMatcher<BallotState<CANDIDATE_TYPE>, CANDIDATE_TYPE>(subMatcher, "with preferred candidate",
 		                                                  "prefered candidate") {
 			@Override
-			protected Candidate featureValueOf(BallotState actual) {
+			protected CANDIDATE_TYPE featureValueOf(BallotState<CANDIDATE_TYPE> actual) {
 				return actual.getPreferredCandidate();
 			}
 		};
 	}
 
-	static Matcher<BallotState> withVoteWeight(Matcher<? super BigFraction> bigFractionMatcher) {
-		return new FeatureMatcher<BallotState, BigFraction>(bigFractionMatcher, "with vote weight", "vote Weight") {
+	static Matcher<BallotState<?>> withVoteWeight(Matcher<? super BigFraction> bigFractionMatcher) {
+		return new FeatureMatcher<BallotState<?>, BigFraction>(bigFractionMatcher, "with vote weight", "vote Weight") {
 			@Override
-			protected BigFraction featureValueOf(BallotState actual) {
+			protected BigFraction featureValueOf(BallotState<?> actual) {
 				return actual.getVoteWeight();
 			}
 		};
 	}
 
-	static Matcher<BallotState> aBallotState(Matcher<? super BallotState> stateMatcher) {
+	static <T extends Candidate> Matcher<BallotState<T>> aBallotState(Matcher<BallotState<T>> stateMatcher) {
 		return new DelegatingMatcher<>(stateMatcher, "a ballot state");
 	}
 
-	static Matcher<BallotState> withVoteWeight(BigFraction voteWeight) {
-		return new FeatureMatcher<BallotState, BigFraction>(is(equalTo(voteWeight)), "with vote weight",
+	static Matcher<BallotState<?>> withVoteWeight(BigFraction voteWeight) {
+		return new FeatureMatcher<BallotState<?>, BigFraction>(is(equalTo(voteWeight)), "with vote weight",
 		                                                    "vote weight") {
 
 			@Override
-			protected BigFraction featureValueOf(BallotState ballotState) {
+			protected BigFraction featureValueOf(BallotState<?> ballotState) {
 				return ballotState.getVoteWeight();
 			}
 		};
 	}
 
-	static Matcher<BallotState> withBallotId(int ballotId) {
-		return new FeatureMatcher<BallotState, Integer>(is(ballotId), "with ballot id", "ballot id") {
+	static Matcher<BallotState<?>> withBallotId(int ballotId) {
+		return new FeatureMatcher<BallotState<?>, Integer>(is(ballotId), "with ballot id", "ballot id") {
 
 			@Override
 			protected Integer featureValueOf(BallotState ballotState) {

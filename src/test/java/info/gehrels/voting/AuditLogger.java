@@ -9,12 +9,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AuditLogger implements ElectionCalculationListener {
+public class AuditLogger implements ElectionCalculationListener<Candidate> {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, BigFraction quorum) {
-		LOGGER.info("Das Quorum liegt bei {} ({} Sitze, {} gültige Stimmen).", quorum.doubleValue(), numberOfSeats, numberOfValidBallots);
+		LOGGER.info("Das Quorum liegt bei {} ({} Sitze, {} gültige Stimmen).", quorum.doubleValue(), numberOfSeats,
+		            numberOfValidBallots);
 	}
 
 	@Override
@@ -22,7 +23,10 @@ public class AuditLogger implements ElectionCalculationListener {
 	                                           int numberOfElectedFemaleExclusiveSeats,
 	                                           int numberOfOpenNonFemaleExclusiveSeats,
 	                                           int numberOfElectableNonFemaleExclusiveSeats) {
-		LOGGER.info("Es wurden nur {} von {} Frauenplätzen besetzt. Daher können auch nur {} von {} offenen Plätzen gewählt werden.", numberOfElectedFemaleExclusiveSeats, numberOfOpenFemaleExclusiveSeats, numberOfElectableNonFemaleExclusiveSeats, numberOfOpenNonFemaleExclusiveSeats);
+		LOGGER.info(
+			"Es wurden nur {} von {} Frauenplätzen besetzt. Daher können auch nur {} von {} offenen Plätzen gewählt werden.",
+			numberOfElectedFemaleExclusiveSeats, numberOfOpenFemaleExclusiveSeats,
+			numberOfElectableNonFemaleExclusiveSeats, numberOfOpenNonFemaleExclusiveSeats);
 	}
 
 	@Override
@@ -45,19 +49,24 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void candidateDropped(Map<Candidate,BigFraction> votesByCandidateBeforeStriking, Candidate candidate,
-	                             BigFraction weakestVoteCount, Map<Candidate, BigFraction> votesByCandidateAfterStriking) {
-		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name, weakestVoteCount.doubleValue());
+	public  void candidateDropped(Map<Candidate, BigFraction> votesByCandidateBeforeStriking,
+	                              Candidate candidate, BigFraction weakestVoteCount,
+	                             Map<Candidate, BigFraction> votesByCandidateAfterStriking) {
+
+		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name,
+		            weakestVoteCount.doubleValue());
 		LOGGER.info("Neue Stimmverteilung:");
 		dumpVoteDistribution(votesByCandidateAfterStriking);
 	}
 
 	@Override
-	public void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, int ballotId, BigFraction voteWeight) {
+	public void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, int ballotId,
+	                                    BigFraction voteWeight) {
 		LOGGER.info(
 			"Es werden {} % der Stimmen weiterverteilt: "
 			+ "Stimmzettel {} hat nun ein verbleibendes Stimmgewicht von {} %.",
-			excessiveFractionOfVoteWeight.multiply(100).doubleValue(), ballotId, voteWeight.multiply(100).doubleValue());
+			excessiveFractionOfVoteWeight.multiply(100).doubleValue(), ballotId,
+			voteWeight.multiply(100).doubleValue());
 	}
 
 	@Override
@@ -85,7 +94,8 @@ public class AuditLogger implements ElectionCalculationListener {
 
 	@Override
 	public void nobodyReachedTheQuorumYet(BigFraction quorum) {
-		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum von {} Stimmen erreicht:", quorum.doubleValue());
+		LOGGER.info("Niemand von den verbleibenden Kandidierenden hat das Quorum von {} Stimmen erreicht:",
+		            quorum.doubleValue());
 	}
 
 	@Override
@@ -94,7 +104,7 @@ public class AuditLogger implements ElectionCalculationListener {
 	}
 
 	@Override
-	public void calculationStarted(Election election, Map<Candidate, BigFraction> voteDistribution) {
+	public void calculationStarted(Election<Candidate> election, Map<Candidate, BigFraction> voteDistribution) {
 		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:",
 		            election.office.name);
 		dumpVoteDistribution(voteDistribution);
@@ -105,9 +115,11 @@ public class AuditLogger implements ElectionCalculationListener {
 		LOGGER.info("{} kann in diesem Wahlgang nicht antreten, Grund: {}", candidate.name, reason);
 	}
 
-	private void dumpVoteDistribution(Map<Candidate, BigFraction> votesByCandidate) {
-		for (Entry<Candidate, BigFraction> candidateDoubleEntry : votesByCandidate.entrySet()) {
-			LOGGER.info("\t{}: {} Stimmen", candidateDoubleEntry.getKey().name, candidateDoubleEntry.getValue().doubleValue());
+	private <CANDIDATE_TYPE extends Candidate> void dumpVoteDistribution(
+		Map<CANDIDATE_TYPE, BigFraction> votesByCandidate) {
+		for (Entry<CANDIDATE_TYPE, BigFraction> candidateDoubleEntry : votesByCandidate.entrySet()) {
+			LOGGER.info("\t{}: {} Stimmen", candidateDoubleEntry.getKey().name,
+			            candidateDoubleEntry.getValue().doubleValue());
 		}
 	}
 }

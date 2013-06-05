@@ -7,13 +7,13 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public final class BallotState {
-	private final ImmutableList<Candidate> rankedCandidates;
+public final class BallotState<CANDIDATE_TYPE> {
+	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
 	private final int ballotId;
 	private final BigFraction voteWeight;
 	private final int currentPositionInRankedCandidatesList;
 
-	public BallotState(Ballot ballot, Election election) {
+	public BallotState(Ballot<CANDIDATE_TYPE> ballot, Election election) {
 		validateThat(ballot, is(notNullValue()));
 		validateThat(election, is(notNullValue()));
 
@@ -24,7 +24,7 @@ public final class BallotState {
 		currentPositionInRankedCandidatesList = 0;
 	}
 
-	private BallotState(int ballotId, ImmutableList<Candidate> rankedCandidates, BigFraction voteWeight,
+	private BallotState(int ballotId, ImmutableList<CANDIDATE_TYPE> rankedCandidates, BigFraction voteWeight,
 	                    int currentPositionInRankedCandidatesList) {
 		this.ballotId = ballotId;
 		this.rankedCandidates = rankedCandidates;
@@ -32,12 +32,12 @@ public final class BallotState {
 		this.currentPositionInRankedCandidatesList = currentPositionInRankedCandidatesList;
 	}
 
-	public BallotState withFirstHopefulCandidate(CandidateStates candidateStates) {
-		BallotState result = this;
+	public BallotState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
+		BallotState<CANDIDATE_TYPE> result = this;
 
-		Candidate preferredCandidate = result.getPreferredCandidate();
+		CANDIDATE_TYPE preferredCandidate = result.getPreferredCandidate();
 		while (preferredCandidate != null) {
-			CandidateState candidateState = candidateStates.getCandidateState(preferredCandidate);
+			CandidateState<CANDIDATE_TYPE> candidateState = candidateStates.getCandidateState(preferredCandidate);
 			if (candidateState != null && candidateState.isHopeful()) {
 				return result;
 			}
@@ -49,7 +49,7 @@ public final class BallotState {
 		return result;
 	}
 
-	public Candidate getPreferredCandidate() {
+	public CANDIDATE_TYPE getPreferredCandidate() {
 		if (currentPositionInRankedCandidatesList >= rankedCandidates.size()) {
 			return null;
 		}
@@ -61,12 +61,12 @@ public final class BallotState {
 		return voteWeight;
 	}
 
-	private BallotState withNextPreference() {
-		return new BallotState(ballotId, rankedCandidates, voteWeight, currentPositionInRankedCandidatesList + 1);
+	private BallotState<CANDIDATE_TYPE> withNextPreference() {
+		return new BallotState<>(ballotId, rankedCandidates, voteWeight, currentPositionInRankedCandidatesList + 1);
 	}
 
-	public BallotState withVoteWeight(BigFraction newVoteWeight) {
-		return new BallotState(ballotId, rankedCandidates, newVoteWeight, currentPositionInRankedCandidatesList);
+	public BallotState<CANDIDATE_TYPE> withVoteWeight(BigFraction newVoteWeight) {
+		return new BallotState<>(ballotId, rankedCandidates, newVoteWeight, currentPositionInRankedCandidatesList);
 	}
 
 	public int getBallotId() {

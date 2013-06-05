@@ -11,8 +11,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class FemalePredicateTest {
-	private static final Candidate ALICE = new Candidate("Alice", true);
-	private static final Candidate BOB = new Candidate("Bob", false);
+	private static final GenderedCandidate ALICE = new GenderedCandidate("Alice", true);
+	private static final GenderedCandidate BOB = new GenderedCandidate("Bob", false);
 	private final ElectionCalculationListener mock = mock(ElectionCalculationListener.class);
 	private final FemalePredicate condition = new FemalePredicate(mock);
 

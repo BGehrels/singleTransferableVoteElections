@@ -8,24 +8,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class CandidateStates implements Iterable<CandidateState> {
-	private final ImmutableMap<Candidate, CandidateState> candidateStates;
+public class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<CANDIDATE_TYPE>> {
+	private final ImmutableMap<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> candidateStates;
 
-	public CandidateStates(ImmutableSet<? extends Candidate> candidates) {
-		Builder<Candidate, CandidateState> candidateStates = ImmutableMap.builder();
-		for (Candidate candidate : candidates) {
-			candidateStates.put(candidate, new CandidateState(candidate));
+	public CandidateStates(ImmutableSet<CANDIDATE_TYPE> candidates) {
+		Builder<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> candidateStates = ImmutableMap.builder();
+		for (CANDIDATE_TYPE candidate : candidates) {
+			candidateStates.put(candidate, new CandidateState<>(candidate));
 		}
 		this.candidateStates = candidateStates.build();
 	}
 
-	private CandidateStates(ImmutableMap<Candidate, CandidateState> candidateStates) {
+	private CandidateStates(ImmutableMap<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> candidateStates) {
 		this.candidateStates = candidateStates;
 	}
 
-	public ImmutableSet<Candidate> getHopefulCandidates() {
-		ImmutableSet.Builder<Candidate> builder = ImmutableSet.builder();
-		for (Entry<Candidate, CandidateState> entry : candidateStates.entrySet()) {
+	public ImmutableSet<CANDIDATE_TYPE> getHopefulCandidates() {
+		ImmutableSet.Builder<CANDIDATE_TYPE> builder = ImmutableSet.builder();
+		for (Entry<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> entry : candidateStates.entrySet()) {
 			if (entry.getValue() != null && entry.getValue().isHopeful()) {
 				builder.add(entry.getValue().getCandidate());
 			}
@@ -34,22 +34,22 @@ public class CandidateStates implements Iterable<CandidateState> {
 		return builder.build();
 	}
 
-	public CandidateStates withElected(Candidate candidate) {
-		return new CandidateStates(
+	public CandidateStates<CANDIDATE_TYPE> withElected(CANDIDATE_TYPE candidate) {
+		return new CandidateStates<>(
 			mapWithChangedEntry(candidateStates, candidate, candidateStates.get(candidate).asElected()));
 	}
 
-	public CandidateStates withLooser(Candidate candidate) {
-		return new CandidateStates(
+	public CandidateStates<CANDIDATE_TYPE> withLooser(CANDIDATE_TYPE candidate) {
+		return new CandidateStates<>(
 			mapWithChangedEntry(candidateStates, candidate, candidateStates.get(candidate).asLooser()));
 	}
 
-	public CandidateState getCandidateState(Candidate candidate) {
+	public CandidateState<CANDIDATE_TYPE> getCandidateState(CANDIDATE_TYPE candidate) {
 		return candidateStates.get(candidate);
 	}
 
 	@Override
-	public Iterator<CandidateState> iterator() {
+	public Iterator<CandidateState<CANDIDATE_TYPE>> iterator() {
 		return candidateStates.values().iterator();
 	}
 

@@ -10,22 +10,22 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 public class BallotTest {
-	private static final Candidate CANDIDATE = new Candidate("Peter", true);
+	private static final Candidate CANDIDATE = new Candidate("Peter");
 	private static final Office OFFICE_1 = new Office("Office1");
 	private static final Office OFFICE_2 = new Office("Office2");
 
-	private static final Election ELECTION_1 = new Election(
+	private static final Election<Candidate> ELECTION_1 = new Election<>(
 		OFFICE_1, 1, 1, ImmutableSet.of(CANDIDATE));
-	private static final Election ELECTION_2 = new Election(
+	private static final Election<Candidate> ELECTION_2 = new Election<>(
 		OFFICE_2, 1, 1, ImmutableSet.of(CANDIDATE));
-	public static final ElectionCandidatePreference PREFERENCE_FOR_ELECTION_1 = new ElectionCandidatePreference(
+	public static final ElectionCandidatePreference<Candidate> PREFERENCE_FOR_ELECTION_1 = new ElectionCandidatePreference<>(
 		ELECTION_1, ImmutableSet.of(CANDIDATE));
 
 	@Test
 	public void returnsEmptyPreferenceIfBallotContainsNoDataForTheElection() {
-		ImmutableSet<ElectionCandidatePreference> preferenceOnlyForElection1
+		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
 			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot ballot = new Ballot(preferenceOnlyForElection1);
+		Ballot<Candidate> ballot = new Ballot<>(preferenceOnlyForElection1);
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_2), is(empty()));
 	}
@@ -33,9 +33,9 @@ public class BallotTest {
 
 	@Test
 	public void returnsElectionsPreferenceIfBallotContainsDataForThisElection() {
-		ImmutableSet<ElectionCandidatePreference> preferenceOnlyForElection1
+		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
 			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot ballot = new Ballot(preferenceOnlyForElection1);
+		Ballot<Candidate> ballot = new Ballot<>(preferenceOnlyForElection1);
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_1), contains(CANDIDATE));
 	}

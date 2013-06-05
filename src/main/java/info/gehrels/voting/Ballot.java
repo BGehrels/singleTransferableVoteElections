@@ -14,27 +14,27 @@ import static org.hamcrest.Matchers.notNullValue;
  * designated to one Election. In each of the areas, the voter may have expressed his preference between
  * one or more Candidates, represented by a ElectionCandidatePreference.
  */
-public class Ballot {
+public class Ballot<CANDIDATE_TYPE> {
     private static int ballotIdFactory = 0;
 
     public final int id;
-    public final ImmutableMap<Election, ImmutableSet<Candidate>> rankedCandidatesByElection;
+    public final ImmutableMap<Election, ImmutableSet<CANDIDATE_TYPE>> rankedCandidatesByElection;
 
-    public Ballot(ImmutableSet<ElectionCandidatePreference> rankedCandidatesByElection) {
+    public Ballot(ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
 	    validateThat(rankedCandidatesByElection, is(notNullValue()));
 
         this.id = ++ballotIdFactory;
-	    Builder<Election,ImmutableSet<Candidate>> builder = ImmutableMap.builder();
-	    for (ElectionCandidatePreference electionCandidatePreference : rankedCandidatesByElection) {
+	    Builder<Election,ImmutableSet<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
+	    for (ElectionCandidatePreference<CANDIDATE_TYPE> electionCandidatePreference : rankedCandidatesByElection) {
 		    builder.put(electionCandidatePreference.election, electionCandidatePreference.candidatePreference);
 	    }
 	    this.rankedCandidatesByElection = builder.build();
     }
 
-	public ImmutableSet<Candidate> getRankedCandidatesByElection(Election election) {
+	public ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election election) {
 		validateThat(election, is(notNullValue()));
 
-		ImmutableSet<Candidate> candidates = rankedCandidatesByElection.get(election);
+		ImmutableSet<CANDIDATE_TYPE> candidates = rankedCandidatesByElection.get(election);
 		if (candidates == null) {
 			// TODO: Is there a difference between not casting a vote and voting with a empty preference? It will make
 			// TODO: one in the algorithm, because the quorum is not met if too many peapole cast empty votes.
@@ -44,13 +44,13 @@ public class Ballot {
 		return candidates;
 	}
 
-	public static class ElectionCandidatePreference {
+	public static class ElectionCandidatePreference<CANDIDATE_TYPE> {
 		private final Election election;
-		private final ImmutableSet<Candidate> candidatePreference;
+		private final ImmutableSet<CANDIDATE_TYPE> candidatePreference;
 
-		public ElectionCandidatePreference(Election election, ImmutableSet<Candidate> candidatePreference) {
+		public ElectionCandidatePreference(Election election, ImmutableSet<CANDIDATE_TYPE> candidatePreference) {
 			this.election = election;
-			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.candidates));;
+			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.candidates));
 		}
 
 	}

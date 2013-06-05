@@ -21,19 +21,19 @@ import static org.mockito.Mockito.verify;
 
 public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
-	public static final Candidate FEMALE_CANDIDATE_1 = new Candidate("F", true);
-	public static final Candidate FEMALE_CANDIDATE_2 = new Candidate("G", true);
-	public static final Candidate CANDIDATE_E = new Candidate("A", false);
-	public static final Candidate CANDIDATE_F = new Candidate("B", false);
+	public static final GenderedCandidate FEMALE_CANDIDATE_1 = new GenderedCandidate("F", true);
+	public static final GenderedCandidate FEMALE_CANDIDATE_2 = new GenderedCandidate("G", true);
+	public static final GenderedCandidate CANDIDATE_E = new GenderedCandidate("A", false);
+	public static final GenderedCandidate CANDIDATE_F = new GenderedCandidate("B", false);
 
-	private static final ImmutableSet<Candidate> CANDIDATES = ImmutableSet.of(
+	private static final ImmutableSet<GenderedCandidate> CANDIDATES = ImmutableSet.of(
 		FEMALE_CANDIDATE_1,
 		FEMALE_CANDIDATE_2,
 		CANDIDATE_E,
 		CANDIDATE_F
 	);
 
-	private final ImmutableCollection<Ballot> ballots = ImmutableList.of(mock(Ballot.class));
+	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots = ImmutableList.of((Ballot<GenderedCandidate>) mock(Ballot.class));
 
 	private final ElectionCalculationFactory electionCalculationFactory = mock(ElectionCalculationFactory.class);
 	private final STVElectionCalculation electionCalculationMock = mock(STVElectionCalculation.class);
@@ -56,7 +56,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	public void allAndOnlyFemaleCandidatesQualifyForFemaleOnlyPositions() {
 		makeSureElectionCalculationDoesNotReturnNull();
 
-		Election election = new Election(OFFICE, 2, 0, CANDIDATES);
+		Election<GenderedCandidate> election = new Election<GenderedCandidate>(OFFICE, 2, 0, CANDIDATES);
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		Matcher<ImmutableSet<Candidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
@@ -66,7 +66,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void onlyNotElectedCanidatesQualifyForOpenPositions() {
-		Election election = new Election(OFFICE, 1, 2, CANDIDATES);
+		Election election = new Election<GenderedCandidate>(OFFICE, 1, 2, CANDIDATES);
 
 
 		// given FEMALE_CANDIDATE_1 has already been elected in the first any female exclusive run
@@ -84,7 +84,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenOnlyALesserNumberOfOpenPositionsAreAvailable() {
-		Election election = new Election(OFFICE, 3, 2, CANDIDATES);
+		Election election = new Election<>(OFFICE, 3, 2, CANDIDATES);
 
 
 		// given only two female positions have been elected in the first run

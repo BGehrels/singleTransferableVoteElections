@@ -1,16 +1,16 @@
 package info.gehrels.voting;
 
-final class CandidateState implements Cloneable {
-	private final Candidate candidate;
+final class CandidateState<CANDIDATE_TYPE> implements Cloneable {
+	private final CANDIDATE_TYPE candidate;
 	private boolean elected = false;
 	private boolean looser = false;
 
 
-	public CandidateState(Candidate candidate) {
+	public CandidateState(CANDIDATE_TYPE candidate) {
 		this.candidate = candidate;
 	}
 
-	public Candidate getCandidate() {
+	public CANDIDATE_TYPE getCandidate() {
 		return candidate;
 	}
 
@@ -26,22 +26,22 @@ final class CandidateState implements Cloneable {
 		return looser;
 	}
 
-	public CandidateState asElected() {
-		CandidateState result = this.clone();
+	public CandidateState<CANDIDATE_TYPE> asElected() {
+		CandidateState<CANDIDATE_TYPE> result = this.clone();
 		result.elected = true;
 		return result;
 	}
 
-	public CandidateState asLooser() {
-		CandidateState result = this.clone();
+	public CandidateState<CANDIDATE_TYPE> asLooser() {
+		CandidateState<CANDIDATE_TYPE> result = this.clone();
 		result.looser = true;
 		return result;
 	}
 
 	@Override
-	protected CandidateState clone()  {
+	protected CandidateState<CANDIDATE_TYPE> clone()  {
 		try {
-			return (CandidateState) super.clone();
+			return (CandidateState<CANDIDATE_TYPE>) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new IllegalStateException(e);
 		}

@@ -12,15 +12,15 @@ import static org.hamcrest.Matchers.is;
 
 public class VotesForCandidateCalculationTest {
 
-	public static final Candidate PIVOT_CANDIDATE = new Candidate("pivotCandidate", true);
-	public static final Candidate OTHER_CANDIDATE = new Candidate("otherCandidate", true);
-	public static final Election ELECTION = new Election(new Office("arbitraryOffice"), 1, 1,
+	public static final Candidate PIVOT_CANDIDATE = new Candidate("pivotCandidate");
+	public static final Candidate OTHER_CANDIDATE = new Candidate("otherCandidate");
+	public static final Election<Candidate> ELECTION = new Election<>(new Office("arbitraryOffice"), 1, 1,
 	                                                     ImmutableSet.of(PIVOT_CANDIDATE, OTHER_CANDIDATE));
 
 	@Test
 	public void candidateHasZeroVotesWhenThereAreNoBallots() {
 		BigFraction numberOfVotes = calculateVotesForCandidate(PIVOT_CANDIDATE,
-		                                                       ImmutableList.<BallotState>of());
+		                                                       ImmutableList.<BallotState<Candidate>>of());
 		assertThat(numberOfVotes, is(BigFraction.ZERO));
 	}
 
@@ -69,9 +69,9 @@ public class VotesForCandidateCalculationTest {
 		assertThat(numberOfVotes, is(new BigFraction(5,6)));
 	}
 
-	private BallotState ballotStatePreferring(Candidate candidate) {
-		return new BallotState(new Ballot(
-			ImmutableSet.of(new ElectionCandidatePreference(ELECTION, ImmutableSet.of(candidate)))),
+	private BallotState<Candidate> ballotStatePreferring(Candidate candidate) {
+		return new BallotState<>(new Ballot<>(
+			ImmutableSet.of(new ElectionCandidatePreference<>(ELECTION, ImmutableSet.of(candidate)))),
 		                       ELECTION);
 	}
 

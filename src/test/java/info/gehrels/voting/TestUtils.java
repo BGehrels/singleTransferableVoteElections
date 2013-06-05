@@ -6,21 +6,21 @@ import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 public class TestUtils {
 	public static final Office OFFICE = new Office("Example Office");
 
-	public static Ballot createBallot(String preferences, Election election) {
-		ImmutableSet<Candidate> candidates = election.candidates;
-		ImmutableSet.Builder<Candidate> preferenceBuilder = ImmutableSet.builder();
+	public static <T extends Candidate> Ballot<T> createBallot(String preferences, Election<T> election) {
+		ImmutableSet<T> candidates = election.candidates;
+		ImmutableSet.Builder<T> preferenceBuilder = ImmutableSet.builder();
 		for (int i = 0; i < preferences.length(); i++) {
 			char c = preferences.charAt(i);
 			preferenceBuilder.add(candidateByName("" + c, candidates));
 		}
 
-		ImmutableSet<Candidate> preference = preferenceBuilder.build();
-		ElectionCandidatePreference electionCandidatePreference = new ElectionCandidatePreference(election, preference);
-		return new Ballot(ImmutableSet.of(electionCandidatePreference));
+		ImmutableSet<T> preference = preferenceBuilder.build();
+		ElectionCandidatePreference<T> electionCandidatePreference = new ElectionCandidatePreference<T>(election, preference);
+		return new Ballot<T>(ImmutableSet.of(electionCandidatePreference));
 	}
 
-	private static Candidate candidateByName(String s, ImmutableSet<Candidate> candidates) {
-		for (Candidate candidate : candidates) {
+	private static <T extends Candidate> T candidateByName(String s, ImmutableSet<T> candidates) {
+		for (T candidate : candidates) {
 			if (candidate.name.equals(s)) {
 				return candidate;
 			}
@@ -29,10 +29,10 @@ public class TestUtils {
 		throw new IllegalArgumentException(s);
 	}
 
-	public static class JustTakeTheFirstOneAmbiguityResolver implements AmbiguityResolver {
+	public static class JustTakeTheFirstOneAmbiguityResolver<T extends Candidate> implements AmbiguityResolver<T> {
 		@Override
-		public AmbiguityResolverResult chooseOneOfMany(ImmutableSet<Candidate> bestCandidates) {
-			return new AmbiguityResolverResult(bestCandidates.iterator().next(),
+		public AmbiguityResolverResult<T> chooseOneOfMany(ImmutableSet <T> bestCandidates) {
+			return new AmbiguityResolverResult<>(bestCandidates.iterator().next(),
 			                                   "Habe ganz primitiv das erste Element der Menge genommen");
 		}
 

@@ -5,11 +5,11 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 public class CandidateStateMatchers {
-	static Matcher<CandidateStates> withLooser(final Candidate a) {
-		return new TypeSafeDiagnosingMatcher<CandidateStates>() {
+	static <CANDIDATE_TYPE extends Candidate> Matcher<CandidateStates<CANDIDATE_TYPE>> withLooser(final CANDIDATE_TYPE a) {
+		return new TypeSafeDiagnosingMatcher<CandidateStates<CANDIDATE_TYPE>>() {
 			@Override
-			protected boolean matchesSafely(CandidateStates candidateStates, Description description) {
-				CandidateState candidateState = candidateStates.getCandidateState(a);
+			protected boolean matchesSafely(CandidateStates<CANDIDATE_TYPE> candidateStates, Description description) {
+				CandidateState<CANDIDATE_TYPE> candidateState = candidateStates.getCandidateState(a);
 				if (candidateState == null) {
 					description.appendText("candidate ").appendValue(a).appendText(" had no state");
 					return false;
@@ -35,11 +35,11 @@ public class CandidateStateMatchers {
 		};
 	}
 
-	static Matcher<CandidateStates> withElectedCandidate(final Candidate a) {
-		return new TypeSafeDiagnosingMatcher<CandidateStates>() {
+	static <CANDIDATE_TYPE>  Matcher<CandidateStates<CANDIDATE_TYPE>> withElectedCandidate(final CANDIDATE_TYPE a) {
+		return new TypeSafeDiagnosingMatcher<CandidateStates<CANDIDATE_TYPE>>() {
 			@Override
-			protected boolean matchesSafely(CandidateStates candidateStates, Description description) {
-				CandidateState candidateState = candidateStates.getCandidateState(a);
+			protected boolean matchesSafely(CandidateStates<CANDIDATE_TYPE> candidateStates, Description description) {
+				CandidateState<CANDIDATE_TYPE> candidateState = candidateStates.getCandidateState(a);
 				if (candidateState == null) {
 					description.appendText("candidate ").appendValue(a).appendText(" had no state");
 					return false;
@@ -65,10 +65,10 @@ public class CandidateStateMatchers {
 		};
 	}
 
-	static Matcher<CandidateState> candidateStateFor(final Candidate candidate) {
-		return new TypeSafeDiagnosingMatcher<CandidateState>() {
+	static <CANDIDATE_TYPE> Matcher<CandidateState<CANDIDATE_TYPE>> candidateStateFor(final CANDIDATE_TYPE candidate) {
+		return new TypeSafeDiagnosingMatcher<CandidateState<CANDIDATE_TYPE>>() {
 			@Override
-			protected boolean matchesSafely(CandidateState candidateState, Description description) {
+			protected boolean matchesSafely(CandidateState<CANDIDATE_TYPE> candidateState, Description description) {
 				if (candidateState.getCandidate() != candidate) {
 					description.appendText("a candidate state for ").appendValue(candidateState);
 					return false;
