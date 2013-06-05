@@ -1,5 +1,8 @@
 package info.gehrels.voting;
 
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
+import info.gehrels.voting.genderedElections.FemalePredicate;
+import info.gehrels.voting.genderedElections.GenderedCandidate;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

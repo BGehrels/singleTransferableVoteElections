@@ -2,6 +2,8 @@ package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
+import info.gehrels.voting.genderedElections.GenderedCandidate;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class AuditLogger implements ElectionCalculationWithFemaleExclusivePositionsListener, ElectionCalculationListener<GenderedCandidate> {
+public class AuditLogger implements
+	ElectionCalculationWithFemaleExclusivePositionsListener, ElectionCalculationListener<GenderedCandidate> {
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	@Override

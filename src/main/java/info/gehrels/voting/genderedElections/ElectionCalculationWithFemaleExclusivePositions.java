@@ -1,7 +1,11 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Election;
+import info.gehrels.voting.ElectionCalculationFactory;
+import info.gehrels.voting.STVElectionCalculation;
 
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Sets.filter;

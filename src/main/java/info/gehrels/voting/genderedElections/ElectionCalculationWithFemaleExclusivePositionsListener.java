@@ -1,4 +1,4 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
 
 public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 

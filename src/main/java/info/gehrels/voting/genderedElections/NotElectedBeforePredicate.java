@@ -1,7 +1,8 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableCollection;
+import info.gehrels.voting.Candidate;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;

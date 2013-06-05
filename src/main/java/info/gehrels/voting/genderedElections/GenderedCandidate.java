@@ -1,4 +1,6 @@
-package info.gehrels.voting;
+package info.gehrels.voting.genderedElections;
+
+import info.gehrels.voting.Candidate;
 
 public class GenderedCandidate extends Candidate {
 	public final boolean isFemale;

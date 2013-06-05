@@ -1,6 +1,9 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
+import info.gehrels.voting.genderedElections.GenderedCandidate;
+import info.gehrels.voting.genderedElections.NotElectedBeforePredicate;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
