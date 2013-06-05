@@ -8,15 +8,15 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 
-public class DefaultElectionCalculationFactoryTest {
+public class STVElectionCalculationFactoryTest {
 	private final QuorumCalculation quorumCalculation = mock(QuorumCalculation.class);
 	private final ElectionCalculationListener<Candidate> electionCalculationListener = mock(ElectionCalculationListener.class);
 	private final AmbiguityResolver<Candidate> ambiguityResolver = mock(AmbiguityResolver.class);
 
 	@Test
 	public void returnsAElectionCalculationForQualifiedGroupInstance() {
-		DefaultElectionCalculationFactory<?> factoryUnderTest =
-			new DefaultElectionCalculationFactory<>(quorumCalculation, electionCalculationListener, ambiguityResolver);
+		STVElectionCalculationFactory<?> factoryUnderTest =
+			new STVElectionCalculationFactory<>(quorumCalculation, electionCalculationListener, ambiguityResolver);
 
 		STVElectionCalculation<?> electionCalculation = factoryUnderTest
 			.createElectionCalculation(mock(Election.class), mock(ImmutableCollection.class));

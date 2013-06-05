@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.AuditLogger;
 import info.gehrels.voting.Ballot;
-import info.gehrels.voting.DefaultElectionCalculationFactory;
+import info.gehrels.voting.STVElectionCalculationFactory;
 import info.gehrels.voting.DefaultQuorumCalculationImpl;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
@@ -83,7 +83,7 @@ public class MartinWilkesExampleIT {
 	@Test
 	public void exampleByMartinWilke() {
 		ElectionCalculationWithFemaleExclusivePositions electionCalculation = new ElectionCalculationWithFemaleExclusivePositions(
-			new DefaultElectionCalculationFactory<>(QUORUM_CALCULATION,
+			new STVElectionCalculationFactory<>(QUORUM_CALCULATION,
 			                                        auditLogger,
 			                                      AMBIGUITY_RESOLVER), auditLogger);
 		ElectionResult electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
