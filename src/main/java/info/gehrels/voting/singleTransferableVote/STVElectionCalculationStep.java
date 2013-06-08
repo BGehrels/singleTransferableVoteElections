@@ -123,7 +123,6 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 
 		CANDIDATE_TYPE weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
 
-		// TODO: Mehrdeutigkeiten bei Schwächsten Kandidaten extern auswählen lassen
 		candidateStates = candidateStates.withLooser(weakestCandidate);
 		ballotStates = createBallotStatesPointingAtNextHopefulCandidate(ballotStates, candidateStates);
 
