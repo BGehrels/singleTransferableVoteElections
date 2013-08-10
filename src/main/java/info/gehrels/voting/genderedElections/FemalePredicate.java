@@ -17,7 +17,7 @@ public class FemalePredicate implements Predicate<GenderedCandidate> {
 
 	@Override
 	public boolean apply(GenderedCandidate candidate) {
-		if (candidate.isFemale) {
+		if (candidate.isFemale()) {
 			return true;
 		} else {
 			electionCalculationListener.candidateNotQualified(candidate, "The candidate is not female.");
