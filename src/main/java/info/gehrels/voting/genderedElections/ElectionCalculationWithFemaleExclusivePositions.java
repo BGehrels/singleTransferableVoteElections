@@ -3,7 +3,6 @@ package info.gehrels.voting.genderedElections;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot;
-import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.ElectionCalculationFactory;
 
@@ -26,7 +25,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		this.electionCalculationFactory = validateThat(electionCalculationFactory, is(notNullValue()));
 	}
 
-	public ElectionResult calculateElectionResult(Election<GenderedCandidate> election,
+	public ElectionResult calculateElectionResult(GenderedElection election,
 	                                              ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
 		validateThat(election, is(notNullValue()));
 		validateThat(ballots, is(notNullValue()));
@@ -44,7 +43,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 	}
 
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForFemaleExclusivePositions(
-		Election<GenderedCandidate> election, ElectionCalculation<GenderedCandidate> electionCalculation) {
+		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation) {
 		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
 		ImmutableSet<GenderedCandidate> femaleCandidates =
 			copyOf(
@@ -55,8 +54,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 	}
 
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
-		Election<GenderedCandidate> election,
-		ElectionCalculation<GenderedCandidate> electionCalculation,
+		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation,
 		ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
 		int numberOfElectableNotFemaleExclusivePositions =
 			max(

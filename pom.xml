@@ -4,11 +4,13 @@
 
 	<groupId>info.gehrels.voting</groupId>
 	<artifactId>wigm</artifactId>
-	<version>1.0</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>wigm</name>
 	<url>http://maven.apache.org</url>
+
+	<!-- TODO: License festlegen -->
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

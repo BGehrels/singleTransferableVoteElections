@@ -37,7 +37,7 @@ public class Ballot<CANDIDATE_TYPE extends Candidate> {
 		ImmutableSet<CANDIDATE_TYPE> candidates = rankedCandidatesByElection.get(election);
 		if (candidates == null) {
 			// TODO: Is there a difference between not casting a vote and voting with a empty preference? It will make
-			// TODO: one in the algorithm, because the quorum is not met if too many peapole cast empty votes.
+			// TODO: one in the algorithm, because the quorum is not met if too many people cast empty votes.
 			return ImmutableSet.of();
 		}
 

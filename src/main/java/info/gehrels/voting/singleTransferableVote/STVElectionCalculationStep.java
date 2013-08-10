@@ -73,7 +73,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		}
 
 
-		// TODO: Ist ambiguity resolution hier überhaupt nötig?
+		// TODO: Ist ambiguity resolution hier überhaupt nötig? Was sagt eigentlich die Satzung zur Streichungsreihenfolge?
 		return chooseOneOutOfManyCandidates(copyOf(bestCandidates));
 	}
 

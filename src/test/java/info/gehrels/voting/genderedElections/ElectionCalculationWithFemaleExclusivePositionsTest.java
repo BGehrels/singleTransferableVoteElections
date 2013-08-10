@@ -7,9 +7,6 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.ElectionCalculationFactory;
-import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
-import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener;
-import info.gehrels.voting.genderedElections.GenderedCandidate;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +63,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 	public void allAndOnlyFemaleCandidatesQualifyForFemaleOnlyPositions() {
 		makeSureElectionCalculationDoesNotReturnNull();
 
-		Election<GenderedCandidate> election = new Election<>(OFFICE, 2, 0, CANDIDATES);
+		GenderedElection election = new GenderedElection(OFFICE, 2, 0, CANDIDATES);
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		Matcher<ImmutableSet<GenderedCandidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
@@ -76,7 +73,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void onlyNotElectedCanidatesQualifyForOpenPositions() {
-		Election<GenderedCandidate> election = new Election<>(OFFICE, 1, 2, CANDIDATES);
+		GenderedElection election = new GenderedElection(OFFICE, 1, 2, CANDIDATES);
 
 
 		// given FEMALE_CANDIDATE_1 has already been elected in the first any female exclusive run
@@ -94,7 +91,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenOnlyALesserNumberOfOpenPositionsAreAvailable() {
-		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
+		GenderedElection election = new GenderedElection(OFFICE, 3, 2, CANDIDATES);
 
 		// given only two female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
@@ -111,7 +108,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenItCanAlsoHappenThatNoMalePositionsCanBeElected() {
-		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
+		GenderedElection election = new GenderedElection(OFFICE, 3, 2, CANDIDATES);
 
 
 		// given only one female positions have been elected in the first run
@@ -129,7 +126,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void ifNotAllFemalePositionsHaveBeenFilledThenNumberOfMalePositionsMayNotBecomeNegative() {
-		Election<GenderedCandidate> election = new Election<>(OFFICE, 3, 2, CANDIDATES);
+		GenderedElection election = new GenderedElection(OFFICE, 3, 2, CANDIDATES);
 
 		// given no female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
@@ -146,7 +143,7 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	@Test
 	public void shouldReportIfNotAllNonFemaleExclusivePositionsCanBeElected() {
-		Election<GenderedCandidate> election = new Election<>(OFFICE, 1, 2, CANDIDATES);
+		GenderedElection election = new GenderedElection(OFFICE, 1, 2, CANDIDATES);
 
 		// given no female positions have been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))

@@ -5,8 +5,6 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.TestUtils;
-import info.gehrels.voting.singleTransferableVote.BallotState;
-import info.gehrels.voting.singleTransferableVote.CandidateStates;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -22,7 +20,7 @@ public class BallotStateTest {
 
 	public static final Candidate A = new Candidate("A");
 	public static final Candidate B = new Candidate("B");
-	public static final Election<Candidate> ELECTION = new Election<>(TestUtils.OFFICE, 1, 1, ImmutableSet.of(A, B));
+	public static final Election<Candidate> ELECTION = new Election<>(TestUtils.OFFICE, ImmutableSet.of(A, B));
 
 	@Test
 	public void returnsNewBallotStateWithSameValuesButUpdatedVoteWeight() {

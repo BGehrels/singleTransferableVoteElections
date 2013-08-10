@@ -5,13 +5,13 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
-import info.gehrels.voting.singleTransferableVote.STVElectionCalculationFactory;
-import info.gehrels.voting.Election;
+import info.gehrels.voting.TestUtils;
+import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
-import info.gehrels.voting.TestUtils;
-import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
+import info.gehrels.voting.genderedElections.GenderedElection;
+import info.gehrels.voting.singleTransferableVote.STVElectionCalculationFactory;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
@@ -20,7 +20,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public class MartinWilkesExampleIT {
-	public static final NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum QUORUM_CALCULATION = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(new BigFraction(1, 1000));
+	public static final NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum QUORUM_CALCULATION = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(
+		new BigFraction(1, 1000));
 	public static final AmbiguityResolver<GenderedCandidate> AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver<>();
 
 	public static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);
@@ -36,7 +37,7 @@ public class MartinWilkesExampleIT {
 
 	private ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
 	private AuditLogger auditLogger;
-	private Election<GenderedCandidate> election;
+	private GenderedElection election;
 
 	public MartinWilkesExampleIT() {
 		ImmutableSet<GenderedCandidate> candidateSet = ImmutableSet.of(
@@ -51,7 +52,7 @@ public class MartinWilkesExampleIT {
 			CANDIDATE_I,
 			CANDIDATE_J);
 
-		election = new Election<>(TestUtils.OFFICE, 0, 4, candidateSet);
+		election = new GenderedElection(TestUtils.OFFICE, 0, 4, candidateSet);
 
 		ballotImmutableList = ImmutableList.of(
 			createBallot("ABDC", election),
@@ -83,8 +84,8 @@ public class MartinWilkesExampleIT {
 	public void exampleByMartinWilke() {
 		ElectionCalculationWithFemaleExclusivePositions electionCalculation = new ElectionCalculationWithFemaleExclusivePositions(
 			new STVElectionCalculationFactory<>(QUORUM_CALCULATION,
-			                                        auditLogger,
-			                                      AMBIGUITY_RESOLVER), auditLogger);
+			                                    auditLogger,
+			                                    AMBIGUITY_RESOLVER), auditLogger);
 		ElectionResult electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
 
 		assertThat(electionResult.candidatesElectedInOpenRun,

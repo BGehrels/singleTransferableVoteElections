@@ -7,7 +7,6 @@ import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.Office;
-import info.gehrels.voting.singleTransferableVote.BallotState;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
@@ -19,8 +18,8 @@ public class VotesForCandidateCalculationTest {
 
 	public static final Candidate PIVOT_CANDIDATE = new Candidate("pivotCandidate");
 	public static final Candidate OTHER_CANDIDATE = new Candidate("otherCandidate");
-	public static final Election<Candidate> ELECTION = new Election<>(new Office("arbitraryOffice"), 1, 1,
-	                                                     ImmutableSet.of(PIVOT_CANDIDATE, OTHER_CANDIDATE));
+	public static final Election<Candidate> ELECTION = new Election<>(new Office("arbitraryOffice"),
+	                                                                  ImmutableSet.of(PIVOT_CANDIDATE, OTHER_CANDIDATE));
 
 	@Test
 	public void candidateHasZeroVotesWhenThereAreNoBallots() {

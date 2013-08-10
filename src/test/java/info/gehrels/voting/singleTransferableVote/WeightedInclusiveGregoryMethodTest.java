@@ -8,8 +8,6 @@ import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
-import info.gehrels.voting.singleTransferableVote.BallotState;
-import info.gehrels.voting.singleTransferableVote.WeightedInclusiveGregoryMethod;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -32,8 +30,8 @@ public class WeightedInclusiveGregoryMethodTest {
 	public static final Candidate CANDIDATE_C = new Candidate("C");
 	public static final Candidate CANDIDATE_D = new Candidate("D");
 
-	public static final Election<Candidate> ELECTION = new Election<>(OFFICE, 0, 1,
-	                                                     ImmutableSet
+	public static final Election<Candidate> ELECTION = new Election<>(OFFICE,
+	                                                                  ImmutableSet
 		                                                     .of(CANDIDATE_A, CANDIDATE_B, CANDIDATE_C, CANDIDATE_D));
 	public static final Ballot<Candidate> BALLOT_ABCD = createBallot("ABCD", ELECTION);
 	public static final Ballot<Candidate> BALLOT_ACD = createBallot("ACD", ELECTION);

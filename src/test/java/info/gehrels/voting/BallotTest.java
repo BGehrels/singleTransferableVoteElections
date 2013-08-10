@@ -15,9 +15,9 @@ public class BallotTest {
 	private static final Office OFFICE_2 = new Office("Office2");
 
 	private static final Election<Candidate> ELECTION_1 = new Election<>(
-		OFFICE_1, 1, 1, ImmutableSet.of(CANDIDATE));
+		OFFICE_1, ImmutableSet.of(CANDIDATE));
 	private static final Election<Candidate> ELECTION_2 = new Election<>(
-		OFFICE_2, 1, 1, ImmutableSet.of(CANDIDATE));
+		OFFICE_2, ImmutableSet.of(CANDIDATE));
 	public static final ElectionCandidatePreference<Candidate> PREFERENCE_FOR_ELECTION_1 = new ElectionCandidatePreference<>(
 		ELECTION_1, ImmutableSet.of(CANDIDATE));
 

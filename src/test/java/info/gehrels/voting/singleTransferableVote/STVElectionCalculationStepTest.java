@@ -57,7 +57,7 @@ public class STVElectionCalculationStepTest {
 	public static final Candidate H = new Candidate("H");
 
 	public static final Office OFFICE = new Office("arbitraryOffice");
-	public static final Election<Candidate> ELECTION = new Election<>(OFFICE, 1, 2, ImmutableSet.of(A, B, C, G, H));
+	public static final Election<Candidate> ELECTION = new Election<>(OFFICE, ImmutableSet.of(A, B, C, G, H));
 
 	public static final Ballot<Candidate> BC_BALLOT = createBallot("BC");
 	public static final Ballot<Candidate> ACGH_BALLOT = createBallot("ACGH");
