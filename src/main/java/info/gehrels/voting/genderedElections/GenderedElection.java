@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 
 public class GenderedElection extends Election<GenderedCandidate> {
-	public final int numberOfFemaleExclusivePositions;
-	public final int numberOfNotFemaleExclusivePositions;
+	private final int numberOfFemaleExclusivePositions;
+	private final int numberOfNotFemaleExclusivePositions;
 
 	public GenderedElection(String officeName, int numberOfFemaleExclusivePositions,
 	                        int numberOfNotFemaleExclusivePositions, ImmutableSet<GenderedCandidate> candidates) {
@@ -18,5 +18,13 @@ public class GenderedElection extends Election<GenderedCandidate> {
 		                                                     is(greaterThanOrEqualTo(0)));
 		this.numberOfNotFemaleExclusivePositions = validateThat(numberOfNotFemaleExclusivePositions,
 		                                                        is(greaterThanOrEqualTo(0)));
+	}
+
+	public int getNumberOfFemaleExclusivePositions() {
+		return numberOfFemaleExclusivePositions;
+	}
+
+	public int getNumberOfNotFemaleExclusivePositions() {
+		return numberOfNotFemaleExclusivePositions;
 	}
 }

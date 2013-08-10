@@ -50,7 +50,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 				filter(election.getCandidates(), femalePredicate)
 			);
 		return electionCalculation.calculate(femaleCandidates,
-		                                     election.numberOfFemaleExclusivePositions);
+		                                     election.getNumberOfFemaleExclusivePositions());
 	}
 
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
@@ -59,14 +59,15 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		int numberOfElectableNotFemaleExclusivePositions =
 			max(
 				0,
-				election.numberOfNotFemaleExclusivePositions
-				- (election.numberOfFemaleExclusivePositions - electedFemaleCandidates.size())
+				election.getNumberOfNotFemaleExclusivePositions()
+				- (election.getNumberOfFemaleExclusivePositions() - electedFemaleCandidates.size())
 			);
 
-		if (numberOfElectableNotFemaleExclusivePositions < election.numberOfNotFemaleExclusivePositions) {
-			electionCalculationListener.reducedNonFemaleExclusiveSeats(election.numberOfFemaleExclusivePositions,
+		if (numberOfElectableNotFemaleExclusivePositions < election.getNumberOfNotFemaleExclusivePositions()) {
+			electionCalculationListener.reducedNonFemaleExclusiveSeats(election.getNumberOfFemaleExclusivePositions(),
 			                                                           electedFemaleCandidates.size(),
-			                                                           election.numberOfNotFemaleExclusivePositions,
+			                                                           election
+				                                                           .getNumberOfNotFemaleExclusivePositions(),
 			                                                           numberOfElectableNotFemaleExclusivePositions);
 		}
 
