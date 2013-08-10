@@ -9,7 +9,6 @@ import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.MapMatchers;
-import info.gehrels.voting.Office;
 import info.gehrels.voting.TestUtils;
 import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
@@ -56,8 +55,7 @@ public class STVElectionCalculationStepTest {
 	public static final Candidate G = new Candidate("G");
 	public static final Candidate H = new Candidate("H");
 
-	public static final Office OFFICE = new Office("arbitraryOffice");
-	public static final Election<Candidate> ELECTION = new Election<>(OFFICE, ImmutableSet.of(A, B, C, G, H));
+	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice", ImmutableSet.of(A, B, C, G, H));
 
 	public static final Ballot<Candidate> BC_BALLOT = createBallot("BC");
 	public static final Ballot<Candidate> ACGH_BALLOT = createBallot("ACGH");

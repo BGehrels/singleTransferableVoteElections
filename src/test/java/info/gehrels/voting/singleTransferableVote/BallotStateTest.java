@@ -20,7 +20,7 @@ public class BallotStateTest {
 
 	public static final Candidate A = new Candidate("A");
 	public static final Candidate B = new Candidate("B");
-	public static final Election<Candidate> ELECTION = new Election<>(TestUtils.OFFICE, ImmutableSet.of(A, B));
+	public static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(A, B));
 
 	@Test
 	public void returnsNewBallotStateWithSameValuesButUpdatedVoteWeight() {

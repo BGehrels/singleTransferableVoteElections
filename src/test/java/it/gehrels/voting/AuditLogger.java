@@ -55,8 +55,8 @@ public class AuditLogger implements
 	}
 
 	@Override
-	public  void candidateDropped(Map<GenderedCandidate, BigFraction> votesByCandidateBeforeStriking,
-	                              GenderedCandidate candidate, BigFraction weakestVoteCount,
+	public void candidateDropped(Map<GenderedCandidate, BigFraction> votesByCandidateBeforeStriking,
+	                             GenderedCandidate candidate, BigFraction weakestVoteCount,
 	                             Map<GenderedCandidate, BigFraction> votesByCandidateAfterStriking) {
 
 		LOGGER.info("{} hat mit {} Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name,
@@ -110,9 +110,9 @@ public class AuditLogger implements
 	}
 
 	@Override
-	public void calculationStarted(Election<GenderedCandidate> election, Map<GenderedCandidate, BigFraction> voteDistribution) {
-		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:",
-		            election.office.name);
+	public void calculationStarted(Election<GenderedCandidate> election,
+	                               Map<GenderedCandidate, BigFraction> voteDistribution) {
+		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:", election.officeName);
 		dumpVoteDistribution(voteDistribution);
 	}
 

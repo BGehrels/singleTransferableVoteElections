@@ -6,7 +6,6 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
-import info.gehrels.voting.Office;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
@@ -31,7 +30,7 @@ public class VotesByCandidateCalculationTest {
 	public static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
 		.of(CANDIDATE_PETER, CANDIDATE_JOHN, CANDIDATE_MARTA);
 
-	public static final Election<Candidate> ELECTION = new Election<>(new Office("arbitraryOfiice"), ALL_CANDIDATES);
+	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOfiice", ALL_CANDIDATES);
 
 	@Test
 	public void returnsEmtpyMapIfCandidateSetAndBallotStatesAreEmpty() {

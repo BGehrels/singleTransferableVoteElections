@@ -11,13 +11,9 @@ import static org.hamcrest.Matchers.is;
 
 public class BallotTest {
 	private static final Candidate CANDIDATE = new Candidate("Peter");
-	private static final Office OFFICE_1 = new Office("Office1");
-	private static final Office OFFICE_2 = new Office("Office2");
 
-	private static final Election<Candidate> ELECTION_1 = new Election<>(
-		OFFICE_1, ImmutableSet.of(CANDIDATE));
-	private static final Election<Candidate> ELECTION_2 = new Election<>(
-		OFFICE_2, ImmutableSet.of(CANDIDATE));
+	private static final Election<Candidate> ELECTION_1 = new Election<>("Office1", ImmutableSet.of(CANDIDATE));
+	private static final Election<Candidate> ELECTION_2 = new Election<>("Office2", ImmutableSet.of(CANDIDATE));
 	public static final ElectionCandidatePreference<Candidate> PREFERENCE_FOR_ELECTION_1 = new ElectionCandidatePreference<>(
 		ELECTION_1, ImmutableSet.of(CANDIDATE));
 

@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
-import info.gehrels.voting.TestUtils;
 import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
@@ -52,7 +51,7 @@ public class MartinWilkesExampleIT {
 			CANDIDATE_I,
 			CANDIDATE_J);
 
-		election = new GenderedElection(TestUtils.OFFICE, 0, 4, candidateSet);
+		election = new GenderedElection("Example Office", 0, 4, candidateSet);
 
 		ballotImmutableList = ImmutableList.of(
 			createBallot("ABDC", election),

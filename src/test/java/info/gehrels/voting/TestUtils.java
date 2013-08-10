@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 
 public class TestUtils {
-	public static final Office OFFICE = new Office("Example Office");
-
 	public static <T extends Candidate> Ballot<T> createBallot(String preferences, Election<T> election) {
 		ImmutableSet<T> candidates = election.candidates;
 		ImmutableSet.Builder<T> preferenceBuilder = ImmutableSet.builder();

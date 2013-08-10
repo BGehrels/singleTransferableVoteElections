@@ -12,11 +12,10 @@ import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
+import static info.gehrels.voting.TestUtils.createBallot;
 import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.aBallotState;
 import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withBallotId;
 import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withVoteWeight;
-import static info.gehrels.voting.TestUtils.OFFICE;
-import static info.gehrels.voting.TestUtils.createBallot;
 import static org.apache.commons.math3.fraction.BigFraction.ONE_HALF;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -30,7 +29,7 @@ public class WeightedInclusiveGregoryMethodTest {
 	public static final Candidate CANDIDATE_C = new Candidate("C");
 	public static final Candidate CANDIDATE_D = new Candidate("D");
 
-	public static final Election<Candidate> ELECTION = new Election<>(OFFICE,
+	public static final Election<Candidate> ELECTION = new Election<>("Example Office",
 	                                                                  ImmutableSet
 		                                                     .of(CANDIDATE_A, CANDIDATE_B, CANDIDATE_C, CANDIDATE_D));
 	public static final Ballot<Candidate> BALLOT_ABCD = createBallot("ABCD", ELECTION);
