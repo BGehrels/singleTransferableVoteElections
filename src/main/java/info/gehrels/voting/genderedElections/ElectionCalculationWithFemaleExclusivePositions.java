@@ -47,7 +47,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
 		ImmutableSet<GenderedCandidate> femaleCandidates =
 			copyOf(
-				filter(election.candidates, femalePredicate)
+				filter(election.getCandidates(), femalePredicate)
 			);
 		return electionCalculation.calculate(femaleCandidates,
 		                                     election.numberOfFemaleExclusivePositions);
@@ -74,7 +74,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		                                                                                    electionCalculationListener);
 		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
 			copyOf(
-				filter(election.candidates, notElectedBeforePredicate)
+				filter(election.getCandidates(), notElectedBeforePredicate)
 			);
 
 		return electionCalculation

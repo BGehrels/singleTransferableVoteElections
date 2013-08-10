@@ -13,11 +13,19 @@ import static org.hamcrest.Matchers.notNullValue;
  * most be successful.
  */
 public class Election<CANDIDATE_TYPE extends Candidate> {
-	public final String officeName;
-	public final ImmutableSet<CANDIDATE_TYPE> candidates;
+	private final String officeName;
+	private final ImmutableSet<CANDIDATE_TYPE> candidates;
 
 	public Election(String officeName, ImmutableSet<CANDIDATE_TYPE> candidates) {
 		this.officeName = validateThat(officeName, not(isEmptyString()));
 		this.candidates = validateThat(candidates, is(notNullValue()));
+	}
+
+	public String getOfficeName() {
+		return officeName;
+	}
+
+	public ImmutableSet<CANDIDATE_TYPE> getCandidates() {
+		return candidates;
 	}
 }

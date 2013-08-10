@@ -5,7 +5,7 @@ import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 
 public class TestUtils {
 	public static <T extends Candidate> Ballot<T> createBallot(String preferences, Election<T> election) {
-		ImmutableSet<T> candidates = election.candidates;
+		ImmutableSet<T> candidates = election.getCandidates();
 		ImmutableSet.Builder<T> preferenceBuilder = ImmutableSet.builder();
 		for (int i = 0; i < preferences.length(); i++) {
 			char c = preferences.charAt(i);

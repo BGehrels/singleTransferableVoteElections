@@ -50,7 +50,7 @@ public class Ballot<CANDIDATE_TYPE extends Candidate> {
 
 		public ElectionCandidatePreference(Election<CANDIDATE_TYPE> election, ImmutableSet<CANDIDATE_TYPE> candidatePreference) {
 			this.election = election;
-			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.candidates));
+			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.getCandidates()));
 		}
 
 	}

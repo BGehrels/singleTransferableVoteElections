@@ -112,7 +112,7 @@ public class AuditLogger implements
 	@Override
 	public void calculationStarted(Election<GenderedCandidate> election,
 	                               Map<GenderedCandidate, BigFraction> voteDistribution) {
-		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:", election.officeName);
+		LOGGER.info("Beginne die Berechnung für Wahl „{}“. Ausgangsstimmverteilung:", election.getOfficeName());
 		dumpVoteDistribution(voteDistribution);
 	}
 
