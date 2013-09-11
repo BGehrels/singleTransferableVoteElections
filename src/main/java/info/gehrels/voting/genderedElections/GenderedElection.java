@@ -7,7 +7,7 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 
-public class GenderedElection extends Election<GenderedCandidate> {
+public final class GenderedElection extends Election<GenderedCandidate> {
 	private final int numberOfFemaleExclusivePositions;
 	private final int numberOfNotFemaleExclusivePositions;
 

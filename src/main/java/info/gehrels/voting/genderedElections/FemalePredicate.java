@@ -7,11 +7,11 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class FemalePredicate implements Predicate<GenderedCandidate> {
+final class FemalePredicate implements Predicate<GenderedCandidate> {
 
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener;
 
-	public FemalePredicate(ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
+	FemalePredicate(ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));
 	}
 

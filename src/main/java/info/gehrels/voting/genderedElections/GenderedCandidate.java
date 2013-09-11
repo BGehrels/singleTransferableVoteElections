@@ -2,12 +2,12 @@ package info.gehrels.voting.genderedElections;
 
 import info.gehrels.voting.Candidate;
 
-public class GenderedCandidate extends Candidate {
+public final class GenderedCandidate extends Candidate {
 	private final boolean isFemale;
 
-	public GenderedCandidate(String name, boolean female) {
+	public GenderedCandidate(String name, boolean isFemale) {
 		super(name);
-		this.isFemale = female;
+		this.isFemale = isFemale;
 	}
 
 	public boolean isFemale() {
@@ -16,6 +16,6 @@ public class GenderedCandidate extends Candidate {
 
 	@Override
 	public String toString() {
-		return name + (isFemale() ? " (♀)": "");
+		return name + (isFemale ? " (♀)": "");
 	}
 }

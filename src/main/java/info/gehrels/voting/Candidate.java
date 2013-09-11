@@ -14,12 +14,12 @@ public class Candidate {
 	    this.name = validateThat(name, not(isEmptyOrNullString()));
     }
 
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
 	@Override
 	public String toString() {
-		return this.name;
+		return name;
 	}
 }

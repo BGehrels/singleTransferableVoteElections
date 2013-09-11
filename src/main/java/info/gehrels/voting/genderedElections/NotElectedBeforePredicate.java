@@ -8,11 +8,11 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class NotElectedBeforePredicate implements Predicate<GenderedCandidate> {
+final class NotElectedBeforePredicate implements Predicate<GenderedCandidate> {
 	private final ImmutableCollection<? extends Candidate> alreadyElectedCandidates;
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener;
 
-	public NotElectedBeforePredicate(ImmutableCollection<GenderedCandidate> alreadyElectedCandidates,
+	NotElectedBeforePredicate(ImmutableCollection<GenderedCandidate> alreadyElectedCandidates,
 	                                 ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
 		this.alreadyElectedCandidates = validateThat(alreadyElectedCandidates, is(notNullValue()));
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));

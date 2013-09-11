@@ -21,11 +21,11 @@ public class Election<CANDIDATE_TYPE extends Candidate> {
 		this.candidates = validateThat(candidates, is(notNullValue()));
 	}
 
-	public String getOfficeName() {
+	public final String getOfficeName() {
 		return officeName;
 	}
 
-	public ImmutableSet<CANDIDATE_TYPE> getCandidates() {
+	public final ImmutableSet<CANDIDATE_TYPE> getCandidates() {
 		return candidates;
 	}
 }
