@@ -6,8 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
-import info.gehrels.voting.ElectionCalculationListener;
-import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -44,7 +42,7 @@ public class WeightedInclusiveGregoryMethodTest {
 		new BallotState<>(BALLOT_NO_VOTES, ELECTION)
 	);
 
-	private ElectionCalculationListener<Candidate> mock = mock(ElectionCalculationListener.class);
+	private STVElectionCalculationListener<Candidate> mock = mock(STVElectionCalculationListener.class);
 	private WeightedInclusiveGregoryMethod<Candidate> weightedInclusiveGregoryMethod = new WeightedInclusiveGregoryMethod<>(mock);
 
 	@Test

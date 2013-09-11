@@ -1,5 +1,6 @@
 package info.gehrels.voting.genderedElections;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot;
@@ -13,7 +14,7 @@ import static java.lang.Math.max;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class ElectionCalculationWithFemaleExclusivePositions {
+public final class ElectionCalculationWithFemaleExclusivePositions {
 	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory;
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener;
 
@@ -25,7 +26,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		this.electionCalculationFactory = validateThat(electionCalculationFactory, is(notNullValue()));
 	}
 
-	public ElectionResult calculateElectionResult(GenderedElection election,
+	public Result calculateElectionResult(GenderedElection election,
 	                                              ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
 		validateThat(election, is(notNullValue()));
 		validateThat(ballots, is(notNullValue()));
@@ -39,12 +40,12 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 		ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
 			election, electionCalculation, electedFemaleCandidates);
 
-		return new ElectionResult(electedFemaleCandidates, candidatesElectedInOpenRun);
+		return new Result(electedFemaleCandidates, candidatesElectedInOpenRun);
 	}
 
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForFemaleExclusivePositions(
 		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation) {
-		FemalePredicate femalePredicate = new FemalePredicate(electionCalculationListener);
+		Predicate<GenderedCandidate> femalePredicate = new FemalePredicate(electionCalculationListener);
 		ImmutableSet<GenderedCandidate> femaleCandidates =
 			copyOf(
 				filter(election.getCandidates(), femalePredicate)
@@ -71,7 +72,7 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 			                                                           numberOfElectableNotFemaleExclusivePositions);
 		}
 
-		NotElectedBeforePredicate notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
+		Predicate<GenderedCandidate> notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
 		                                                                                    electionCalculationListener);
 		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
 			copyOf(
@@ -83,16 +84,23 @@ public class ElectionCalculationWithFemaleExclusivePositions {
 	}
 
 
-	public static class ElectionResult {
-		public final ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun;
-		public final ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun;
+	public static final class Result {
+		private final ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun;
+		private final ImmutableSet<GenderedCandidate> candidatesElectedInNonFemaleOnlyRun;
 
-		private ElectionResult(ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun,
-		                       ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun) {
+		Result(ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun,
+		       ImmutableSet<GenderedCandidate> candidatesElectedInNonFemaleOnlyRun) {
 
 			this.candidatesElectedInFemaleOnlyRun = candidatesElectedInFemaleOnlyRun;
-			this.candidatesElectedInOpenRun = candidatesElectedInOpenRun;
+			this.candidatesElectedInNonFemaleOnlyRun = candidatesElectedInNonFemaleOnlyRun;
+		}
+
+		public ImmutableSet<GenderedCandidate> getCandidatesElectedInFemaleOnlyRun() {
+			return candidatesElectedInFemaleOnlyRun;
+		}
+
+		public ImmutableSet<GenderedCandidate> getCandidatesElectedInNonFemaleOnlyRun() {
+			return candidatesElectedInNonFemaleOnlyRun;
 		}
 	}
-
 }

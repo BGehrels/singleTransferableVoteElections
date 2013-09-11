@@ -9,14 +9,12 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculation;
-import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.QuorumCalculation;
-import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import static com.google.common.collect.Collections2.transform;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
+
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -25,15 +23,16 @@ import static org.hamcrest.Matchers.nullValue;
 public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements ElectionCalculation<CANDIDATE_TYPE> {
 	private final ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots;
 	private final QuorumCalculation quorumCalculation;
-	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
+	private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final Election<CANDIDATE_TYPE> election;
 	private final VoteWeightRedistributionMethod<CANDIDATE_TYPE> voteWeightRedistributionMethod;
 	private final STVElectionCalculationStep<CANDIDATE_TYPE> electionStep;
 
 	public STVElectionCalculation(ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots,
 	                              QuorumCalculation quorumCalculation,
-	                              ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
-	                              Election<CANDIDATE_TYPE> election, AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver,
+	                              STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
+	                              Election<CANDIDATE_TYPE> election,
+	                              AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver,
 	                              VoteWeightRedistributionMethod<CANDIDATE_TYPE> redistributionMethod) {
 		this.ballots = validateThat(ballots, is(not(nullValue())));
 		this.quorumCalculation = validateThat(quorumCalculation, is(not(nullValue())));
@@ -41,14 +40,14 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		this.voteWeightRedistributionMethod = validateThat(redistributionMethod, is(not(nullValue())));
 		this.electionStep = new STVElectionCalculationStep<>(
 			validateThat(electionCalculationListener, is(not(nullValue()))),
-		    validateThat(ambiguityResolver, is(not(nullValue())))
+			validateThat(ambiguityResolver, is(not(nullValue())))
 		);
 		this.electionCalculationListener = electionCalculationListener;
 	}
 
 	@Override
-	public final ImmutableSet<CANDIDATE_TYPE> calculate(
-		ImmutableSet<CANDIDATE_TYPE> qualifiedCandidates, int numberOfSeats) {
+	public final ImmutableSet<CANDIDATE_TYPE> calculate(ImmutableSet<CANDIDATE_TYPE> qualifiedCandidates,
+	                                                    int numberOfSeats) {
 		validateThat(qualifiedCandidates, is(not(nullValue())));
 		validateThat(numberOfSeats, is(greaterThanOrEqualTo(0)));
 
@@ -61,20 +60,19 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		CandidateStates<CANDIDATE_TYPE> candidateStates = new CandidateStates<>(qualifiedCandidates);
 		ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates = constructBallotStates(candidateStates);
 
-		int numberOfElectedCandidates = 0;
-
 		electionCalculationListener
 			.calculationStarted(election,
 			                    VotesByCandidateCalculation
 				                    .calculateVotesByCandidate(candidateStates.getHopefulCandidates(),
 				                                               ballotStates));
 
+		int numberOfElectedCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {
-			ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep.declareWinnerOrStrikeCandidate(quorum,
-			                                                                                    ballotStates,
-			                                                                                    redistributor,
-			                                                                                    numberOfElectedCandidates,
-			                                                                                    candidateStates);
+			STVElectionCalculationStep.ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep.declareWinnerOrStrikeCandidate(quorum,
+			                                                                                                    ballotStates,
+			                                                                                                    redistributor,
+			                                                                                                    numberOfElectedCandidates,
+			                                                                                                    candidateStates);
 			candidateStates = electionStepResult.newCandidateStates;
 			ballotStates = electionStepResult.newBallotStates;
 			numberOfElectedCandidates = electionStepResult.newNumberOfElectedCandidates;
@@ -85,7 +83,8 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		return electedCandidates;
 	}
 
-	private ImmutableCollection<BallotState<CANDIDATE_TYPE>> constructBallotStates(final CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	private ImmutableCollection<BallotState<CANDIDATE_TYPE>> constructBallotStates(
+		final CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		ImmutableList.Builder<BallotState<CANDIDATE_TYPE>> builder = ImmutableList.builder();
 		return builder.addAll(transform(ballots, new Function<Ballot<CANDIDATE_TYPE>, BallotState<CANDIDATE_TYPE>>() {
 			@Override

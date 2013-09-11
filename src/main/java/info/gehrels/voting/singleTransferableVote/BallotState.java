@@ -1,5 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
@@ -16,11 +17,11 @@ final class BallotState<CANDIDATE_TYPE extends Candidate> {
 	private final BigFraction voteWeight;
 	private final int currentPositionInRankedCandidatesList;
 
-	public BallotState(Ballot<CANDIDATE_TYPE> ballot, Election<CANDIDATE_TYPE> election) {
+	BallotState(Ballot<CANDIDATE_TYPE> ballot, Election<CANDIDATE_TYPE> election) {
 		validateThat(ballot, is(notNullValue()));
 		validateThat(election, is(notNullValue()));
 
-		this.ballotId = ballot.id;
+		ballotId = ballot.id;
 		rankedCandidates = ballot.getRankedCandidatesByElection(election).asList();
 
 		voteWeight = BigFraction.ONE;
@@ -35,13 +36,13 @@ final class BallotState<CANDIDATE_TYPE extends Candidate> {
 		this.currentPositionInRankedCandidatesList = currentPositionInRankedCandidatesList;
 	}
 
-	public final BallotState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	public BallotState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		BallotState<CANDIDATE_TYPE> result = this;
 
-		CANDIDATE_TYPE preferredCandidate = result.getPreferredCandidate();
-		while (preferredCandidate != null) {
-			CandidateState<CANDIDATE_TYPE> candidateState = candidateStates.getCandidateState(preferredCandidate);
-			if (candidateState != null && candidateState.isHopeful()) {
+		Optional<CANDIDATE_TYPE> preferredCandidate = result.getPreferredCandidate();
+		while (preferredCandidate.isPresent()) {
+			CandidateState<CANDIDATE_TYPE> candidateState = candidateStates.getCandidateState(preferredCandidate.get());
+			if ((candidateState != null) && candidateState.isHopeful()) {
 				return result;
 			}
 
@@ -52,15 +53,15 @@ final class BallotState<CANDIDATE_TYPE extends Candidate> {
 		return result;
 	}
 
-	public final CANDIDATE_TYPE getPreferredCandidate() {
+	public Optional<CANDIDATE_TYPE> getPreferredCandidate() {
 		if (currentPositionInRankedCandidatesList >= rankedCandidates.size()) {
-			return null;
+			return Optional.absent();
 		}
 
-		return rankedCandidates.asList().get(currentPositionInRankedCandidatesList);
+		return Optional.of(rankedCandidates.asList().get(currentPositionInRankedCandidatesList));
 	}
 
-	public final BigFraction getVoteWeight() {
+	public BigFraction getVoteWeight() {
 		return voteWeight;
 	}
 
@@ -78,6 +79,6 @@ final class BallotState<CANDIDATE_TYPE extends Candidate> {
 
 	@Override
 	public String toString() {
-		return "BallotState<" + this.ballotId + "; preferred: " + this.getPreferredCandidate() + "; " + this.getVoteWeight() + ">";
+		return "BallotState<" + ballotId + "; preferred: " + getPreferredCandidate() + "; " + voteWeight + ">";
 	}
 }

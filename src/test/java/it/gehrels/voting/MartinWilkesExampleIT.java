@@ -7,12 +7,15 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
 import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
-import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions.ElectionResult;
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions.Result;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
 import info.gehrels.voting.genderedElections.GenderedElection;
+import info.gehrels.voting.genderedElections.StringBuilderBackedElectionCalculationWithFemaleExclusivePositionsListener;
 import info.gehrels.voting.singleTransferableVote.STVElectionCalculationFactory;
+import info.gehrels.voting.singleTransferableVote.StringBuilderBackedSTVElectionCalculationListener;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import static info.gehrels.voting.TestUtils.createBallot;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,7 +38,6 @@ public class MartinWilkesExampleIT {
 	public static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
 
 	private ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
-	private AuditLogger auditLogger;
 	private GenderedElection election;
 
 	public MartinWilkesExampleIT() {
@@ -75,20 +77,25 @@ public class MartinWilkesExampleIT {
 			createBallot("IJF", election),
 			createBallot("IJH", election),
 			createBallot("JIHFE", election));
-
-		auditLogger = new AuditLogger();
 	}
 
 	@Test
 	public void exampleByMartinWilke() {
-		ElectionCalculationWithFemaleExclusivePositions electionCalculation = new ElectionCalculationWithFemaleExclusivePositions(
-			new STVElectionCalculationFactory<>(QUORUM_CALCULATION,
-			                                    auditLogger,
-			                                    AMBIGUITY_RESOLVER), auditLogger);
-		ElectionResult electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
+		StringBuilder builder = new StringBuilder();
+		StringBuilderBackedSTVElectionCalculationListener<GenderedCandidate> listener =
+			new StringBuilderBackedSTVElectionCalculationListener<>(builder);
+		StringBuilderBackedElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener =
+			new StringBuilderBackedElectionCalculationWithFemaleExclusivePositionsListener(builder);
 
-		assertThat(electionResult.candidatesElectedInOpenRun,
+		ElectionCalculationWithFemaleExclusivePositions electionCalculation = new ElectionCalculationWithFemaleExclusivePositions(
+			new STVElectionCalculationFactory<>(QUORUM_CALCULATION, listener, AMBIGUITY_RESOLVER),
+			electionCalculationListener);
+
+		Result electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
+
+		assertThat(electionResult.getCandidatesElectedInNonFemaleOnlyRun(),
 		           containsInAnyOrder(CANDIDATE_C, CANDIDATE_E, CANDIDATE_F, CANDIDATE_I));
+		LoggerFactory.getLogger(MartinWilkesExampleIT.class).info(builder.toString());
 	}
 
 

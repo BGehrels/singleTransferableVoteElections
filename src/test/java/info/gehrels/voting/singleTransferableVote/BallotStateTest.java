@@ -16,11 +16,12 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
-public class BallotStateTest {
+public final class BallotStateTest {
 
-	public static final Candidate A = new Candidate("A");
-	public static final Candidate B = new Candidate("B");
-	public static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(A, B));
+	public static final Candidate CANDIDATE_A = new Candidate("A");
+	public static final Candidate CANDIDATE_B = new Candidate("B");
+	public static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A,
+	                                                                                                    CANDIDATE_B));
 
 	@Test
 	public void returnsNewBallotStateWithSameValuesButUpdatedVoteWeight() {
@@ -40,7 +41,7 @@ public class BallotStateTest {
 	public void moveToNextHopefulCandidateReturnsStateWithNullPreferenceIfNoCandidatesWereMarkedOnTheBallot() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("", ELECTION);
 		BallotState<Candidate> resultingBallotState = new BallotState<>(ballot, ELECTION)
-			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(A)));
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A)));
 		assertThat(resultingBallotState.getPreferredCandidate(), is(nullValue()));
 	}
 
@@ -56,7 +57,9 @@ public class BallotStateTest {
 	public void moveToNextHopefulCandidateReturnsStateWithNullPreferenceIfRemainingMarkedCandidatesAreNotHopefull() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		BallotState<Candidate> resultingBallotState = new BallotState<>(ballot, ELECTION)
-			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(A,B)).withElected(A).withLooser(B));
+			.withFirstHopefulCandidate(
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
+					CANDIDATE_B));
 		assertThat(resultingBallotState.getPreferredCandidate(), is(nullValue()));
 	}
 
@@ -64,16 +67,17 @@ public class BallotStateTest {
 	public void moveToNextHopefulCandidateReturnsSameStateIfCurrentCandidateIsStillHopeful() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		BallotState<Candidate> resultingBallotState = new BallotState<>(ballot, ELECTION)
-			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(A,B)));
-		assertThat(resultingBallotState.getPreferredCandidate(), is(A));
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)));
+		assertThat(resultingBallotState.getPreferredCandidate().orNull(), is(CANDIDATE_A));
 	}
 
 	@Test
 	public void moveToNextHopefulCandidateReturnsStateWithNextHopefulPreferenceIfCurrentPreferenceIsNotHopeful() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		BallotState<Candidate> resultingBallotState = new BallotState<>(ballot, ELECTION)
-			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(A,B)).withLooser(A));
-		assertThat(resultingBallotState.getPreferredCandidate(), is(B));
+			.withFirstHopefulCandidate(
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLooser(CANDIDATE_A));
+		assertThat(resultingBallotState.getPreferredCandidate().orNull(), is(CANDIDATE_B));
 	}
 
 }

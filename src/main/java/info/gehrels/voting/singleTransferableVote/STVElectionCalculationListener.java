@@ -1,12 +1,14 @@
-package info.gehrels.voting;
+package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
+import info.gehrels.voting.Candidate;
+import info.gehrels.voting.Election;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Map;
 
-public interface ElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
+public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
 	void numberOfElectedPositions(int numberOfElectedCandidates, int numberOfSeatsToElect);
 
 	void electedCandidates(ImmutableSet<CANDIDATE_TYPE> electedCandidates);
@@ -19,11 +21,11 @@ public interface ElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
 	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight,
 	                             int ballotId, BigFraction voteWeight);
 
-	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> candidateDoubleMap);
+	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
 	void delegatingToExternalAmbiguityResolution(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
 
-	void externalyResolvedAmbiguity(AmbiguityResolverResult<CANDIDATE_TYPE> winner);
+	void externalyResolvedAmbiguity(AmbiguityResolverResult<CANDIDATE_TYPE> ambiguityResolverResult);
 
 	void candidateIsElected(CANDIDATE_TYPE winner, BigFraction numberOfVotes, BigFraction quorum);
 
@@ -31,7 +33,7 @@ public interface ElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
 
 	void noCandidatesAreLeft();
 
-	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> candidateDoubleMap);
+	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
 	void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, BigFraction quorum);
 }

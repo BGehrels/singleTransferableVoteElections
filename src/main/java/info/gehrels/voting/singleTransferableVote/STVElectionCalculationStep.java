@@ -6,8 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.Candidate;
-import info.gehrels.voting.ElectionCalculationListener;
-import info.gehrels.voting.singleTransferableVote.VoteWeightRedistributionMethod.VoteWeightRedistributor;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
@@ -18,17 +16,17 @@ import java.util.Map.Entry;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Lists.newArrayList;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 
-	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
+	private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver;
 
-	public STVElectionCalculationStep(ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
+	public STVElectionCalculationStep(STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
 	                                  AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver) {
 		this.ambiguityResolver = validateThat(ambiguityResolver, is(not(nullValue())));
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(not(nullValue())));
@@ -65,7 +63,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			if (votesForCandidate.getValue().compareTo(quorum) >= 0) {
 				if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate) > 0) {
 					numberOfVotesOfBestCandidate = votesForCandidate.getValue();
-					bestCandidates = new ArrayList<>(asList(votesForCandidate.getKey()));
+					bestCandidates = new ArrayList<>(singletonList(votesForCandidate.getKey()));
 				} else if (votesForCandidate.getValue().equals(numberOfVotesOfBestCandidate)) {
 					bestCandidates.add(votesForCandidate.getKey());
 				}
@@ -145,7 +143,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
 			if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate) < 0) {
 				numberOfVotesOfBestCandidate = votesForCandidate.getValue();
-				weakestCandidates = new ArrayList<>(asList(votesForCandidate.getKey()));
+				weakestCandidates = new ArrayList<>(singletonList(votesForCandidate.getKey()));
 			} else if (votesForCandidate.getValue().equals(numberOfVotesOfBestCandidate)) {
 				weakestCandidates.add(votesForCandidate.getKey());
 			}
@@ -166,11 +164,12 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	private CANDIDATE_TYPE chooseOneOutOfManyCandidates(ImmutableSet<CANDIDATE_TYPE> candidates) {
-		CANDIDATE_TYPE winner = null;
-
 		if (candidates.size() == 1) {
 			return candidates.iterator().next();
-		} else if (candidates.size() > 1) {
+		}
+
+		CANDIDATE_TYPE winner = null;
+		if (candidates.size() > 1) {
 			electionCalculationListener.delegatingToExternalAmbiguityResolution(candidates);
 			AmbiguityResolverResult<CANDIDATE_TYPE> ambiguityResolverResult = ambiguityResolver
 				.chooseOneOfMany(candidates);
@@ -181,27 +180,28 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		return winner;
 	}
 
-	public static class ElectionStepResult<CANDIDATE_TYPE extends Candidate> {
-		public final CandidateStates<CANDIDATE_TYPE> newCandidateStates;
-		public final ImmutableCollection<BallotState<CANDIDATE_TYPE>> newBallotStates;
-		public final int newNumberOfElectedCandidates;
-
-		public ElectionStepResult(ImmutableCollection<BallotState<CANDIDATE_TYPE>> newBallotStates, int newNumberOfElectedCandidates,
-		                          CandidateStates<CANDIDATE_TYPE> candidateStates) {
-			this.newCandidateStates = candidateStates;
-			this.newBallotStates = newBallotStates;
-			this.newNumberOfElectedCandidates = newNumberOfElectedCandidates;
-		}
-	}
-
 	private class State<CANDIDATE_TYPE extends Candidate> {
 		private final CandidateStates<CANDIDATE_TYPE> candidateStates;
 		private final ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates;
 
-		public State(CandidateStates<CANDIDATE_TYPE> candidateStates,
-		             ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates) {
+		private State(CandidateStates<CANDIDATE_TYPE> candidateStates,
+		              ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates) {
 			this.candidateStates = candidateStates;
 			this.ballotStates = ballotStates;
+		}
+	}
+
+	public static class ElectionStepResult<CANDIDATE_TYPE extends Candidate> {
+		final CandidateStates<CANDIDATE_TYPE> newCandidateStates;
+		final ImmutableCollection<BallotState<CANDIDATE_TYPE>> newBallotStates;
+		final int newNumberOfElectedCandidates;
+
+		ElectionStepResult(ImmutableCollection<BallotState<CANDIDATE_TYPE>> newBallotStates,
+		                          int newNumberOfElectedCandidates,
+		                          CandidateStates<CANDIDATE_TYPE> candidateStates) {
+			this.newCandidateStates = candidateStates;
+			this.newBallotStates = newBallotStates;
+			this.newNumberOfElectedCandidates = newNumberOfElectedCandidates;
 		}
 	}
 }

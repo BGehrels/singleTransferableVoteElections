@@ -2,7 +2,6 @@ package info.gehrels.voting.singleTransferableVote;
 
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.DelegatingMatcher;
-import info.gehrels.voting.singleTransferableVote.BallotState;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -10,13 +9,16 @@ import org.hamcrest.Matcher;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class BallotStateMatchers {
+public final class BallotStateMatchers {
+	private BallotStateMatchers() {
+	}
+
 	static <CANDIDATE_TYPE extends Candidate> Matcher<BallotState<CANDIDATE_TYPE>> withPreferredCandidate(Matcher<? super CANDIDATE_TYPE> subMatcher) {
 		return new FeatureMatcher<BallotState<CANDIDATE_TYPE>, CANDIDATE_TYPE>(subMatcher, "with preferred candidate",
 		                                                  "prefered candidate") {
 			@Override
 			protected CANDIDATE_TYPE featureValueOf(BallotState<CANDIDATE_TYPE> actual) {
-				return actual.getPreferredCandidate();
+				return actual.getPreferredCandidate().orNull();
 			}
 		};
 	}

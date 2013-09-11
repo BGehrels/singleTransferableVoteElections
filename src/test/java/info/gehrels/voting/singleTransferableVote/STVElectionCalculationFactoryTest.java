@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
-import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.QuorumCalculation;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import static org.mockito.Mockito.mock;
 
 public class STVElectionCalculationFactoryTest {
 	private final QuorumCalculation quorumCalculation = mock(QuorumCalculation.class);
-	private final ElectionCalculationListener<Candidate> electionCalculationListener = mock(ElectionCalculationListener.class);
+	private final STVElectionCalculationListener<Candidate> electionCalculationListener = mock(STVElectionCalculationListener.class);
 	private final AmbiguityResolver<Candidate> ambiguityResolver = mock(AmbiguityResolver.class);
 
 	@Test

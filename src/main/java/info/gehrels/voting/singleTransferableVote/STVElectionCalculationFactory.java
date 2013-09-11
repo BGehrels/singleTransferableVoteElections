@@ -6,7 +6,6 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculationFactory;
-import info.gehrels.voting.ElectionCalculationListener;
 import info.gehrels.voting.QuorumCalculation;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
@@ -16,11 +15,11 @@ import static org.hamcrest.Matchers.notNullValue;
 public class STVElectionCalculationFactory<CANDIDATE_TYPE extends Candidate> implements
 	ElectionCalculationFactory<CANDIDATE_TYPE> {
 	private final QuorumCalculation quorumCalculation;
-	private final ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
+	private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver;
 
 	public STVElectionCalculationFactory(QuorumCalculation quorumCalculation,
-	                                     ElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
+	                                     STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
 	                                     AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver) {
 		this.quorumCalculation = validateThat(quorumCalculation, is(notNullValue()));
 		this.electionCalculationListener = validateThat(electionCalculationListener, is(notNullValue()));
