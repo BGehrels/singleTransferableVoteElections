@@ -13,7 +13,7 @@ import static info.gehrels.voting.singleTransferableVote.VotesForCandidateCalcul
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class VotesForCandidateCalculationTest {
+public final class VotesForCandidateCalculationTest {
 
 	public static final Candidate PIVOT_CANDIDATE = new Candidate("pivotCandidate");
 	public static final Candidate OTHER_CANDIDATE = new Candidate("otherCandidate");
@@ -31,8 +31,8 @@ public class VotesForCandidateCalculationTest {
 	public void candidateHasZeroVotesIfAllBallotsHaveOtherCandidatesOnTop() {
 		BigFraction numberOfVotes = calculateVotesForCandidate(PIVOT_CANDIDATE,
 		                                                       ImmutableList.of(
-			                                                       ballotStatePreferring(OTHER_CANDIDATE),
-			                                                       ballotStatePreferring(OTHER_CANDIDATE)
+			                                                       ballotStatePreferring(0, OTHER_CANDIDATE),
+			                                                       ballotStatePreferring(1, OTHER_CANDIDATE)
 		                                                       )
 		);
 		assertThat(numberOfVotes, is(BigFraction.ZERO));
@@ -42,7 +42,7 @@ public class VotesForCandidateCalculationTest {
 	public void candidateHasOneVoteIfTheOnlyBallotHasFullVoteWeightAndShowsHerOnTop() {
 		BigFraction numberOfVotes = calculateVotesForCandidate(PIVOT_CANDIDATE,
 		                                                       ImmutableList.of(
-			                                                       ballotStatePreferring(PIVOT_CANDIDATE)
+			                                                       ballotStatePreferring(0, PIVOT_CANDIDATE)
 		                                                       )
 		);
 		assertThat(numberOfVotes, is(BigFraction.ONE));
@@ -52,7 +52,7 @@ public class VotesForCandidateCalculationTest {
 	public void candidateHasHalfOfAVoteIfTheOnlyBallotHas50PercentVoteWeightAndShowsHerOnTop() {
 		BigFraction numberOfVotes = calculateVotesForCandidate(PIVOT_CANDIDATE,
 		                                                       ImmutableList.of(
-			                                                       ballotStatePreferring(PIVOT_CANDIDATE).withVoteWeight(
+			                                                       ballotStatePreferring(0, PIVOT_CANDIDATE).withVoteWeight(
 				                                                       BigFraction.ONE_HALF)
 		                                                       )
 		);
@@ -63,16 +63,16 @@ public class VotesForCandidateCalculationTest {
 	public void candidateHasSumOfTheVoteWeightsOfThoseBallotsShowingHerOnTop() {
 		BigFraction numberOfVotes = calculateVotesForCandidate(PIVOT_CANDIDATE,
 		                                                       ImmutableList.of(
-			                                                       ballotStatePreferring(PIVOT_CANDIDATE).withVoteWeight(BigFraction.ONE_HALF),
-			                                                       ballotStatePreferring(OTHER_CANDIDATE).withVoteWeight(BigFraction.ONE_THIRD),
-			                                                       ballotStatePreferring(OTHER_CANDIDATE).withVoteWeight(BigFraction.ONE_FIFTH),
-			                                                       ballotStatePreferring(PIVOT_CANDIDATE).withVoteWeight(BigFraction.ONE_THIRD)
+			                                                       ballotStatePreferring(0, PIVOT_CANDIDATE).withVoteWeight(BigFraction.ONE_HALF),
+			                                                       ballotStatePreferring(1, OTHER_CANDIDATE).withVoteWeight(BigFraction.ONE_THIRD),
+			                                                       ballotStatePreferring(2, OTHER_CANDIDATE).withVoteWeight(BigFraction.ONE_FIFTH),
+			                                                       ballotStatePreferring(3, PIVOT_CANDIDATE).withVoteWeight(BigFraction.ONE_THIRD)
 		                                                       )
 		);
 		assertThat(numberOfVotes, is(new BigFraction(5,6)));
 	}
 
-	private BallotState<Candidate> ballotStatePreferring(Candidate candidate) {
+	private BallotState<Candidate> ballotStatePreferring(int id, Candidate candidate) {
 		return new BallotState<>(new Ballot<>(
 			id, ImmutableSet.of(new ElectionCandidatePreference<>(ELECTION, ImmutableSet.of(candidate)))),
 		                       ELECTION);

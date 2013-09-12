@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
-public class BallotTest {
+public final class BallotTest {
 	private static final Candidate CANDIDATE = new Candidate("Peter");
 
 	private static final Election<Candidate> ELECTION_1 = new Election<>("Office1", ImmutableSet.of(CANDIDATE));
@@ -21,7 +21,7 @@ public class BallotTest {
 	public void returnsEmptyPreferenceIfBallotContainsNoDataForTheElection() {
 		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
 			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = new Ballot<>(id, preferenceOnlyForElection1);
+		Ballot<Candidate> ballot = new Ballot<>(0, preferenceOnlyForElection1);
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_2), is(empty()));
 	}
@@ -31,7 +31,7 @@ public class BallotTest {
 	public void returnsElectionsPreferenceIfBallotContainsDataForThisElection() {
 		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
 			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = new Ballot<>(id, preferenceOnlyForElection1);
+		Ballot<Candidate> ballot = new Ballot<>(0, preferenceOnlyForElection1);
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_1), contains(CANDIDATE));
 	}

@@ -19,13 +19,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 
-public class VotesByCandidateCalculationTest {
-
+public final class VotesByCandidateCalculationTest {
 	public static final ImmutableList<BallotState<Candidate>> EMPTY_BALLOT_LIST = ImmutableList.of();
 	public static final ImmutableSet<Candidate> EMPTY_CANDIDATE_SET = ImmutableSet.of();
 	public static final Candidate CANDIDATE_PETER = new Candidate("Peter");
 	public static final Candidate CANDIDATE_JOHN = new Candidate("John");
 	public static final Candidate CANDIDATE_MARTA = new Candidate("Marta");
+
+
 
 	public static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
 		.of(CANDIDATE_PETER, CANDIDATE_JOHN, CANDIDATE_MARTA);
@@ -53,10 +54,10 @@ public class VotesByCandidateCalculationTest {
 	public void returnsCorrectNumberOfVotesForMultipleCandidates() {
 		Map<Candidate, BigFraction> votesByCandidate =
 			calculateVotesByCandidate(ALL_CANDIDATES, ImmutableList.of(
-				createBallotStateFor(CANDIDATE_JOHN, CANDIDATE_MARTA),
-				createBallotStateFor(CANDIDATE_MARTA, CANDIDATE_JOHN),
-				createBallotStateFor(),
-				createBallotStateFor(CANDIDATE_PETER, CANDIDATE_MARTA)
+				createBallotStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
+				createBallotStateFor(1, CANDIDATE_MARTA, CANDIDATE_JOHN),
+				createBallotStateFor(2),
+				createBallotStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA)
 			)
 		);
 
@@ -72,10 +73,10 @@ public class VotesByCandidateCalculationTest {
 	public void returnsCorrectNumberOfVotesForMultipleCandidatesAndFractionalVoteWeights() {
 		Map<Candidate, BigFraction> votesByCandidate =
 			calculateVotesByCandidate(ALL_CANDIDATES, ImmutableList.of(
-				createBallotStateFor(CANDIDATE_JOHN, CANDIDATE_MARTA),
-				createBallotStateFor(CANDIDATE_JOHN, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_FIFTH),
-				createBallotStateFor(),
-				createBallotStateFor(CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_THIRD)
+				createBallotStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
+				createBallotStateFor(1, CANDIDATE_JOHN, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_FIFTH),
+				createBallotStateFor(2),
+				createBallotStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_THIRD)
 			)
 		);
 
@@ -87,7 +88,7 @@ public class VotesByCandidateCalculationTest {
 		));
 	}
 
-	private BallotState<Candidate> createBallotStateFor(Candidate... candidates) {
+	private BallotState<Candidate> createBallotStateFor(int id, Candidate... candidates) {
 		return new BallotState<>(new Ballot<>(id, ImmutableSet.of(new ElectionCandidatePreference<>(
 			ELECTION, ImmutableSet.copyOf(candidates)))), ELECTION
 		);
