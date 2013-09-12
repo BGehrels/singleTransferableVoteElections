@@ -42,7 +42,7 @@ public final class BallotStateTest {
 		Ballot<Candidate> ballot = TestUtils.createBallot("", ELECTION);
 		BallotState<Candidate> resultingBallotState = new BallotState<>(ballot, ELECTION)
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A)));
-		assertThat(resultingBallotState.getPreferredCandidate(), is(nullValue()));
+		assertThat(resultingBallotState.getPreferredCandidate().orNull(), is(nullValue()));
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public final class BallotStateTest {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		BallotState<Candidate> resultingBallotState = new BallotState<>(ballot, ELECTION)
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.<Candidate>of()));
-		assertThat(resultingBallotState.getPreferredCandidate(), is(nullValue()));
+		assertThat(resultingBallotState.getPreferredCandidate().orNull(), is(nullValue()));
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public final class BallotStateTest {
 			.withFirstHopefulCandidate(
 				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
 					CANDIDATE_B));
-		assertThat(resultingBallotState.getPreferredCandidate(), is(nullValue()));
+		assertThat(resultingBallotState.getPreferredCandidate().orNull(), is(nullValue()));
 	}
 
 	@Test
