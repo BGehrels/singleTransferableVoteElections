@@ -15,15 +15,13 @@ import static org.hamcrest.Matchers.notNullValue;
  * one or more Candidates, represented by a ElectionCandidatePreference.
  */
 public class Ballot<CANDIDATE_TYPE extends Candidate> {
-    private static int ballotIdFactory = 0;
-
     public final int id;
     public final ImmutableMap<Election<CANDIDATE_TYPE>, ImmutableSet<CANDIDATE_TYPE>> rankedCandidatesByElection;
 
-    public Ballot(ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
+    public Ballot(int id, ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
+	    this.id = id;
 	    validateThat(rankedCandidatesByElection, is(notNullValue()));
 
-        this.id = ++ballotIdFactory;
 	    Builder<Election<CANDIDATE_TYPE>,ImmutableSet<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
 	    for (ElectionCandidatePreference<CANDIDATE_TYPE> electionCandidatePreference : rankedCandidatesByElection) {
 		    builder.put(electionCandidatePreference.election, electionCandidatePreference.candidatePreference);

@@ -88,7 +88,7 @@ public class VotesByCandidateCalculationTest {
 	}
 
 	private BallotState<Candidate> createBallotStateFor(Candidate... candidates) {
-		return new BallotState<>(new Ballot<>(ImmutableSet.of(new ElectionCandidatePreference<>(
+		return new BallotState<>(new Ballot<>(id, ImmutableSet.of(new ElectionCandidatePreference<>(
 			ELECTION, ImmutableSet.copyOf(candidates)))), ELECTION
 		);
 	}

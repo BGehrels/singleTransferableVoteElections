@@ -74,7 +74,7 @@ public class VotesForCandidateCalculationTest {
 
 	private BallotState<Candidate> ballotStatePreferring(Candidate candidate) {
 		return new BallotState<>(new Ballot<>(
-			ImmutableSet.of(new ElectionCandidatePreference<>(ELECTION, ImmutableSet.of(candidate)))),
+			id, ImmutableSet.of(new ElectionCandidatePreference<>(ELECTION, ImmutableSet.of(candidate)))),
 		                       ELECTION);
 	}
 
