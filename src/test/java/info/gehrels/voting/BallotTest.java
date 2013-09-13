@@ -21,7 +21,7 @@ public final class BallotTest {
 	public void returnsEmptyPreferenceIfBallotContainsNoDataForTheElection() {
 		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
 			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = new Ballot<>(0, preferenceOnlyForElection1);
+		Ballot<Candidate> ballot = Ballot.createValidBallot(0, preferenceOnlyForElection1);
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_2), is(empty()));
 	}
@@ -31,7 +31,7 @@ public final class BallotTest {
 	public void returnsElectionsPreferenceIfBallotContainsDataForThisElection() {
 		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
 			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = new Ballot<>(0, preferenceOnlyForElection1);
+		Ballot<Candidate> ballot = Ballot.createValidBallot(0, preferenceOnlyForElection1);
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_1), contains(CANDIDATE));
 	}

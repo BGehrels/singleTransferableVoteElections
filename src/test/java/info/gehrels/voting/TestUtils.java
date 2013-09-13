@@ -19,7 +19,7 @@ public final class TestUtils {
 
 		ImmutableSet<T> preference = preferenceBuilder.build();
 		ElectionCandidatePreference<T> electionCandidatePreference = new ElectionCandidatePreference<>(election, preference);
-		return new Ballot<>(ballotId++, ImmutableSet.of(electionCandidatePreference));
+		return Ballot.createValidBallot(ballotId++, ImmutableSet.of(electionCandidatePreference));
 	}
 
 	private static <T extends Candidate> T candidateByName(String s, ImmutableSet<T> candidates) {

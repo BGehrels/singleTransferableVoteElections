@@ -16,10 +16,13 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class Ballot<CANDIDATE_TYPE extends Candidate> {
     public final int id;
+	public final boolean valid;
     public final ImmutableMap<Election<CANDIDATE_TYPE>, ImmutableSet<CANDIDATE_TYPE>> rankedCandidatesByElection;
 
-    public Ballot(int id, ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
+    private Ballot(int id, boolean valid,
+                   ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
 	    this.id = id;
+	    this.valid = valid;
 	    validateThat(rankedCandidatesByElection, is(notNullValue()));
 
 	    Builder<Election<CANDIDATE_TYPE>,ImmutableSet<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
@@ -28,6 +31,15 @@ public class Ballot<CANDIDATE_TYPE extends Candidate> {
 	    }
 	    this.rankedCandidatesByElection = builder.build();
     }
+
+	public static <CANDIDATE_TYPE extends Candidate> Ballot<CANDIDATE_TYPE> createValidBallot(int id,
+	                                                                                          ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
+		return new Ballot<>(id, true, rankedCandidatesByElection);
+	}
+
+	public static <CANDIDATE_TYPE extends Candidate> Ballot<CANDIDATE_TYPE> createInvalidBallot(int id) {
+		return new Ballot<>(id, false, ImmutableSet.<ElectionCandidatePreference<CANDIDATE_TYPE>>of());
+	}
 
 	public final ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election<CANDIDATE_TYPE> election) {
 		validateThat(election, is(notNullValue()));
