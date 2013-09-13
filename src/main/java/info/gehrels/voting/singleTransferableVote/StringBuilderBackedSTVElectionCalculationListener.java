@@ -48,8 +48,8 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 		formatLine(
 			"Es werden %f %% der Stimmen weiterverteilt: "
 			+ "Stimmzettel %d hat nun ein verbleibendes Stimmgewicht von %f %%.",
-			excessiveFractionOfVoteWeight.multiply(100).doubleValue(), ballotId,
-			voteWeight.multiply(100).doubleValue());
+			excessiveFractionOfVoteWeight.percentageValue(), ballotId,
+			voteWeight.percentageValue());
 	}
 
 	@Override
