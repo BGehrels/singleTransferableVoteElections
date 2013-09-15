@@ -35,4 +35,11 @@ public final class BallotTest {
 
 		assertThat(ballot.getRankedCandidatesByElection(ELECTION_1), contains(CANDIDATE));
 	}
+
+	@Test
+	public void invalidBallotsHaveAnEmptyPreference() {
+		ImmutableSet<Candidate> rankedCandidatesByElection = Ballot.createInvalidBallot(1)
+			.getRankedCandidatesByElection(ELECTION_1);
+		assertThat(rankedCandidatesByElection, is(empty()));
+	}
 }
