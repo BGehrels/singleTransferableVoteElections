@@ -1,7 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
 import info.gehrels.voting.Candidate;
-import info.gehrels.voting.singleTransferableVote.CandidateState;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,8 +8,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 
-public class CandidateStateTest {
-
+public final class CandidateStateTest {
 	public static final Candidate ARBITRARY_CANDIDATE = new Candidate("Adam");
 
 	@Test

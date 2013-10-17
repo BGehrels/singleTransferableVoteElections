@@ -12,8 +12,7 @@ import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-public class CandidateStatesTest {
-
+public final class CandidateStatesTest {
 	public static final Candidate A = new Candidate("A");
 	public static final Candidate B = new Candidate("B");
 	public static final Candidate C = new Candidate("C");
@@ -97,7 +96,7 @@ public class CandidateStatesTest {
 	@Test
 	public void returnsAllCandidateStatesInArbitraryOrder() {
 		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of(A, B));
-		assertThat(candidateStates, is(containsInAnyOrder(candidateStateFor(A), candidateStateFor(B))));
+		assertThat(candidateStates, containsInAnyOrder(candidateStateFor(A), candidateStateFor(B)));
 	}
 
 
