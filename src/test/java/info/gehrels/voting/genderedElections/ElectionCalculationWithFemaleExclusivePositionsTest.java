@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
-public class ElectionCalculationWithFemaleExclusivePositionsTest {
+public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 	public static final GenderedCandidate FEMALE_CANDIDATE_1 = new GenderedCandidate("F", true);
 	public static final GenderedCandidate FEMALE_CANDIDATE_2 = new GenderedCandidate("G", true);
@@ -36,16 +36,16 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		CANDIDATE_F
 	);
 
-	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots = ImmutableList
-		.of((Ballot<GenderedCandidate>) mock(Ballot.class));
+	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots =
+		ImmutableList.of((Ballot<GenderedCandidate>) mock(Ballot.class));
 
-	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory = mock(
-		ElectionCalculationFactory.class);
+	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory =
+		mock(ElectionCalculationFactory.class);
 	private final ElectionCalculation<GenderedCandidate> electionCalculationMock = mock(ElectionCalculation.class);
-	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener = mock(
-		ElectionCalculationWithFemaleExclusivePositionsListener.class);
+	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener =
+		mock(ElectionCalculationWithFemaleExclusivePositionsListener.class);
 
-	private ElectionCalculationWithFemaleExclusivePositions objectUnderTest =
+	private final ElectionCalculationWithFemaleExclusivePositions objectUnderTest =
 		new ElectionCalculationWithFemaleExclusivePositions(
 			electionCalculationFactory,
 			electionCalculationListener
@@ -78,7 +78,6 @@ public class ElectionCalculationWithFemaleExclusivePositionsTest {
 		// given FEMALE_CANDIDATE_1 has already been elected in the first any female exclusive run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
-
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
