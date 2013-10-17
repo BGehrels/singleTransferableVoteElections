@@ -3,9 +3,9 @@ package info.gehrels.voting.singleTransferableVote;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Ballot;
-import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
+import info.gehrels.voting.Vote;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
@@ -20,12 +20,11 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 
 public final class VotesByCandidateCalculationTest {
-	public static final ImmutableList<BallotState<Candidate>> EMPTY_BALLOT_LIST = ImmutableList.of();
+	public static final ImmutableList<VoteState<Candidate>> EMPTY_VOTE_STATE_LIST = ImmutableList.of();
 	public static final ImmutableSet<Candidate> EMPTY_CANDIDATE_SET = ImmutableSet.of();
 	public static final Candidate CANDIDATE_PETER = new Candidate("Peter");
 	public static final Candidate CANDIDATE_JOHN = new Candidate("John");
 	public static final Candidate CANDIDATE_MARTA = new Candidate("Marta");
-
 
 
 	public static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
@@ -34,17 +33,17 @@ public final class VotesByCandidateCalculationTest {
 	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOfiice", ALL_CANDIDATES);
 
 	@Test
-	public void returnsEmtpyMapIfCandidateSetAndBallotStatesAreEmpty() {
+	public void returnsEmtpyMapIfCandidateSetAndVoteStatesAreEmpty() {
 		Map<Candidate, BigFraction> votesByCandidate = calculateVotesByCandidate(EMPTY_CANDIDATE_SET,
-		                                                                         EMPTY_BALLOT_LIST);
+		                                                                         EMPTY_VOTE_STATE_LIST);
 
 		assertThat(votesByCandidate, is(equalTo(Collections.<Candidate, BigFraction>emptyMap())));
 	}
 
 	@Test
-	public void returnsZeroVotesForCandidatesWhoAreNotMentionedOnAnyBallot() {
+	public void returnsZeroVotesForCandidatesWhoAreNotMentionedByAnyVoteState() {
 		Map<Candidate, BigFraction> votesByCandidate = calculateVotesByCandidate(ImmutableSet.of(CANDIDATE_PETER),
-		                                                                         EMPTY_BALLOT_LIST);
+		                                                                         EMPTY_VOTE_STATE_LIST);
 
 		assertThat(votesByCandidate.size(), is(1));
 		assertThat(votesByCandidate, hasEntry(CANDIDATE_PETER, BigFraction.ZERO));
@@ -54,12 +53,12 @@ public final class VotesByCandidateCalculationTest {
 	public void returnsCorrectNumberOfVotesForMultipleCandidates() {
 		Map<Candidate, BigFraction> votesByCandidate =
 			calculateVotesByCandidate(ALL_CANDIDATES, ImmutableList.of(
-				createBallotStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
-				createBallotStateFor(1, CANDIDATE_MARTA, CANDIDATE_JOHN),
-				createBallotStateFor(2),
-				createBallotStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA)
+				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
+				createVoteStateFor(1, CANDIDATE_MARTA, CANDIDATE_JOHN),
+				createVoteStateFor(2),
+				createVoteStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA)
 			)
-		);
+			);
 
 		assertThat(votesByCandidate.size(), is(3));
 		assertThat(votesByCandidate, allOf(
@@ -73,25 +72,30 @@ public final class VotesByCandidateCalculationTest {
 	public void returnsCorrectNumberOfVotesForMultipleCandidatesAndFractionalVoteWeights() {
 		Map<Candidate, BigFraction> votesByCandidate =
 			calculateVotesByCandidate(ALL_CANDIDATES, ImmutableList.of(
-				createBallotStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
-				createBallotStateFor(1, CANDIDATE_JOHN, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_FIFTH),
-				createBallotStateFor(2),
-				createBallotStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_THIRD)
+				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
+				createVoteStateFor(1, CANDIDATE_JOHN, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_FIFTH),
+				createVoteStateFor(2),
+				createVoteStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_THIRD)
 			)
-		);
+			);
 
 		assertThat(votesByCandidate.size(), is(3));
 		assertThat(votesByCandidate, allOf(
 			hasEntry(CANDIDATE_PETER, BigFraction.ONE_THIRD),
-			hasEntry(CANDIDATE_JOHN, new BigFraction(6,5)),
+			hasEntry(CANDIDATE_JOHN, new BigFraction(6, 5)),
 			hasEntry(CANDIDATE_MARTA, BigFraction.ZERO)
 		));
 	}
 
-	private BallotState<Candidate> createBallotStateFor(int id, Candidate... candidates) {
-		return new BallotState<>(Ballot.createValidBallot(id, ImmutableSet.of(new ElectionCandidatePreference<>(
-			ELECTION, ImmutableSet.copyOf(candidates)))), ELECTION
-		);
+	private VoteState<Candidate> createVoteStateFor(int id, Candidate... candidates) {
+		Vote<Candidate> preferenceVote;
+		if (candidates.length == 0) {
+			preferenceVote = Vote.createNoVote(ELECTION);
+		} else {
+			preferenceVote = Vote.createPreferenceVote(ELECTION, ImmutableSet.copyOf(candidates));
+		}
+
+		return VoteState.forBallotAndElection(new Ballot<>(id, ImmutableSet.of(preferenceVote)), ELECTION).get();
 	}
 
 

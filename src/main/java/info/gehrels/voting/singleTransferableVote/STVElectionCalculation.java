@@ -1,6 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
-import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -12,9 +12,7 @@ import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.QuorumCalculation;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import static com.google.common.collect.Collections2.transform;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -58,23 +56,23 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		electionCalculationListener.quorumHasBeenCalculated(numberOfValidBallots, numberOfSeats, quorum);
 
 		CandidateStates<CANDIDATE_TYPE> candidateStates = new CandidateStates<>(qualifiedCandidates);
-		ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates = constructBallotStates(candidateStates);
+		ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates = constructVoteStates(candidateStates);
 
 		electionCalculationListener
 			.calculationStarted(election,
 			                    VotesByCandidateCalculation
 				                    .calculateVotesByCandidate(candidateStates.getHopefulCandidates(),
-				                                               ballotStates));
+				                                               voteStates));
 
 		int numberOfElectedCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {
 			STVElectionCalculationStep.ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep.declareWinnerOrStrikeCandidate(quorum,
-			                                                                                                    ballotStates,
+			                                                                                                                               voteStates,
 			                                                                                                    redistributor,
 			                                                                                                    numberOfElectedCandidates,
 			                                                                                                    candidateStates);
 			candidateStates = electionStepResult.newCandidateStates;
-			ballotStates = electionStepResult.newBallotStates;
+			voteStates = electionStepResult.newVoteStates;
 			numberOfElectedCandidates = electionStepResult.newNumberOfElectedCandidates;
 		}
 
@@ -83,16 +81,15 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		return electedCandidates;
 	}
 
-	private ImmutableCollection<BallotState<CANDIDATE_TYPE>> constructBallotStates(
-		final CandidateStates<CANDIDATE_TYPE> candidateStates) {
-		ImmutableList.Builder<BallotState<CANDIDATE_TYPE>> builder = ImmutableList.builder();
-		return builder.addAll(transform(ballots, new Function<Ballot<CANDIDATE_TYPE>, BallotState<CANDIDATE_TYPE>>() {
-			@Override
-			public BallotState<CANDIDATE_TYPE> apply(Ballot<CANDIDATE_TYPE> ballot) {
-				return new BallotState<>(ballot, election)
-					.withFirstHopefulCandidate(candidateStates);
+	private ImmutableCollection<VoteState<CANDIDATE_TYPE>> constructVoteStates(CandidateStates<CANDIDATE_TYPE> candidateStates) {
+		ImmutableList.Builder<VoteState<CANDIDATE_TYPE>> builder = ImmutableList.builder();
+		for (Ballot<CANDIDATE_TYPE> ballot : ballots) {
+			Optional<VoteState<CANDIDATE_TYPE>> voteStateOptional = VoteState.forBallotAndElection(ballot, election);
+			if (voteStateOptional.isPresent()) {
+				builder.add(voteStateOptional.get().withFirstHopefulCandidate(candidateStates));
 			}
-		})).build();
+		}
+		return builder.build();
 	}
 
 

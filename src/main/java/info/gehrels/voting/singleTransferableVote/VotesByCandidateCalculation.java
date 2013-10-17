@@ -16,8 +16,8 @@ public final class VotesByCandidateCalculation {
 	}
 
 	static <CANDIDATE extends Candidate> Map<CANDIDATE, BigFraction> calculateVotesByCandidate(ImmutableSet<CANDIDATE> candidates,
-	                                                             ImmutableCollection<BallotState<CANDIDATE>> ballotStates) {
-		Map<CANDIDATE, BigFraction> votesByCandidateDraft = getVotesByVotedCandidates(ballotStates);
+	                                                             ImmutableCollection<VoteState<CANDIDATE>> voteStates) {
+		Map<CANDIDATE, BigFraction> votesByCandidateDraft = getVotesByVotedCandidates(voteStates);
 
 		Builder<CANDIDATE, BigFraction> builder = ImmutableMap.builder();
 		for (CANDIDATE candidate : candidates) {
@@ -29,10 +29,10 @@ public final class VotesByCandidateCalculation {
 	}
 
 	private static <CANDIDATE extends Candidate> Map<CANDIDATE, BigFraction> getVotesByVotedCandidates(
-		ImmutableCollection<BallotState<CANDIDATE>> ballotStates) {
+		ImmutableCollection<VoteState<CANDIDATE>> voteStates) {
 		Map<CANDIDATE, BigFraction> votesByCandidateDraft = new HashMap<>();
-		for (BallotState<CANDIDATE> ballotState : ballotStates) {
-			Optional<CANDIDATE> preferredHopefulCandidate = ballotState.getPreferredCandidate();
+		for (VoteState<CANDIDATE> voteState : voteStates) {
+			Optional<CANDIDATE> preferredHopefulCandidate = voteState.getPreferredCandidate();
 			if (!preferredHopefulCandidate.isPresent()) {
 				continue;
 			}
@@ -40,9 +40,9 @@ public final class VotesByCandidateCalculation {
 			CANDIDATE candidate = preferredHopefulCandidate.get();
 			BigFraction votes = votesByCandidateDraft.get(candidate);
 			if (votes == null) {
-				votesByCandidateDraft.put(candidate, ballotState.getVoteWeight());
+				votesByCandidateDraft.put(candidate, voteState.getVoteWeight());
 			} else {
-				votesByCandidateDraft.put(candidate, votes.add(ballotState.getVoteWeight()));
+				votesByCandidateDraft.put(candidate, votes.add(voteState.getVoteWeight()));
 			}
 		}
 		return votesByCandidateDraft;

@@ -7,7 +7,10 @@ import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.Ele
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
-public class ElectionStepResultMatchers {
+public final class ElectionStepResultMatchers {
+	private ElectionStepResultMatchers() {
+	}
+
 	static Matcher<ElectionStepResult<?>> withNumberOfElectedCandidates(Matcher<Integer> subMatcher) {
 		return new FeatureMatcher<ElectionStepResult<?>, Integer>(subMatcher, "with number of elected candidates",
 		                                                          "number of elected candidates") {
@@ -19,17 +22,17 @@ public class ElectionStepResultMatchers {
 		};
 	}
 
-	static Matcher<ElectionStepResult<Candidate>> withBallotStates(
-		Matcher<? super ImmutableCollection<BallotState<Candidate>>> subMatcher) {
-		return new FeatureMatcher<ElectionStepResult<Candidate>,ImmutableCollection<BallotState<Candidate>>>(
+	static Matcher<ElectionStepResult<Candidate>> withVoteStates(
+		Matcher<? super ImmutableCollection<VoteState<Candidate>>> subMatcher) {
+		return new FeatureMatcher<ElectionStepResult<Candidate>,ImmutableCollection<VoteState<Candidate>>>(
 			subMatcher,
 			"with ballot states",
 			"ballot states"
 		) {
 			@Override
-			protected ImmutableCollection<BallotState<Candidate>> featureValueOf(
+			protected ImmutableCollection<VoteState<Candidate>> featureValueOf(
 				ElectionStepResult<Candidate> electionStepResult) {
-				return electionStepResult.newBallotStates;
+				return electionStepResult.newVoteStates;
 			}
 		};
 	}
@@ -46,8 +49,7 @@ public class ElectionStepResultMatchers {
 		};
 	}
 
-	static <T extends Candidate> Matcher<ElectionStepResult<T>> anElectionStepResult(
-		final Matcher<ElectionStepResult<T>> subMatcher) {
+	static <T extends Candidate> Matcher<ElectionStepResult<T>> anElectionStepResult(Matcher<ElectionStepResult<T>> subMatcher) {
 		return new DelegatingMatcher<>(subMatcher, "an election step result");
 	}
 }

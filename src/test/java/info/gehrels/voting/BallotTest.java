@@ -1,12 +1,11 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
-import info.gehrels.voting.Ballot.ElectionCandidatePreference;
 import org.junit.Test;
 
+import static info.gehrels.voting.OptionalMatchers.anAbsentOptional;
+import static info.gehrels.voting.Vote.createPreferenceVote;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 public final class BallotTest {
@@ -14,32 +13,24 @@ public final class BallotTest {
 
 	private static final Election<Candidate> ELECTION_1 = new Election<>("Office1", ImmutableSet.of(CANDIDATE));
 	private static final Election<Candidate> ELECTION_2 = new Election<>("Office2", ImmutableSet.of(CANDIDATE));
-	public static final ElectionCandidatePreference<Candidate> PREFERENCE_FOR_ELECTION_1 = new ElectionCandidatePreference<>(
-		ELECTION_1, ImmutableSet.of(CANDIDATE));
+	public static final Vote<Candidate> VOTE_FOR_ELECTION_1 = createPreferenceVote(ELECTION_1,
+	                                                                               ImmutableSet.of(CANDIDATE));
 
 	@Test
-	public void returnsEmptyPreferenceIfBallotContainsNoDataForTheElection() {
-		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
-			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = Ballot.createValidBallot(0, preferenceOnlyForElection1);
+	public void returnsAbsentOptionalIfBallotContainsNoVoteForThisElection() {
+		ImmutableSet<Vote<Candidate>> voteOnlyForElection1
+			= ImmutableSet.of(VOTE_FOR_ELECTION_1);
+		Ballot<Candidate> ballot = new Ballot<>(0, voteOnlyForElection1);
 
-		assertThat(ballot.getRankedCandidatesByElection(ELECTION_2), is(empty()));
+		assertThat(ballot.getVote(ELECTION_2), is(anAbsentOptional()));
 	}
 
 
 	@Test
-	public void returnsElectionsPreferenceIfBallotContainsDataForThisElection() {
-		ImmutableSet<ElectionCandidatePreference<Candidate>> preferenceOnlyForElection1
-			= ImmutableSet.of(PREFERENCE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = Ballot.createValidBallot(0, preferenceOnlyForElection1);
+	public void returnsTheVoteIfBallotContainsOneThisElection() {
+		ImmutableSet<Vote<Candidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1);
+		Ballot<Candidate> ballot = new Ballot<>(0, votes);
 
-		assertThat(ballot.getRankedCandidatesByElection(ELECTION_1), contains(CANDIDATE));
-	}
-
-	@Test
-	public void invalidBallotsHaveAnEmptyPreference() {
-		ImmutableSet<Candidate> rankedCandidatesByElection = Ballot.createInvalidBallot(1)
-			.getRankedCandidatesByElection(ELECTION_1);
-		assertThat(rankedCandidatesByElection, is(empty()));
+		assertThat(ballot.getVote(ELECTION_1).get().getElection(), is(ELECTION_1));
 	}
 }

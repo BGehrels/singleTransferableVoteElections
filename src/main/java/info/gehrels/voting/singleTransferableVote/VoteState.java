@@ -5,39 +5,50 @@ import com.google.common.collect.ImmutableList;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
+import info.gehrels.voting.Vote;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-final class BallotState<CANDIDATE_TYPE extends Candidate> {
+final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
 	private final int ballotId;
 	private final BigFraction voteWeight;
 	private final int currentPositionInRankedCandidatesList;
 
-	BallotState(Ballot<CANDIDATE_TYPE> ballot, Election<CANDIDATE_TYPE> election) {
+	public static <CANDIDATE_TYPE extends Candidate> Optional<VoteState<CANDIDATE_TYPE>> forBallotAndElection(
+		Ballot<CANDIDATE_TYPE> ballot, Election<CANDIDATE_TYPE> election) {
 		validateThat(ballot, is(notNullValue()));
 		validateThat(election, is(notNullValue()));
 
-		ballotId = ballot.id;
-		rankedCandidates = ballot.getRankedCandidatesByElection(election).asList();
+		Optional<Vote<CANDIDATE_TYPE>> vote = ballot.getVote(election);
+		if (!vote.isPresent()) {
+			return Optional.absent();
+		}
+
+		return Optional.of(new VoteState<>(ballot.id, vote.get()));
+	}
+
+	private VoteState( int ballotId, Vote<CANDIDATE_TYPE> vote) {
+		this.ballotId = ballotId;
+		rankedCandidates = vote.getRankedCandidates().asList();
 
 		voteWeight = BigFraction.ONE;
 		currentPositionInRankedCandidatesList = 0;
 	}
 
-	private BallotState(int ballotId, ImmutableList<CANDIDATE_TYPE> rankedCandidates, BigFraction voteWeight,
-	                    int currentPositionInRankedCandidatesList) {
+	private VoteState(int ballotId, ImmutableList<CANDIDATE_TYPE> rankedCandidates, BigFraction voteWeight,
+	                  int currentPositionInRankedCandidatesList) {
 		this.ballotId = ballotId;
 		this.rankedCandidates = rankedCandidates;
 		this.voteWeight = voteWeight;
 		this.currentPositionInRankedCandidatesList = currentPositionInRankedCandidatesList;
 	}
 
-	public BallotState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
-		BallotState<CANDIDATE_TYPE> result = this;
+	public VoteState<CANDIDATE_TYPE> withFirstHopefulCandidate(CandidateStates<CANDIDATE_TYPE> candidateStates) {
+		VoteState<CANDIDATE_TYPE> result = this;
 
 		Optional<CANDIDATE_TYPE> preferredCandidate = result.getPreferredCandidate();
 		while (preferredCandidate.isPresent()) {
@@ -65,12 +76,12 @@ final class BallotState<CANDIDATE_TYPE extends Candidate> {
 		return voteWeight;
 	}
 
-	private BallotState<CANDIDATE_TYPE> withNextPreference() {
-		return new BallotState<>(ballotId, rankedCandidates, voteWeight, currentPositionInRankedCandidatesList + 1);
+	private VoteState<CANDIDATE_TYPE> withNextPreference() {
+		return new VoteState<>(ballotId, rankedCandidates, voteWeight, currentPositionInRankedCandidatesList + 1);
 	}
 
-	public BallotState<CANDIDATE_TYPE> withVoteWeight(BigFraction newVoteWeight) {
-		return new BallotState<>(ballotId, rankedCandidates, newVoteWeight, currentPositionInRankedCandidatesList);
+	public VoteState<CANDIDATE_TYPE> withVoteWeight(BigFraction newVoteWeight) {
+		return new VoteState<>(ballotId, rankedCandidates, newVoteWeight, currentPositionInRankedCandidatesList);
 	}
 
 	public int getBallotId() {
@@ -79,6 +90,6 @@ final class BallotState<CANDIDATE_TYPE extends Candidate> {
 
 	@Override
 	public String toString() {
-		return "BallotState<" + ballotId + "; preferred: " + getPreferredCandidate() + "; " + voteWeight + ">";
+		return "VoteState<" + ballotId + "; preferred: " + getPreferredCandidate() + "; " + voteWeight + ">";
 	}
 }

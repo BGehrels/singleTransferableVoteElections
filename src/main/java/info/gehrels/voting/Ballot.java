@@ -1,67 +1,38 @@
 package info.gehrels.voting;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static info.gehrels.voting.SetMatchers.isSubSetOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * A Ballot instance represents a physical piece of paper marked by a voter. It contains one or more areas, each
  * designated to one Election. In each of the areas, the voter may have expressed his preference between
- * one or more Candidates, represented by a ElectionCandidatePreference.
+ * one or more Candidates, represented by a Vote.
  */
 public class Ballot<CANDIDATE_TYPE extends Candidate> {
-    public final int id;
-	public final boolean valid;
-    public final ImmutableMap<Election<CANDIDATE_TYPE>, ImmutableSet<CANDIDATE_TYPE>> rankedCandidatesByElection;
+	public final int id;
+	public final ImmutableMap<Election<CANDIDATE_TYPE>, Vote<CANDIDATE_TYPE>> votesByElections;
 
-    private Ballot(int id, boolean valid,
-                   ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
-	    this.id = id;
-	    this.valid = valid;
-	    validateThat(rankedCandidatesByElection, is(notNullValue()));
+	public Ballot(int id, ImmutableSet<Vote<CANDIDATE_TYPE>> votes) {
+		this.id = id;
+		validateThat(votes, is(notNullValue()));
 
-	    Builder<Election<CANDIDATE_TYPE>,ImmutableSet<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
-	    for (ElectionCandidatePreference<CANDIDATE_TYPE> electionCandidatePreference : rankedCandidatesByElection) {
-		    builder.put(electionCandidatePreference.election, electionCandidatePreference.candidatePreference);
-	    }
-	    this.rankedCandidatesByElection = builder.build();
-    }
-
-	public static <CANDIDATE_TYPE extends Candidate> Ballot<CANDIDATE_TYPE> createValidBallot(int id,
-	                                                                                          ImmutableSet<ElectionCandidatePreference<CANDIDATE_TYPE>> rankedCandidatesByElection) {
-		return new Ballot<>(id, true, rankedCandidatesByElection);
+		Builder<Election<CANDIDATE_TYPE>, Vote<CANDIDATE_TYPE>> builder = ImmutableMap.builder();
+		for (Vote<CANDIDATE_TYPE> vote : votes) {
+			builder.put(vote.getElection(), vote);
+		}
+		this.votesByElections = builder.build();
 	}
 
-	public static <CANDIDATE_TYPE extends Candidate> Ballot<CANDIDATE_TYPE> createInvalidBallot(int id) {
-		return new Ballot<>(id, false, ImmutableSet.<ElectionCandidatePreference<CANDIDATE_TYPE>>of());
-	}
-
-	public final ImmutableSet<CANDIDATE_TYPE> getRankedCandidatesByElection(Election<CANDIDATE_TYPE> election) {
+	public final Optional<Vote<CANDIDATE_TYPE>> getVote(Election<CANDIDATE_TYPE> election) {
 		validateThat(election, is(notNullValue()));
 
-		ImmutableSet<CANDIDATE_TYPE> candidates = rankedCandidatesByElection.get(election);
-		if (candidates == null) {
-			// TODO: Is there a difference between not casting a vote and voting with a empty preference? It will make
-			// TODO: one in the algorithm, because the quorum is not met if too many people cast empty votes.
-			return ImmutableSet.of();
-		}
-
-		return candidates;
+		return Optional.fromNullable(votesByElections.get(election));
 	}
 
-	public static class ElectionCandidatePreference<CANDIDATE_TYPE extends Candidate> {
-		private final Election<CANDIDATE_TYPE> election;
-		private final ImmutableSet<CANDIDATE_TYPE> candidatePreference;
-
-		public ElectionCandidatePreference(Election<CANDIDATE_TYPE> election, ImmutableSet<CANDIDATE_TYPE> candidatePreference) {
-			this.election = election;
-			this.candidatePreference = validateThat(candidatePreference, isSubSetOf(election.getCandidates()));
-		}
-
-	}
 }

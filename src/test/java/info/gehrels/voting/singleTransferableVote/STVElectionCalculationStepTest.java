@@ -17,13 +17,14 @@ import java.util.Map;
 
 import static info.gehrels.voting.MapMatchers.aMap;
 import static info.gehrels.voting.MapMatchers.anEntry;
-import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.aBallotState;
-import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withPreferredCandidate;
-import static info.gehrels.voting.singleTransferableVote.BallotStateMatchers.withVoteWeight;
+import static info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
+import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.aVoteState;
+import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withPreferredCandidate;
+import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withVoteWeight;
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withLooser;
 import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.anElectionStepResult;
-import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withBallotStates;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withVoteStates;
 import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withCandidateStates;
 import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withNumberOfElectedCandidates;
 import static org.apache.commons.math3.fraction.BigFraction.FOUR_FIFTHS;
@@ -45,14 +46,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class STVElectionCalculationStepTest {
+public final class STVElectionCalculationStepTest {
 	public static final Candidate A = new Candidate("A");
 	public static final Candidate B = new Candidate("B");
 	public static final Candidate C = new Candidate("C");
 	public static final Candidate G = new Candidate("G");
 	public static final Candidate H = new Candidate("H");
 
-	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice", ImmutableSet.of(A, B, C, G, H));
+	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice",
+	                                                                  ImmutableSet.of(A, B, C, G, H));
 
 	public static final Ballot<Candidate> BC_BALLOT = createBallot("BC");
 	public static final Ballot<Candidate> ACGH_BALLOT = createBallot("ACGH");
@@ -62,7 +64,7 @@ public class STVElectionCalculationStepTest {
 	private static final Ballot<Candidate> CA_BALLOT = createBallot("CA");
 
 	public static final BigFraction THREE = new BigFraction(3);
-	private static final ImmutableList<BallotState<Candidate>> stubRedistributionResult = ImmutableList.of(
+	private static final ImmutableList<VoteState<Candidate>> STUB_REDISTRIBUTION_RESULT = ImmutableList.of(
 		stateFor(AC_BALLOT).withVoteWeight(FOUR_FIFTHS),
 		stateFor(A_BALLOT).withVoteWeight(ONE),
 		stateFor(ACGH_BALLOT).withVoteWeight(ONE_FIFTH),
@@ -70,28 +72,29 @@ public class STVElectionCalculationStepTest {
 	);
 	public static final BigFraction FIVE = new BigFraction(5);
 
-	private final STVElectionCalculationListener<Candidate> electionCalculationListenerMock = mock(STVElectionCalculationListener.class);
+	private final STVElectionCalculationListener<Candidate> electionCalculationListenerMock = mock(
+		STVElectionCalculationListener.class);
 	private final AmbiguityResolver<Candidate> ambiguityResolverMock = mock(AmbiguityResolver.class);
 	private final VoteWeightRedistributor<Candidate> redistributorMock = mock(VoteWeightRedistributor.class);
 
-	private final STVElectionCalculationStep<Candidate> step = new STVElectionCalculationStep<>(electionCalculationListenerMock,
-	                                                                               ambiguityResolverMock);
+	private final STVElectionCalculationStep<Candidate> step = new STVElectionCalculationStep<>(
+		electionCalculationListenerMock, ambiguityResolverMock);
 	public static final CandidateStates<Candidate> CANDIDATE_STATES = new CandidateStates<>(ImmutableSet.of(A, B, C));
 
 	@Test
 	public void marksOneCandidateAsWinnerAndRedistributesVoteWeightIfExactlyOneCandidateReachedTheQuorum() {
-		ImmutableList<BallotState<Candidate>> ballotStates = ImmutableList.of(
+		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
 			stateFor(AC_BALLOT),
 			stateFor(A_BALLOT),
 			stateFor(ACGH_BALLOT),
 			stateFor(BC_BALLOT)
 		);
 
-		when(redistributorMock.redistributeExceededVoteWeight(A, THREE, ballotStates))
-			.thenReturn(stubRedistributionResult);
+		when(redistributorMock.redistributeExceededVoteWeight(A, THREE, voteStates))
+			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
-		STVElectionCalculationStep.ElectionStepResult<Candidate> electionStepResult = step
-			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
+		ElectionStepResult<Candidate> electionStepResult =
+			step.declareWinnerOrStrikeCandidate(THREE, voteStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, THREE);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted((Map<Candidate, BigFraction>) argThat(
@@ -100,20 +103,20 @@ public class STVElectionCalculationStepTest {
 				hasEntry(C, ONE))
 		));
 
-		Matcher<STVElectionCalculationStep.ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
+		Matcher<ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
 			withNumberOfElectedCandidates(is(2)),
-			withBallotStates(containsInAnyOrder(
-				aBallotState(allOf(
+			withVoteStates(containsInAnyOrder(
+				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
 					withVoteWeight(equalTo(FOUR_FIFTHS))
 				)),
-				aBallotState(BallotStateMatchers.<Candidate>withPreferredCandidate(nullValue())),
-				aBallotState(allOf(
+				aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(nullValue())),
+				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
 					withVoteWeight(equalTo(ONE_FIFTH))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(B)),
 					withVoteWeight(equalTo(ONE_HALF))
 				))
@@ -124,18 +127,18 @@ public class STVElectionCalculationStepTest {
 
 	@Test
 	public void marksCandidateWithHigherNumberOfVotesAsWinnerAndRedistributesVoteWeightIfMoreThanOneCandidateReachedTheQuorum() {
-		ImmutableList<BallotState<Candidate>> ballotStates = ImmutableList.of(
+		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
 			stateFor(AC_BALLOT),
 			stateFor(A_BALLOT),
 			stateFor(ACGH_BALLOT),
 			stateFor(BC_BALLOT)
 		);
 
-		when(redistributorMock.redistributeExceededVoteWeight(A, ONE, ballotStates))
-			.thenReturn(stubRedistributionResult);
+		when(redistributorMock.redistributeExceededVoteWeight(A, ONE, voteStates))
+			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
-		STVElectionCalculationStep.ElectionStepResult<Candidate> electionStepResult = step
-			.declareWinnerOrStrikeCandidate(ONE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
+		ElectionStepResult<Candidate> electionStepResult = step
+			.declareWinnerOrStrikeCandidate(ONE, voteStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, ONE);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted((Map<Candidate, BigFraction>) argThat(
@@ -144,20 +147,20 @@ public class STVElectionCalculationStepTest {
 				hasEntry(C, ONE))
 		));
 
-		Matcher<STVElectionCalculationStep.ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
+		Matcher<ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
 			withNumberOfElectedCandidates(is(2)),
-			withBallotStates(containsInAnyOrder(
-				aBallotState(allOf(
+			withVoteStates(containsInAnyOrder(
+				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
 					withVoteWeight(equalTo(FOUR_FIFTHS))
 				)),
-				aBallotState(BallotStateMatchers.<Candidate>withPreferredCandidate(nullValue())),
-				aBallotState(allOf(
+				aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(nullValue())),
+				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
 					withVoteWeight(equalTo(ONE_FIFTH))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(B)),
 					withVoteWeight(equalTo(ONE_HALF))
 				))
@@ -168,7 +171,7 @@ public class STVElectionCalculationStepTest {
 
 	@Test
 	public void marksCandidateResultingFromAbiguityResulutionAsWinnerAndRedistributesVoteWeightIfMoreThanOneCandidateWithEqualNumberOfVotesReachedWheQuorum() {
-		ImmutableList<BallotState<Candidate>> ballotStates = ImmutableList.of(
+		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
 			stateFor(AC_BALLOT),
 			stateFor(A_BALLOT),
 			stateFor(BA_BALLOT),
@@ -178,12 +181,11 @@ public class STVElectionCalculationStepTest {
 		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(A, B)))
 			.thenReturn(new AmbiguityResolverResult<>(B, "Fixed as Mock"));
 
-		when(redistributorMock.redistributeExceededVoteWeight(B, TWO, ballotStates))
-			.thenReturn(stubRedistributionResult);
+		when(redistributorMock.redistributeExceededVoteWeight(B, TWO, voteStates))
+			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
-
-		STVElectionCalculationStep.ElectionStepResult<Candidate> electionStepResult = step
-			.declareWinnerOrStrikeCandidate(TWO, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
+		ElectionStepResult<Candidate> electionStepResult = step
+			.declareWinnerOrStrikeCandidate(TWO, voteStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).candidateIsElected(B, TWO, TWO);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted((Map<Candidate, BigFraction>) argThat(
@@ -195,20 +197,20 @@ public class STVElectionCalculationStepTest {
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(B)),
 			withNumberOfElectedCandidates(is(2)),
-			withBallotStates(containsInAnyOrder(
-				aBallotState(allOf(
+			withVoteStates(containsInAnyOrder(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(FOUR_FIFTHS))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE_FIFTH))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
 					withVoteWeight(equalTo(ONE_HALF))
 				))
@@ -218,15 +220,15 @@ public class STVElectionCalculationStepTest {
 
 	@Test
 	public void strikesWeakestCandidateIfNoCandidateReachedTheQuorum() {
-		ImmutableList<BallotState<Candidate>> ballotStates = ImmutableList.of(
+		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
 			stateFor(AC_BALLOT),
 			stateFor(A_BALLOT),
 			stateFor(ACGH_BALLOT),
 			stateFor(BC_BALLOT)
 		);
 
-		STVElectionCalculationStep.ElectionStepResult<Candidate> electionStepResult = step
-			.declareWinnerOrStrikeCandidate(FIVE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
+		ElectionStepResult<Candidate> electionStepResult = step
+			.declareWinnerOrStrikeCandidate(FIVE, voteStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(FIVE);
 
@@ -245,23 +247,23 @@ public class STVElectionCalculationStepTest {
 					anEntry(B, ONE)
 				))))));
 
-		Matcher<STVElectionCalculationStep.ElectionStepResult<Candidate>> electionStepResultMatcher = allOf(
+		Matcher<ElectionStepResult<Candidate>> electionStepResultMatcher = allOf(
 			withCandidateStates(withLooser(C)),
 			withNumberOfElectedCandidates(is(1)),
-			withBallotStates(containsInAnyOrder(
-				aBallotState(allOf(
+			withVoteStates(containsInAnyOrder(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(B)),
 					withVoteWeight(equalTo(ONE))
 				))
@@ -273,18 +275,18 @@ public class STVElectionCalculationStepTest {
 
 	@Test
 	public void strikesCandidateResultingFromAmbiguityResolutionIfNoCandidateReachedTheQuorumAndThereAreMoreThanOneWeakestCandidate() {
-		ImmutableList<BallotState<Candidate>> ballotStates = ImmutableList.of(
+		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
 			stateFor(AC_BALLOT),
 			stateFor(A_BALLOT),
 			stateFor(BA_BALLOT),
 			stateFor(CA_BALLOT)
 		);
 
-		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(B,C)))
+		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(B, C)))
 			.thenReturn(new AmbiguityResolverResult<>(B, "arbitrary message"));
 
-		STVElectionCalculationStep.ElectionStepResult<Candidate> electionStepResult = step
-			.declareWinnerOrStrikeCandidate(THREE, ballotStates, redistributorMock, 1, CANDIDATE_STATES);
+		ElectionStepResult<Candidate> electionStepResult = step
+			.declareWinnerOrStrikeCandidate(THREE, voteStates, redistributorMock, 1, CANDIDATE_STATES);
 
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(THREE);
 
@@ -303,23 +305,23 @@ public class STVElectionCalculationStepTest {
 					anEntry(C, ONE)
 				))))));
 
-		Matcher<STVElectionCalculationStep.ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
+		Matcher<ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
 			withCandidateStates(withLooser(B)),
 			withNumberOfElectedCandidates(is(1)),
-			withBallotStates(containsInAnyOrder(
-				aBallotState(allOf(
+			withVoteStates(containsInAnyOrder(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
 					withVoteWeight(equalTo(ONE))
 				)),
-				aBallotState(allOf(
+				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
 					withVoteWeight(equalTo(ONE))
 				))
@@ -329,8 +331,8 @@ public class STVElectionCalculationStepTest {
 	}
 
 
-	private static BallotState<Candidate> stateFor(Ballot<Candidate> ballot) {
-		return new BallotState<>(ballot, ELECTION);
+	private static VoteState<Candidate> stateFor(Ballot<Candidate> ballot) {
+		return VoteState.forBallotAndElection(ballot, ELECTION).get();
 	}
 
 	private static Ballot<Candidate> createBallot(String preference) {

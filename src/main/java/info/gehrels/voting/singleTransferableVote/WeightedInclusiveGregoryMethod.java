@@ -23,24 +23,24 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 
 	private final class WigmVoteWeightRedistributor<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributor<CANDIDATE_TYPE> {
 		@Override
-		public ImmutableList<BallotState<CANDIDATE_TYPE>> redistributeExceededVoteWeight(CANDIDATE_TYPE winner, BigFraction quorum,
-		                                                                       ImmutableCollection<BallotState<CANDIDATE_TYPE>> ballotStates) {
-			Builder<BallotState<CANDIDATE_TYPE>> resultBuilder = ImmutableList.builder();
+		public ImmutableList<VoteState<CANDIDATE_TYPE>> redistributeExceededVoteWeight(CANDIDATE_TYPE winner, BigFraction quorum,
+		                                                                       ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates) {
+			Builder<VoteState<CANDIDATE_TYPE>> resultBuilder = ImmutableList.builder();
 
-			BigFraction votesForCandidate = calculateVotesForCandidate(winner, ballotStates);
+			BigFraction votesForCandidate = calculateVotesForCandidate(winner, voteStates);
 			BigFraction excessiveVotes = votesForCandidate.subtract(quorum);
 			BigFraction excessiveFractionOfVoteWeight = excessiveVotes.divide(votesForCandidate);
 
-			for (BallotState<CANDIDATE_TYPE> ballotState : ballotStates) {
-				if (ballotState.getPreferredCandidate().orNull() == winner) {
-					BigFraction newVoteWeight = ballotState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
-					BallotState<CANDIDATE_TYPE> newBallotState = ballotState.withVoteWeight(newVoteWeight);
+			for (VoteState<CANDIDATE_TYPE> voteState : voteStates) {
+				if (voteState.getPreferredCandidate().orNull() == winner) {
+					BigFraction newVoteWeight = voteState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
+					VoteState<CANDIDATE_TYPE> newVoteState = voteState.withVoteWeight(newVoteWeight);
 					electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
-					                                                    newBallotState.getBallotId(),
-					                                                    newBallotState.getVoteWeight());
-					resultBuilder.add(newBallotState);
+					                                                    newVoteState.getBallotId(),
+					                                                    newVoteState.getVoteWeight());
+					resultBuilder.add(newVoteState);
 				} else {
-					resultBuilder.add(ballotState);
+					resultBuilder.add(voteState);
 				}
 			}
 
