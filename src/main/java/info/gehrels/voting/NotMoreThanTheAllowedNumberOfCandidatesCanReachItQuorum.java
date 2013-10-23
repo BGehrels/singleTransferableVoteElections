@@ -15,8 +15,8 @@ public class NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum implements 
 	}
 
 	@Override
-	public final BigFraction calculateQuorum(int numberOfValidBallots, int numberOfSeats) {
-		return new BigFraction(numberOfValidBallots, (numberOfSeats + 1)).add(surplus);
+	public final BigFraction calculateQuorum(long numberOfValidVotes, long numberOfSeats) {
+		return new BigFraction(numberOfValidVotes, (numberOfSeats + 1)).add(surplus);
 	}
 
 

@@ -10,6 +10,7 @@ import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.QuorumCalculation;
+import info.gehrels.voting.Vote;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
@@ -45,13 +46,12 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 
 	@Override
 	public final ImmutableSet<CANDIDATE_TYPE> calculate(ImmutableSet<CANDIDATE_TYPE> qualifiedCandidates,
-	                                                    int numberOfSeats) {
+	                                                    long numberOfSeats) {
 		validateThat(qualifiedCandidates, is(not(nullValue())));
-		validateThat(numberOfSeats, is(greaterThanOrEqualTo(0)));
+		validateThat(numberOfSeats, is(greaterThanOrEqualTo(0L)));
 
 		VoteWeightRedistributor<CANDIDATE_TYPE> redistributor = voteWeightRedistributionMethod.redistributorFor();
-		int numberOfValidBallots = ballots.size();
-		// Runden oder nicht runden?
+		long numberOfValidBallots = calculateNumberOfValidVotes();
 		BigFraction quorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfSeats);
 		electionCalculationListener.quorumHasBeenCalculated(numberOfValidBallots, numberOfSeats, quorum);
 
@@ -64,7 +64,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 				                    .calculateVotesByCandidate(candidateStates.getHopefulCandidates(),
 				                                               voteStates));
 
-		int numberOfElectedCandidates = 0;
+		long numberOfElectedCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {
 			STVElectionCalculationStep.ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep.declareWinnerOrStrikeCandidate(quorum,
 			                                                                                                                               voteStates,
@@ -81,6 +81,18 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		return electedCandidates;
 	}
 
+	private long calculateNumberOfValidVotes() {
+		long numberOfValidVotes = 0;
+		for (Ballot<CANDIDATE_TYPE> ballot : ballots) {
+			Optional<Vote<CANDIDATE_TYPE>> vote = ballot.getVote(election);
+			if (vote.isPresent() && vote.get().isValid()) {
+				numberOfValidVotes++;
+			}
+		}
+
+		return numberOfValidVotes;
+	}
+
 	private ImmutableCollection<VoteState<CANDIDATE_TYPE>> constructVoteStates(CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		ImmutableList.Builder<VoteState<CANDIDATE_TYPE>> builder = ImmutableList.builder();
 		for (Ballot<CANDIDATE_TYPE> ballot : ballots) {
@@ -93,7 +105,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 	}
 
 
-	private boolean notAllSeatsFilled(int numberOfElectedCandidates, int numberOfSeatsToElect) {
+	private boolean notAllSeatsFilled(long numberOfElectedCandidates, long numberOfSeatsToElect) {
 		boolean notAllSeatsFilled = numberOfElectedCandidates < numberOfSeatsToElect;
 		electionCalculationListener.numberOfElectedPositions(numberOfElectedCandidates, numberOfSeatsToElect);
 		return notAllSeatsFilled;

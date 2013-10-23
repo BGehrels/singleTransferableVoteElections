@@ -11,12 +11,12 @@ public final class ElectionStepResultMatchers {
 	private ElectionStepResultMatchers() {
 	}
 
-	static Matcher<ElectionStepResult<?>> withNumberOfElectedCandidates(Matcher<Integer> subMatcher) {
-		return new FeatureMatcher<ElectionStepResult<?>, Integer>(subMatcher, "with number of elected candidates",
+	static Matcher<ElectionStepResult<?>> withNumberOfElectedCandidates(Matcher<Long> subMatcher) {
+		return new FeatureMatcher<ElectionStepResult<?>, Long>(subMatcher, "whose number of elected candidates",
 		                                                          "number of elected candidates") {
 
 			@Override
-			protected Integer featureValueOf(ElectionStepResult<?> electionStepResult) {
+			protected Long featureValueOf(ElectionStepResult<?> electionStepResult) {
 				return electionStepResult.newNumberOfElectedCandidates;
 			}
 		};

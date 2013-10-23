@@ -18,7 +18,6 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory;
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener;
 
-	// TODO: Validate, that Ballots without a female vote are invalid (are they?)
 	public ElectionCalculationWithFemaleExclusivePositions(
 		ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory,
 		ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener) {
@@ -57,7 +56,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
 		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation,
 		ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
-		int numberOfElectableNotFemaleExclusivePositions =
+		long numberOfElectableNotFemaleExclusivePositions =
 			max(
 				0,
 				election.getNumberOfNotFemaleExclusivePositions()

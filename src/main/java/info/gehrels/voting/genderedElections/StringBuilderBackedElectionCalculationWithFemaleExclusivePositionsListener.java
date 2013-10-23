@@ -10,11 +10,12 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 		this.builder = builder;
 	}
 
+	// TODO: Am Anfang einmal Die Anzahl der Abgegebenen, Gültigen, ungültigen, Nein-Stimmen und Präferenz-Stimmen ausgeben
 	@Override
-	public void reducedNonFemaleExclusiveSeats(int numberOfOpenFemaleExclusiveSeats,
-	                                           int numberOfElectedFemaleExclusiveSeats,
-	                                           int numberOfOpenNonFemaleExclusiveSeats,
-	                                           int numberOfElectableNonFemaleExclusiveSeats) {
+	public void reducedNonFemaleExclusiveSeats(long numberOfOpenFemaleExclusiveSeats,
+	                                           long numberOfElectedFemaleExclusiveSeats,
+	                                           long numberOfOpenNonFemaleExclusiveSeats,
+	                                           long numberOfElectableNonFemaleExclusiveSeats) {
 		formatLine(
 			"Es wurden nur %d von %d Frauenplätzen besetzt. Daher können auch nur %d von %d offenen Plätzen gewählt werden.",
 			numberOfElectedFemaleExclusiveSeats, numberOfOpenFemaleExclusiveSeats,

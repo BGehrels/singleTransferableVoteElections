@@ -21,7 +21,7 @@ import static info.gehrels.voting.TestUtils.createBallot;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
-public class MartinWilkesExampleIT {
+public final class MartinWilkesExampleIT {
 	public static final NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum QUORUM_CALCULATION = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(
 		new BigFraction(1, 1000));
 	public static final AmbiguityResolver<GenderedCandidate> AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver<>();
@@ -37,8 +37,8 @@ public class MartinWilkesExampleIT {
 	public static final GenderedCandidate CANDIDATE_I = new GenderedCandidate("I", true);
 	public static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
 
-	private ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
-	private GenderedElection election;
+	private final ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
+	private final GenderedElection election;
 
 	public MartinWilkesExampleIT() {
 		ImmutableSet<GenderedCandidate> candidateSet = ImmutableSet.of(

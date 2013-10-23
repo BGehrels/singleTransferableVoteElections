@@ -35,7 +35,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	public final ElectionStepResult<CANDIDATE_TYPE> declareWinnerOrStrikeCandidate(BigFraction quorum,
 	                                                         ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
 	                                                         VoteWeightRedistributor<CANDIDATE_TYPE> redistributor,
-	                                                         int numberOfElectedCandidates,
+	                                                         long numberOfElectedCandidates,
 	                                                         CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		CANDIDATE_TYPE winner = bestCandidateThatReachedTheQuorum(quorum, voteStates, candidateStates);
 		if (winner != null) {
@@ -79,13 +79,13 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByRedistributingTheWinnersExceedingVotes(BigFraction quorum,
 	                                                                                               ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
 	                                                                                               VoteWeightRedistributor<CANDIDATE_TYPE> redistributor,
-	                                                                                               int numberOfElectedCandidates,
+	                                                                                               long numberOfElectedCandidates,
 	                                                                                               CANDIDATE_TYPE winner,
 	                                                                                               CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		electionCalculationListener
 			.candidateIsElected(winner, VotesForCandidateCalculation.calculateVotesForCandidate(winner, voteStates), quorum);
 
-		int newNumberOfElectedCandidates = numberOfElectedCandidates + 1;
+		long newNumberOfElectedCandidates = numberOfElectedCandidates + 1;
 		voteStates = redistributor.redistributeExceededVoteWeight(winner, quorum, voteStates);
 
 		CandidateStates<CANDIDATE_TYPE> newCandidateStates = candidateStates.withElected(winner);
@@ -102,7 +102,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 
 	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByStrikingTheWeakestCandidate(BigFraction quorum,
 	                                                                                    ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
-	                                                                                    int numberOfElectedCandidates,
+	                                                                                    long numberOfElectedCandidates,
 	                                                                                    CandidateStates<CANDIDATE_TYPE> candidateStates) {
 
 		electionCalculationListener.nobodyReachedTheQuorumYet(quorum);
@@ -194,10 +194,10 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	public static class ElectionStepResult<CANDIDATE_TYPE extends Candidate> {
 		final CandidateStates<CANDIDATE_TYPE> newCandidateStates;
 		final ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates;
-		final int newNumberOfElectedCandidates;
+		final long newNumberOfElectedCandidates;
 
 		ElectionStepResult(ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates,
-		                          int newNumberOfElectedCandidates,
+		                          long newNumberOfElectedCandidates,
 		                          CandidateStates<CANDIDATE_TYPE> candidateStates) {
 			this.newCandidateStates = candidateStates;
 			this.newVoteStates = newVoteStates;

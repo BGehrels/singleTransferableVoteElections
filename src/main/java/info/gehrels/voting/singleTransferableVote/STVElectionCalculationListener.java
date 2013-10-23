@@ -9,7 +9,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.util.Map;
 
 public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
-	void numberOfElectedPositions(int numberOfElectedCandidates, int numberOfSeatsToElect);
+	void numberOfElectedPositions(long numberOfElectedCandidates, long numberOfSeatsToElect);
 
 	void electedCandidates(ImmutableSet<CANDIDATE_TYPE> electedCandidates);
 
@@ -18,8 +18,7 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 		BigFraction weakestVoteCount,
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking);
 
-	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight,
-	                             int ballotId, BigFraction voteWeight);
+	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, int ballotId, BigFraction newVoteWeight);
 
 	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
@@ -35,5 +34,5 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 
 	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
-	void quorumHasBeenCalculated(int numberOfValidBallots, int numberOfSeats, BigFraction quorum);
+	void quorumHasBeenCalculated(long numberOfValidBallots, long numberOfSeats, BigFraction quorum);
 }

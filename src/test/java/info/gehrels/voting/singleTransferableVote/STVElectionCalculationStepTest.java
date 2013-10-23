@@ -10,23 +10,22 @@ import info.gehrels.voting.Election;
 import info.gehrels.voting.MapMatchers;
 import info.gehrels.voting.TestUtils;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.util.Map;
 
 import static info.gehrels.voting.MapMatchers.aMap;
 import static info.gehrels.voting.MapMatchers.anEntry;
+import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;
+import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withLooser;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.anElectionStepResult;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withCandidateStates;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withNumberOfElectedCandidates;
+import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withVoteStates;
 import static info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.aVoteState;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withPreferredCandidate;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withVoteWeight;
-import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;
-import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withLooser;
-import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.anElectionStepResult;
-import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withVoteStates;
-import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withCandidateStates;
-import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withNumberOfElectedCandidates;
 import static org.apache.commons.math3.fraction.BigFraction.FOUR_FIFTHS;
 import static org.apache.commons.math3.fraction.BigFraction.ONE;
 import static org.apache.commons.math3.fraction.BigFraction.ONE_FIFTH;
@@ -103,9 +102,9 @@ public final class STVElectionCalculationStepTest {
 				hasEntry(C, ONE))
 		));
 
-		Matcher<ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
+		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
-			withNumberOfElectedCandidates(is(2)),
+			withNumberOfElectedCandidates(is(2L)),
 			withVoteStates(containsInAnyOrder(
 				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
@@ -121,8 +120,7 @@ public final class STVElectionCalculationStepTest {
 					withVoteWeight(equalTo(ONE_HALF))
 				))
 			))
-		)));
-		assertThat(electionStepResult, matcher);
+		))));
 	}
 
 	@Test
@@ -147,9 +145,9 @@ public final class STVElectionCalculationStepTest {
 				hasEntry(C, ONE))
 		));
 
-		Matcher<ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
+		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
-			withNumberOfElectedCandidates(is(2)),
+			withNumberOfElectedCandidates(is(2L)),
 			withVoteStates(containsInAnyOrder(
 				aVoteState(allOf(
 					withPreferredCandidate(is(C)),
@@ -165,8 +163,7 @@ public final class STVElectionCalculationStepTest {
 					withVoteWeight(equalTo(ONE_HALF))
 				))
 			))
-		)));
-		assertThat(electionStepResult, matcher);
+		))));
 	}
 
 	@Test
@@ -196,7 +193,7 @@ public final class STVElectionCalculationStepTest {
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(B)),
-			withNumberOfElectedCandidates(is(2)),
+			withNumberOfElectedCandidates(is(2L)),
 			withVoteStates(containsInAnyOrder(
 				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
@@ -247,9 +244,9 @@ public final class STVElectionCalculationStepTest {
 					anEntry(B, ONE)
 				))))));
 
-		Matcher<ElectionStepResult<Candidate>> electionStepResultMatcher = allOf(
+		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withLooser(C)),
-			withNumberOfElectedCandidates(is(1)),
+			withNumberOfElectedCandidates(is(1L)),
 			withVoteStates(containsInAnyOrder(
 				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
@@ -268,8 +265,7 @@ public final class STVElectionCalculationStepTest {
 					withVoteWeight(equalTo(ONE))
 				))
 			))
-		);
-		assertThat(electionStepResult, is(anElectionStepResult(electionStepResultMatcher)));
+		))));
 	}
 
 
@@ -305,9 +301,9 @@ public final class STVElectionCalculationStepTest {
 					anEntry(C, ONE)
 				))))));
 
-		Matcher<ElectionStepResult<Candidate>> matcher = is(anElectionStepResult(allOf(
+		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withLooser(B)),
-			withNumberOfElectedCandidates(is(1)),
+			withNumberOfElectedCandidates(is(1L)),
 			withVoteStates(containsInAnyOrder(
 				aVoteState(allOf(
 					withPreferredCandidate(is(A)),
@@ -326,8 +322,7 @@ public final class STVElectionCalculationStepTest {
 					withVoteWeight(equalTo(ONE))
 				))
 			))
-		)));
-		assertThat(electionStepResult, matcher);
+		))));
 	}
 
 

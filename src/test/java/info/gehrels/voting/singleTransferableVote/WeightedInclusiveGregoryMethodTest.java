@@ -7,7 +7,6 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -17,7 +16,6 @@ import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withB
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withVoteWeight;
 import static org.apache.commons.math3.fraction.BigFraction.ONE_HALF;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -55,17 +53,15 @@ public final class WeightedInclusiveGregoryMethodTest {
 		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRedistributor
 			.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE);
 
-		Matcher<VoteState<Candidate>> stateMatcher = allOf(
-			withVoteWeight(ONE_HALF),
-			withBallotId(BALLOT_ABCD.id)
-		);
-		Matcher<VoteState<Candidate>> stateMatcher1 = allOf(
-			withBallotId(BALLOT_ACD.id),
-			withVoteWeight(new BigFraction(3, 8))
-		);
 		assertThat(voteStates, hasItems(
-			aVoteState(stateMatcher),
-			aVoteState(stateMatcher1)
+			aVoteState(Matchers.<VoteState<Candidate>>allOf(
+				withVoteWeight(ONE_HALF),
+				withBallotId(BALLOT_ABCD.id)
+			)),
+			aVoteState(Matchers.<VoteState<Candidate>>allOf(
+				withBallotId(BALLOT_ACD.id),
+				withVoteWeight(new BigFraction(3, 8))
+			))
 		));
 	}
 

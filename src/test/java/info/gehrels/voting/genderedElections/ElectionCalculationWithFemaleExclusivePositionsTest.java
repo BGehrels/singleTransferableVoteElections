@@ -14,7 +14,7 @@ import org.mockito.InOrder;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
@@ -23,11 +23,10 @@ import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
 public final class ElectionCalculationWithFemaleExclusivePositionsTest {
-
-	public static final GenderedCandidate FEMALE_CANDIDATE_1 = new GenderedCandidate("F", true);
-	public static final GenderedCandidate FEMALE_CANDIDATE_2 = new GenderedCandidate("G", true);
-	public static final GenderedCandidate CANDIDATE_E = new GenderedCandidate("A", false);
-	public static final GenderedCandidate CANDIDATE_F = new GenderedCandidate("B", false);
+	private static final GenderedCandidate FEMALE_CANDIDATE_1 = new GenderedCandidate("F", true);
+	private static final GenderedCandidate FEMALE_CANDIDATE_2 = new GenderedCandidate("G", true);
+	private static final GenderedCandidate CANDIDATE_E = new GenderedCandidate("A", false);
+	private static final GenderedCandidate CANDIDATE_F = new GenderedCandidate("B", false);
 
 	private static final ImmutableSet<GenderedCandidate> CANDIDATES = ImmutableSet.of(
 		FEMALE_CANDIDATE_1,
@@ -92,7 +91,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		GenderedElection election = new GenderedElection("Example Office", 3, 2, CANDIDATES);
 
 		// given only two female positions have been elected in the first run
-		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3L)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1, FEMALE_CANDIDATE_2));
 
 
@@ -100,8 +99,8 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		// Then all non elected candidates qualify for the second run.
 		InOrder inOrder = inOrder(electionCalculationMock);
-		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3));
-		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(1));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3L));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(1L));
 	}
 
 	@Test
@@ -110,7 +109,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 		// given only one female positions have been elected in the first run
-		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3L)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
 
@@ -118,8 +117,8 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		// Then all non elected candidates qualify for the second run.
 		InOrder inOrder = inOrder(electionCalculationMock);
-		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3));
-		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3L));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0L));
 	}
 
 	@Test
@@ -127,7 +126,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		GenderedElection election = new GenderedElection("Example Office", 3, 2, CANDIDATES);
 
 		// given no female positions have been elected in the first run
-		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3L)))
 			.toReturn(ImmutableSet.<GenderedCandidate>of());
 
 
@@ -135,8 +134,8 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		// Then all non elected candidates qualify for the second run.
 		InOrder inOrder = inOrder(electionCalculationMock);
-		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3));
-		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3L));
+		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0L));
 	}
 
 	@Test
@@ -144,7 +143,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		GenderedElection election = new GenderedElection("Example Office", 1, 2, CANDIDATES);
 
 		// given no female positions have been elected in the first run
-		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1L)))
 			.toReturn(ImmutableSet.<GenderedCandidate>of());
 
 
@@ -155,7 +154,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 	private void makeSureElectionCalculationDoesNotReturnNull() {
-		stub(electionCalculationMock.calculate(any(ImmutableSet.class), anyInt()))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), anyLong()))
 			.toReturn(ImmutableSet.<GenderedCandidate>of());
 	}
 
