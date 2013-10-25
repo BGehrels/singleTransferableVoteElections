@@ -12,8 +12,13 @@ import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.QuorumCalculation;
 import info.gehrels.voting.Vote;
 import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.util.Pair;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -33,7 +38,11 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 	                              Election<CANDIDATE_TYPE> election,
 	                              AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver,
 	                              VoteWeightRedistributionMethod<CANDIDATE_TYPE> redistributionMethod) {
-		this.ballots = validateThat(ballots, is(not(nullValue())));
+
+		this.ballots = validateThat(ballots, allOf(
+			is(not(nullValue())),
+			not(hasAPairOfElementsThat(this.<CANDIDATE_TYPE>hasEqualIds()))
+			));
 		this.quorumCalculation = validateThat(quorumCalculation, is(not(nullValue())));
 		this.election = validateThat(election, is(not(nullValue())));
 		this.voteWeightRedistributionMethod = validateThat(redistributionMethod, is(not(nullValue())));
@@ -66,11 +75,12 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 
 		long numberOfElectedCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {
-			STVElectionCalculationStep.ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep.declareWinnerOrStrikeCandidate(quorum,
-			                                                                                                                               voteStates,
-			                                                                                                    redistributor,
-			                                                                                                    numberOfElectedCandidates,
-			                                                                                                    candidateStates);
+			STVElectionCalculationStep.ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep
+				.declareWinnerOrStrikeCandidate(quorum,
+				                                voteStates,
+				                                redistributor,
+				                                numberOfElectedCandidates,
+				                                candidateStates);
 			candidateStates = electionStepResult.newCandidateStates;
 			voteStates = electionStepResult.newVoteStates;
 			numberOfElectedCandidates = electionStepResult.newNumberOfElectedCandidates;
@@ -93,7 +103,8 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		return numberOfValidVotes;
 	}
 
-	private ImmutableCollection<VoteState<CANDIDATE_TYPE>> constructVoteStates(CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	private ImmutableCollection<VoteState<CANDIDATE_TYPE>> constructVoteStates(
+		CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		ImmutableList.Builder<VoteState<CANDIDATE_TYPE>> builder = ImmutableList.builder();
 		for (Ballot<CANDIDATE_TYPE> ballot : ballots) {
 			Optional<VoteState<CANDIDATE_TYPE>> voteStateOptional = VoteState.forBallotAndElection(ballot, election);
@@ -135,5 +146,51 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		return builder.build();
 	}
 
+	private <T extends Candidate> Matcher<Pair<Ballot<T>, Ballot<T>>> hasEqualIds() {
+		return new TypeSafeDiagnosingMatcher<Pair<Ballot<T>, Ballot<T>>>() {
+			@Override
+			protected boolean matchesSafely(Pair<Ballot<T>, Ballot<T>> item, Description mismatchDescription) {
+				int firstId = item.getFirst().id;
+				int secondId = item.getSecond().id;
+				if (firstId != secondId) {
+					mismatchDescription.appendValue(item).appendText(" had different ids ").appendValue(firstId)
+						.appendText(" and ").appendValue(secondId);
+					return false;
+				}
+				return true;
+			}
 
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("has equal ids");
+			}
+		};
+	}
+
+
+	private static <T> Matcher<Iterable<T>> hasAPairOfElementsThat(final Matcher<Pair<T, T>> subMatcher) {
+		return new TypeSafeDiagnosingMatcher<Iterable<T>>() {
+			@Override
+			protected boolean matchesSafely(Iterable<T> iterable, Description mismatchDescription) {
+				for (T item1 : iterable) {
+					for (T item2 : iterable) {
+						if (item1 != item2) {
+							Pair<T, T> pair = new Pair<>(item1, item2);
+							if (subMatcher.matches(pair)) {
+								return true;
+							}
+						}
+					}
+				}
+
+				mismatchDescription.appendValue(iterable).appendText(" did not contain a pair of elements that ").appendDescriptionOf(subMatcher);
+				return false;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("has a pair of Elements that ").appendDescriptionOf(subMatcher);
+			}
+		};
+	}
 }
