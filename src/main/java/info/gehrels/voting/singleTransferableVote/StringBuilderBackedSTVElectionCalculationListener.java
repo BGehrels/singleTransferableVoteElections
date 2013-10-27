@@ -63,7 +63,7 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 	 * TODO: sowie die Kandidatin / den Kandidaten von der / dem und zu der / dem übertragen wurde.
 	 */
 	@Override
-	public void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, int ballotId,
+	public void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, long ballotId,
 	                                    BigFraction newVoteWeight) {
 		formatLine(
 			"Es werden %f %% der Stimmen weiterverteilt: "

@@ -150,8 +150,8 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		return new TypeSafeDiagnosingMatcher<Pair<Ballot<T>, Ballot<T>>>() {
 			@Override
 			protected boolean matchesSafely(Pair<Ballot<T>, Ballot<T>> item, Description mismatchDescription) {
-				int firstId = item.getFirst().id;
-				int secondId = item.getSecond().id;
+				long firstId = item.getFirst().id;
+				long secondId = item.getSecond().id;
 				if (firstId != secondId) {
 					mismatchDescription.appendValue(item).appendText(" had different ids ").appendValue(firstId)
 						.appendText(" and ").appendValue(secondId);

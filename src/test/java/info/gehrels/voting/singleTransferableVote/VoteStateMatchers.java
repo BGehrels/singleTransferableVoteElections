@@ -47,11 +47,11 @@ public final class VoteStateMatchers {
 		};
 	}
 
-	static Matcher<VoteState<?>> withBallotId(int ballotId) {
-		return new FeatureMatcher<VoteState<?>, Integer>(is(ballotId), "with ballot id", "ballot id") {
+	static Matcher<VoteState<?>> withBallotId(long ballotId) {
+		return new FeatureMatcher<VoteState<?>, Long>(is(ballotId), "with ballot id", "ballot id") {
 
 			@Override
-			protected Integer featureValueOf(VoteState<?> voteState) {
+			protected Long featureValueOf(VoteState<?> voteState) {
 				return voteState.getBallotId();
 			}
 		};

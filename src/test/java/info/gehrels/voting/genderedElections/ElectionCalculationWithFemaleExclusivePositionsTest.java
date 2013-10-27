@@ -66,7 +66,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		Matcher<ImmutableSet<GenderedCandidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_1, FEMALE_CANDIDATE_2);
-		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
+		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2L));
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 
 		// given FEMALE_CANDIDATE_1 has already been elected in the first any female exclusive run
-		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1)))
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(1L)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
 		objectUnderTest.calculateElectionResult(election, ballots);
@@ -83,7 +83,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		// Then all non elected candidates qualify for the second run.
 		Matcher<ImmutableSet<GenderedCandidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_2, CANDIDATE_E, CANDIDATE_F);
-		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2));
+		verify(electionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2L));
 	}
 
 	@Test

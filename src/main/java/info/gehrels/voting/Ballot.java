@@ -1,10 +1,12 @@
 package info.gehrels.voting;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
+import static com.google.common.base.Objects.equal;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -14,11 +16,11 @@ import static org.hamcrest.Matchers.notNullValue;
  * designated to one Election. In each of the areas, the voter may have expressed his preference between
  * one or more Candidates, represented by a Vote.
  */
-public class Ballot<CANDIDATE_TYPE extends Candidate> {
-	public final int id;
+public final class Ballot<CANDIDATE_TYPE extends Candidate> {
+	public final long id;
 	public final ImmutableMap<Election<CANDIDATE_TYPE>, Vote<CANDIDATE_TYPE>> votesByElections;
 
-	public Ballot(int id, ImmutableSet<Vote<CANDIDATE_TYPE>> votes) {
+	public Ballot(long id, ImmutableSet<Vote<CANDIDATE_TYPE>> votes) {
 		this.id = id;
 		validateThat(votes, is(notNullValue()));
 
@@ -29,10 +31,24 @@ public class Ballot<CANDIDATE_TYPE extends Candidate> {
 		this.votesByElections = builder.build();
 	}
 
-	public final Optional<Vote<CANDIDATE_TYPE>> getVote(Election<CANDIDATE_TYPE> election) {
+	public Optional<Vote<CANDIDATE_TYPE>> getVote(Election<CANDIDATE_TYPE> election) {
 		validateThat(election, is(notNullValue()));
 
 		return Optional.fromNullable(votesByElections.get(election));
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id, votesByElections);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Ballot)) {
+			return false;
+		}
+
+		Ballot<?> otherBallot = (Ballot<?>) obj;
+		return equal(id, otherBallot.id) && equal(votesByElections, otherBallot.votesByElections);
+	}
 }

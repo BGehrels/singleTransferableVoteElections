@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
-	private final int ballotId;
+	private final long ballotId;
 	private final BigFraction voteWeight;
 	private final int currentPositionInRankedCandidatesList;
 
@@ -31,7 +31,7 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 		return Optional.of(new VoteState<>(ballot.id, vote.get()));
 	}
 
-	private VoteState( int ballotId, Vote<CANDIDATE_TYPE> vote) {
+	private VoteState( long ballotId, Vote<CANDIDATE_TYPE> vote) {
 		this.ballotId = ballotId;
 		rankedCandidates = vote.getRankedCandidates().asList();
 
@@ -39,7 +39,7 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 		currentPositionInRankedCandidatesList = 0;
 	}
 
-	private VoteState(int ballotId, ImmutableList<CANDIDATE_TYPE> rankedCandidates, BigFraction voteWeight,
+	private VoteState(long ballotId, ImmutableList<CANDIDATE_TYPE> rankedCandidates, BigFraction voteWeight,
 	                  int currentPositionInRankedCandidatesList) {
 		this.ballotId = ballotId;
 		this.rankedCandidates = rankedCandidates;
@@ -84,7 +84,7 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 		return new VoteState<>(ballotId, rankedCandidates, newVoteWeight, currentPositionInRankedCandidatesList);
 	}
 
-	public int getBallotId() {
+	public long getBallotId() {
 		return ballotId;
 	}
 

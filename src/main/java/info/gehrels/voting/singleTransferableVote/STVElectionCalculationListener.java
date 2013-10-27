@@ -18,7 +18,7 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 		BigFraction weakestVoteCount,
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking);
 
-	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, int ballotId, BigFraction newVoteWeight);
+	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, long ballotId, BigFraction newVoteWeight);
 
 	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
