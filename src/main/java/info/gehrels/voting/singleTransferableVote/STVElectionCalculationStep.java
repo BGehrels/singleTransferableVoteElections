@@ -168,16 +168,16 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			return candidates.iterator().next();
 		}
 
-		CANDIDATE_TYPE winner = null;
+		CANDIDATE_TYPE choosenCandidate = null;
 		if (candidates.size() > 1) {
 			electionCalculationListener.delegatingToExternalAmbiguityResolution(candidates);
 			AmbiguityResolverResult<CANDIDATE_TYPE> ambiguityResolverResult = ambiguityResolver
 				.chooseOneOfMany(candidates);
 			electionCalculationListener.externalyResolvedAmbiguity(ambiguityResolverResult);
-			winner = ambiguityResolverResult.chosenCandidate;
+			choosenCandidate = ambiguityResolverResult.chosenCandidate;
 		}
 
-		return winner;
+		return choosenCandidate;
 	}
 
 	private class State<CANDIDATE_TYPE extends Candidate> {
