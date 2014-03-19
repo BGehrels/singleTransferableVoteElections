@@ -1,5 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.Candidate;
@@ -18,7 +19,9 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 		BigFraction weakestVoteCount,
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking);
 
-	void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, long ballotId, BigFraction newVoteWeight);
+	<T extends Candidate> void  voteWeightRedistributed(long ballotId, T from, Optional<T> to,
+	                             BigFraction excessiveFractionOfVoteWeight,
+	                             BigFraction newVoteWeight);
 
 	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 

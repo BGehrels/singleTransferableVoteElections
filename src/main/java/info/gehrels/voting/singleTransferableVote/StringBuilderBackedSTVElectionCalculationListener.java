@@ -1,5 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.Candidate;
@@ -59,21 +60,26 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 	 * [...]
 	 * 5. In Fällen des § 18 Nr. 7, 8 die Anzahl der übertragenen Stimmen, der Gesamtstimmwert dieser Stimmen zum
 	 * Zeitpunkt der Übertragung sowie die Kandidatin / den Kandidaten von der / dem und zu der / dem übertragen wurde.
-	 * [...]
-	 * TODO: sowie die Kandidatin / den Kandidaten von der / dem und zu der / dem übertragen wurde.
 	 */
 	@Override
-	public void voteWeightRedistributed(BigFraction excessiveFractionOfVoteWeight, long ballotId,
-	                                    BigFraction newVoteWeight) {
-		formatLine(
-			"Es werden %f %% der Stimmen weiterverteilt: "
-			+ "Stimmzettel %d hat nun ein verbleibendes Stimmgewicht von %f %%.",
-			excessiveFractionOfVoteWeight.percentageValue(), ballotId,
-			newVoteWeight.percentageValue());
+	public <C1 extends Candidate> void voteWeightRedistributed(long ballotId, C1 from, Optional<C1> to,
+	                                                           BigFraction excessiveFractionOfVoteWeight,
+	                                                           BigFraction newVoteWeight) {
+		if (to.isPresent()) {
+			formatLine(
+				"Es werden %f %% der Stimmen von %s weiterverteilt: "
+				+ "Stimmzettel %d hat nun ein verbleibendes Stimmgewicht von %f %% für %s.",
+				excessiveFractionOfVoteWeight.percentageValue(), from.getName(), ballotId,
+				newVoteWeight.percentageValue(), to.get().getName());
+		} else {
+			formatLine(
+				"Es werden %f %% der Stimmen von %s weiterverteilt: Stimmzettel %d hat keine weiteren Präferenzen, sein verbleibendes Stimmgewicht von %f %% zählt nun wie eine Nein-Stimme.",
+				excessiveFractionOfVoteWeight.percentageValue(), from.getName(), ballotId, newVoteWeight.percentageValue());
+		}
 	}
 
 	@Override
-	public void delegatingToExternalAmbiguityResolution(ImmutableSet<T> bestCandidates) {
+	public void delegatingToExternalAmbiguityResolution(ImmutableSet <T> bestCandidates) {
 		formatLine("Mehrere Stimmgleiche Kandidierende: %s. Delegiere an externes Auswahlverfahren.", bestCandidates);
 	}
 

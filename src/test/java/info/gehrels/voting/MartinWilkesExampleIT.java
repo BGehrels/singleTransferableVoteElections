@@ -1,10 +1,7 @@
-package it.gehrels.voting;
+package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import info.gehrels.voting.AmbiguityResolver;
-import info.gehrels.voting.Ballot;
-import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
 import info.gehrels.voting.TestUtils.JustTakeTheFirstOneAmbiguityResolver;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions;
 import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositions.Result;

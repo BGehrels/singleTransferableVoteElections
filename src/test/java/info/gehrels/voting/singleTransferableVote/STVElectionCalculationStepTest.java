@@ -89,7 +89,7 @@ public final class STVElectionCalculationStepTest {
 			stateFor(BC_BALLOT)
 		);
 
-		when(redistributorMock.redistributeExceededVoteWeight(A, THREE, voteStates))
+		when(redistributorMock.redistributeExceededVoteWeight(A, THREE, voteStates, CANDIDATE_STATES))
 			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
 		ElectionStepResult<Candidate> electionStepResult =
@@ -132,7 +132,7 @@ public final class STVElectionCalculationStepTest {
 			stateFor(BC_BALLOT)
 		);
 
-		when(redistributorMock.redistributeExceededVoteWeight(A, ONE, voteStates))
+		when(redistributorMock.redistributeExceededVoteWeight(A, ONE, voteStates, CANDIDATE_STATES))
 			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
 		ElectionStepResult<Candidate> electionStepResult = step
@@ -178,7 +178,7 @@ public final class STVElectionCalculationStepTest {
 		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(A, B)))
 			.thenReturn(new AmbiguityResolverResult<>(B, "Fixed as Mock"));
 
-		when(redistributorMock.redistributeExceededVoteWeight(B, TWO, voteStates))
+		when(redistributorMock.redistributeExceededVoteWeight(B, TWO, voteStates, CANDIDATE_STATES))
 			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
 		ElectionStepResult<Candidate> electionStepResult = step

@@ -86,7 +86,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			.candidateIsElected(winner, VotesForCandidateCalculation.calculateVotesForCandidate(winner, voteStates), quorum);
 
 		long newNumberOfElectedCandidates = numberOfElectedCandidates + 1;
-		voteStates = redistributor.redistributeExceededVoteWeight(winner, quorum, voteStates);
+		voteStates = redistributor.redistributeExceededVoteWeight(winner, quorum, voteStates, candidateStates);
 
 		CandidateStates<CANDIDATE_TYPE> newCandidateStates = candidateStates.withElected(winner);
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates = createVoteStatesPointingAtNextHopefulCandidate(

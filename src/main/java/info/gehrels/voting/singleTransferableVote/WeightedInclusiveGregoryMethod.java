@@ -1,5 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -10,7 +11,7 @@ import static info.gehrels.voting.singleTransferableVote.VotesForCandidateCalcul
 
 public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> implements
 	VoteWeightRedistributionMethod<CANDIDATE_TYPE> {
-	private final STVElectionCalculationListener<?> electionCalculationListener;
+	private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 
 	public WeightedInclusiveGregoryMethod(STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener) {
 		this.electionCalculationListener = electionCalculationListener;
@@ -21,10 +22,13 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 		return new WigmVoteWeightRedistributor<CANDIDATE_TYPE>();
 	}
 
-	private final class WigmVoteWeightRedistributor<CANDIDATE_TYPE extends Candidate> implements VoteWeightRedistributor<CANDIDATE_TYPE> {
+	private final class WigmVoteWeightRedistributor<CANDIDATE_TYPE extends Candidate>
+		implements VoteWeightRedistributor<CANDIDATE_TYPE> {
 		@Override
-		public ImmutableList<VoteState<CANDIDATE_TYPE>> redistributeExceededVoteWeight(CANDIDATE_TYPE winner, BigFraction quorum,
-		                                                                       ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates) {
+		public ImmutableList<VoteState<CANDIDATE_TYPE>> redistributeExceededVoteWeight(CANDIDATE_TYPE winner,
+		                                                                               BigFraction quorum,
+		                                                                               ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
+		                                                                               CandidateStates<CANDIDATE_TYPE> candidateStates) {
 			Builder<VoteState<CANDIDATE_TYPE>> resultBuilder = ImmutableList.builder();
 
 			// TODO: Rundungsregeln bei der Stimmgewichtsübertragung aus der Satzung streichen.
@@ -49,11 +53,13 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 
 			for (VoteState<CANDIDATE_TYPE> voteState : voteStates) {
 				if (voteState.getPreferredCandidate().orNull() == winner) {
+					Optional<CANDIDATE_TYPE> candidateVotesGetRedistributedTo = voteState.withFirstHopefulCandidate(
+						candidateStates.withElected(winner)).getPreferredCandidate();
 					BigFraction newVoteWeight = voteState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
 					VoteState<CANDIDATE_TYPE> newVoteState = voteState.withVoteWeight(newVoteWeight);
-					electionCalculationListener.voteWeightRedistributed(excessiveFractionOfVoteWeight,
-					                                                    newVoteState.getBallotId(),
-					                                                    newVoteState.getVoteWeight());
+					electionCalculationListener
+						.voteWeightRedistributed(newVoteState.getBallotId(), winner, candidateVotesGetRedistributedTo,
+						                         excessiveFractionOfVoteWeight,newVoteState.getVoteWeight());
 					resultBuilder.add(newVoteState);
 				} else {
 					resultBuilder.add(voteState);
