@@ -1,6 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
-import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.Candidate;
@@ -16,14 +16,12 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 
 	void candidateDropped(
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateBeforeStriking, CANDIDATE_TYPE candidate,
-		BigFraction weakestVoteCount,
-		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking);
+		BigFraction weakestVoteCount);
 
-	<T extends Candidate> void  voteWeightRedistributed(long ballotId, T from, Optional<T> to,
-	                             BigFraction excessiveFractionOfVoteWeight,
-	                             BigFraction newVoteWeight);
 
-	void voteWeightRedistributionCompleted(Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
+	void voteWeightRedistributionCompleted(ImmutableCollection<VoteState<CANDIDATE_TYPE>> originalVoteStates,
+	                                       ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates,
+	                                       Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
 	void delegatingToExternalAmbiguityResolution(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
 
@@ -38,4 +36,6 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
 
 	void quorumHasBeenCalculated(long numberOfValidBallots, long numberOfSeats, BigFraction quorum);
+
+	void redistributingExcessiveFractionOfVoteWeight(Candidate winner, BigFraction excessiveFractionOfVoteWeight);
 }

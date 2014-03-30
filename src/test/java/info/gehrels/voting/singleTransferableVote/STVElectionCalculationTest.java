@@ -31,8 +31,8 @@ public final class STVElectionCalculationTest {
 		mock(STVElectionCalculationListener.class);
 	private final AmbiguityResolver<Candidate> ambiguityResolverMock =
 		mock(AmbiguityResolver.class);
-	private final VoteWeightRedistributionMethod<Candidate> redistributionMethodMock =
-		mock(VoteWeightRedistributionMethod.class);
+	private final VoteWeightRecalculationMethod<Candidate> redistributionMethodMock =
+		mock(VoteWeightRecalculationMethod.class);
 
 	@Test
 	public void callsQuorumCalculatorWithTheCorrectParameters() {

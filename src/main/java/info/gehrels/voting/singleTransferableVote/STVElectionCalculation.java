@@ -29,7 +29,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 	private final QuorumCalculation quorumCalculation;
 	private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final Election<CANDIDATE_TYPE> election;
-	private final VoteWeightRedistributionMethod<CANDIDATE_TYPE> voteWeightRedistributionMethod;
+	private final VoteWeightRecalculationMethod<CANDIDATE_TYPE> voteWeightRecalculationMethod;
 	private final STVElectionCalculationStep<CANDIDATE_TYPE> electionStep;
 
 	public STVElectionCalculation(ImmutableCollection<Ballot<CANDIDATE_TYPE>> ballots,
@@ -37,7 +37,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 	                              STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener,
 	                              Election<CANDIDATE_TYPE> election,
 	                              AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver,
-	                              VoteWeightRedistributionMethod<CANDIDATE_TYPE> redistributionMethod) {
+	                              VoteWeightRecalculationMethod<CANDIDATE_TYPE> redistributionMethod) {
 
 		this.ballots = validateThat(ballots, allOf(
 			is(not(nullValue())),
@@ -45,7 +45,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 			));
 		this.quorumCalculation = validateThat(quorumCalculation, is(not(nullValue())));
 		this.election = validateThat(election, is(not(nullValue())));
-		this.voteWeightRedistributionMethod = validateThat(redistributionMethod, is(not(nullValue())));
+		this.voteWeightRecalculationMethod = validateThat(redistributionMethod, is(not(nullValue())));
 		this.electionStep = new STVElectionCalculationStep<>(
 			validateThat(electionCalculationListener, is(not(nullValue()))),
 			validateThat(ambiguityResolver, is(not(nullValue())))
@@ -59,7 +59,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		validateThat(qualifiedCandidates, is(not(nullValue())));
 		validateThat(numberOfSeats, is(greaterThanOrEqualTo(0L)));
 
-		VoteWeightRedistributor<CANDIDATE_TYPE> redistributor = voteWeightRedistributionMethod.redistributorFor();
+		VoteWeightRecalculator<CANDIDATE_TYPE> redistributor = voteWeightRecalculationMethod.recalculatorFor();
 		long numberOfValidBallots = calculateNumberOfValidVotes();
 		BigFraction quorum = quorumCalculation.calculateQuorum(numberOfValidBallots, numberOfSeats);
 		electionCalculationListener.quorumHasBeenCalculated(numberOfValidBallots, numberOfSeats, quorum);

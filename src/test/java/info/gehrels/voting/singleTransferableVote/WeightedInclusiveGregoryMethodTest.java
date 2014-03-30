@@ -1,6 +1,5 @@
 package info.gehrels.voting.singleTransferableVote;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -51,10 +50,11 @@ public final class WeightedInclusiveGregoryMethodTest {
 
 	@Test
 	public void reducesVoteWeightOfThoseBallotsThatHadTheElectedCandidateAsCurrentPreferredCandidate() {
-		VoteWeightRedistributor<Candidate> voteWeightRedistributor = wigm.redistributorFor();
+		VoteWeightRecalculator<Candidate> voteWeightRecalculator = wigm.recalculatorFor();
 
-		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRedistributor
-			.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE, ALL_HOPEFULL_CANDIDATE_STATE);
+		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRecalculator
+			.recalculateExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE,
+			                               ALL_HOPEFULL_CANDIDATE_STATE);
 
 		assertThat(voteStates, hasItems(
 			aVoteState(Matchers.<VoteState<Candidate>>allOf(
@@ -70,24 +70,23 @@ public final class WeightedInclusiveGregoryMethodTest {
 
 	@Test
 	public void reportsEachVoteWeightRedistribution() {
-		VoteWeightRedistributor<Candidate> voteWeightRedistributor = wigm.redistributorFor();
+		VoteWeightRecalculator<Candidate> voteWeightRecalculator = wigm.recalculatorFor();
 
-		voteWeightRedistributor
-			.redistributeExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE, ALL_HOPEFULL_CANDIDATE_STATE);
+		voteWeightRecalculator
+			.recalculateExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE,
+			                               ALL_HOPEFULL_CANDIDATE_STATE);
 
-		verify(listenerMock).voteWeightRedistributed(BALLOT_ABCD.id, CANDIDATE_A, Optional.of(CANDIDATE_B), ONE_HALF,
-		                                             ONE_HALF);
-		verify(listenerMock).voteWeightRedistributed(BALLOT_ACD.id, CANDIDATE_A, Optional.of(CANDIDATE_C), ONE_HALF,
-		                                             new BigFraction(3, 8));
+		verify(listenerMock).redistributingExcessiveFractionOfVoteWeight(CANDIDATE_A, ONE_HALF);
 	}
 
 
 	@Test
 	public void doesNotReduceVoteWeightOfThoseVotesThatDidNotHaveTheElectedCandidateAsCurrentPreferredCandidate() {
-		VoteWeightRedistributor<Candidate> voteWeightRedistributor = wigm.redistributorFor();
+		VoteWeightRecalculator<Candidate> voteWeightRecalculator = wigm.recalculatorFor();
 
-		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRedistributor
-			.redistributeExceededVoteWeight(CANDIDATE_A, BigFraction.ONE, VOTE_STATES_FIXTURE, ALL_HOPEFULL_CANDIDATE_STATE);
+		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRecalculator
+			.recalculateExceededVoteWeight(CANDIDATE_A, BigFraction.ONE, VOTE_STATES_FIXTURE,
+			                               ALL_HOPEFULL_CANDIDATE_STATE);
 
 		assertThat(voteStates, hasItems(
 			aVoteState(Matchers.<VoteState<Candidate>>allOf(
