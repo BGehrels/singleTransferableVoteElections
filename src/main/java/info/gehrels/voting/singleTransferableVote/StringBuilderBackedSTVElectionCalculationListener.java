@@ -50,16 +50,20 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 
 	@Override
 	public void electedCandidates(ImmutableSet<T> electedCandidates) {
-		formatLine("======================================");
-		formatLine("Gewählt sind:");
-		for (T electedCandidate : electedCandidates) {
-			formatLine("\t%s", electedCandidate.name);
+		if (!electedCandidates.isEmpty()) {
+			formatLine("======================================");
+			formatLine("Gewählt sind:");
+			for (T electedCandidate : electedCandidates) {
+				formatLine("\t%s", electedCandidate.name);
+			}
 		}
 	}
 
 	@Override
-	public void redistributingExcessiveFractionOfVoteWeight(Candidate winner, BigFraction excessiveFractionOfVoteWeight) {
-		formatLine("Es werden %f%% des Stimmgewichts von %s weiterverteilt.", excessiveFractionOfVoteWeight.percentageValue(), winner.getName());
+	public void redistributingExcessiveFractionOfVoteWeight(Candidate winner,
+	                                                        BigFraction excessiveFractionOfVoteWeight) {
+		formatLine("Es werden %f%% des Stimmgewichts von %s weiterverteilt.",
+		           excessiveFractionOfVoteWeight.percentageValue(), winner.getName());
 	}
 
 	@Override
@@ -140,7 +144,9 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 					newState.getVoteWeight().percentageValue(), oldState.getPreferredCandidate().get().getName(),
 					getNameOrNo(newState.getPreferredCandidate()));
 			} else if (preferredCandidateChanged) {
-				formatLine("Stimmzettel %d überträgt sein bestehendes Stimmgewicht (%f%%) von %s auf %s", ballotId, oldState.getVoteWeight().percentageValue(), oldState.getPreferredCandidate().get().getName(), getNameOrNo(newState.getPreferredCandidate())
+				formatLine("Stimmzettel %d überträgt sein bestehendes Stimmgewicht (%f%%) von %s auf %s", ballotId,
+				           oldState.getVoteWeight().percentageValue(), oldState.getPreferredCandidate().get().getName(),
+				           getNameOrNo(newState.getPreferredCandidate())
 				);
 			}
 		}
