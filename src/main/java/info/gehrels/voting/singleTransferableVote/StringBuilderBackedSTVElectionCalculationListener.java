@@ -190,9 +190,9 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 
 	private <CANDIDATE_TYPE extends Candidate> void dumpVoteDistribution(
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidate) {
-		for (Entry<CANDIDATE_TYPE, BigFraction> candidateDoubleEntry : votesByCandidate.entrySet()) {
-			formatLine("\t%s: %f Stimmen", candidateDoubleEntry.getKey().name,
-			           candidateDoubleEntry.getValue().doubleValue());
+		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
+			formatLine("\t%s: %f Stimmen", votesForCandidate.getKey().name,
+			           votesForCandidate.getValue().doubleValue());
 		}
 	}
 
