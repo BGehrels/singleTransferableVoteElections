@@ -16,11 +16,12 @@
  */
 package info.gehrels.voting.genderedElections;
 
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener.NonQualificationReason;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -42,7 +43,8 @@ public final class FemalePredicateTest {
 	public void doesNotReportToElectionCalculationListenerWhenCandidatesAreQualified() {
 		condition.apply(ALICE);
 
-		verify(mock, never()).candidateNotQualified(isA(GenderedCandidate.class), anyString());
+		verify(mock, never()).candidateNotQualified(isA(GenderedCandidate.class), any(
+					NonQualificationReason.class));
 	}
 
 	@Test
@@ -54,6 +56,6 @@ public final class FemalePredicateTest {
 	public void reportsToElectionCalculationListenerWhenCandidatesAreNotQualified() {
 		condition.apply(BOB);
 
-		verify(mock).candidateNotQualified(BOB, "The candidate is not female.");
+		verify(mock).candidateNotQualified(BOB, NonQualificationReason.NOT_FEMALE);
 	}
 }

@@ -39,8 +39,19 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 	}
 
 	@Override
-	public void candidateNotQualified(GenderedCandidate candidate, String reason) {
-		formatLine("%s kann in diesem Wahlgang nicht antreten, Grund: %s", candidate.name, reason);
+	public void candidateNotQualified(GenderedCandidate candidate, NonQualificationReason reason) {
+		formatLine("%s kann in diesem Wahlgang nicht antreten, Grund: %s", candidate.name, getReasonAsGermanString(reason));
+	}
+
+	private String getReasonAsGermanString(NonQualificationReason reason) {
+		switch (reason) {
+			case NOT_FEMALE:
+				return "Nicht weiblich";
+			case ALREADY_ELECTED:
+				return "Bereits gewählt";
+		}
+
+		throw new IllegalArgumentException("Unbekannter Grund: " + reason);
 	}
 
 	private StringBuilder formatLine(String formatString, Object... objects) {

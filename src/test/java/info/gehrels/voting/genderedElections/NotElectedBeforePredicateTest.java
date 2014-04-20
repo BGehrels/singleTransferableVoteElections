@@ -17,11 +17,12 @@
 package info.gehrels.voting.genderedElections;
 
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener.NonQualificationReason;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -46,7 +47,8 @@ public final class NotElectedBeforePredicateTest {
 	@Test
 	public void doNotCallListenerWhenCandidateIsQualified() {
 		condition.apply(ALICE);
-		verify(electionCalculationListener, never()).candidateNotQualified(isA(GenderedCandidate.class), anyString());
+		verify(electionCalculationListener, never()).candidateNotQualified(isA(GenderedCandidate.class), any(
+			NonQualificationReason.class));
 	}
 
 
@@ -58,7 +60,7 @@ public final class NotElectedBeforePredicateTest {
 	@Test
 	public void callListenerWhenCandidateIsNotQualified() {
 		condition.apply(EVE);
-		verify(electionCalculationListener).candidateNotQualified(EVE, "The candidate has already been elected.");
+		verify(electionCalculationListener).candidateNotQualified(EVE, NonQualificationReason.ALREADY_ELECTED);
 	}
 
 

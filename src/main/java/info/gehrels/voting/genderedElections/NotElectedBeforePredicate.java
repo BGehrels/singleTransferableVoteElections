@@ -19,6 +19,7 @@ package info.gehrels.voting.genderedElections;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableCollection;
 import info.gehrels.voting.Candidate;
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener.NonQualificationReason;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
@@ -37,7 +38,7 @@ final class NotElectedBeforePredicate implements Predicate<GenderedCandidate> {
 	@Override
 	public boolean apply(GenderedCandidate candidate) {
 		if (alreadyElectedCandidates.contains(candidate)) {
-			electionCalculationListener.candidateNotQualified(candidate, "The candidate has already been elected.");
+			electionCalculationListener.candidateNotQualified(candidate, NonQualificationReason.ALREADY_ELECTED);
 			return false;
 		}
 

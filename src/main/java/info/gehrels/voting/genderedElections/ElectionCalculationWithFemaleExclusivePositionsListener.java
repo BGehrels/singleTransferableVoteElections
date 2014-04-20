@@ -25,6 +25,9 @@ public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 	                                    long numberOfElectableNonFemaleExclusiveSeats);
 
 
-	void candidateNotQualified(GenderedCandidate candidate, String reason);
+	void candidateNotQualified(GenderedCandidate candidate, NonQualificationReason reason);
 
+	public enum NonQualificationReason {
+		NOT_FEMALE, ALREADY_ELECTED
+	}
 }

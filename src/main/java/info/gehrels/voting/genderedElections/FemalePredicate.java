@@ -18,6 +18,7 @@ package info.gehrels.voting.genderedElections;
 
 
 import com.google.common.base.Predicate;
+import info.gehrels.voting.genderedElections.ElectionCalculationWithFemaleExclusivePositionsListener.NonQualificationReason;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
@@ -36,7 +37,7 @@ final class FemalePredicate implements Predicate<GenderedCandidate> {
 		if (candidate.isFemale()) {
 			return true;
 		} else {
-			electionCalculationListener.candidateNotQualified(candidate, "The candidate is not female.");
+			electionCalculationListener.candidateNotQualified(candidate, NonQualificationReason.NOT_FEMALE);
 			return false;
 		}
 	}
