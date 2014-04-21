@@ -10,23 +10,26 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class VoteDistributionMatchers {
-	public static Matcher<VoteDistribution<?>> aVoteDistribution(Matcher<VoteDistribution<?>>... subMatcher) {
+public final class VoteDistributionMatchers {
+	private VoteDistributionMatchers() {
+	}
+
+	public static <CANDIDATE extends Candidate> Matcher<VoteDistribution<CANDIDATE>> aVoteDistribution(Matcher<? super VoteDistribution<? super CANDIDATE>>... subMatcher) {
 		return new DelegatingMatcher<>(allOf(subMatcher), "a vote distribution");
 	}
 
-	public static Matcher<VoteDistribution<?>> withVotesForCandidate(final Candidate candidate, BigFraction numberOfVotes) {
+	public static <CANDIDATE extends Candidate> Matcher<VoteDistribution<? super CANDIDATE>> withVotesForCandidate(final CANDIDATE candidate, BigFraction numberOfVotes) {
 		String featureDescription = "number of votes for " + candidate;
-		return new FeatureMatcher<VoteDistribution<?>, BigFraction>(is(equalTo(numberOfVotes)), featureDescription, featureDescription) {
+		return new FeatureMatcher<VoteDistribution<? super CANDIDATE>, BigFraction>(is(equalTo(numberOfVotes)), featureDescription, featureDescription) {
 
 			@Override
-			protected BigFraction featureValueOf(VoteDistribution<?> actual) {
+			protected BigFraction featureValueOf(VoteDistribution<? super CANDIDATE> actual) {
 				return actual.votesByCandidate.get(candidate);
 			}
 		};
 	}
 
-	public static Matcher<VoteDistribution<?>> withNoVotes(BigFraction numberOfVotes) {
+	public static <CANDIDATE extends Candidate> Matcher<VoteDistribution<?>> withNoVotes(BigFraction numberOfVotes) {
 		String featureDescription = "number of no votes";
 		return new FeatureMatcher<VoteDistribution<?>, BigFraction>(is(equalTo(numberOfVotes)), featureDescription, featureDescription) {
 

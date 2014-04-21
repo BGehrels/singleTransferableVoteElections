@@ -53,9 +53,7 @@ import static org.apache.commons.math3.fraction.BigFraction.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -114,31 +112,30 @@ public final class STVElectionCalculationStepTest {
 
 		Matcher<Iterable<? extends VoteState<Candidate>>> newVoteStatesMatcher = containsInAnyOrder(
 			aVoteState(allOf(
-				withPreferredCandidate(is(C)),
-				withVoteWeight(equalTo(FOUR_FIFTHS))
+				withPreferredCandidate(C),
+				withVoteWeight(FOUR_FIFTHS)
 			)),
-			aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(nullValue())),
+			aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(null)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(C)),
-				withVoteWeight(equalTo(ONE_FIFTH))
+				withPreferredCandidate(C),
+				withVoteWeight(ONE_FIFTH)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(B)),
-				withVoteWeight(equalTo(ONE_HALF))
+				withPreferredCandidate(B),
+				withVoteWeight(ONE_HALF)
 			))
 		);
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, THREE);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted(eq(voteStates),
 		                                                                          (ImmutableCollection<VoteState<Candidate>>) argThat(
 			                                                                          newVoteStatesMatcher),
-		                                                                          (VoteDistribution<Candidate>) argThat(
-			                                                                          is(aVoteDistribution(
-				                                                                          withVotesForCandidate(B,
-				                                                                                                ONE_HALF),
-				                                                                          withVotesForCandidate(C, ONE),
-				                                                                          withNoVotes(ONE),
-				                                                                          withInvalidVotes(ZERO)
-			                                                                          ))));
+		                                                                          argThat(is(aVoteDistribution(
+			                                                                          withVotesForCandidate(B,
+			                                                                                                ONE_HALF),
+			                                                                          withVotesForCandidate(C, ONE),
+			                                                                          withNoVotes(ONE),
+			                                                                          withInvalidVotes(ZERO)
+		                                                                          ))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
@@ -164,27 +161,26 @@ public final class STVElectionCalculationStepTest {
 
 		Matcher newVoteStateMatcher = containsInAnyOrder(
 			aVoteState(allOf(
-				withPreferredCandidate(is(C)),
-				withVoteWeight(equalTo(FOUR_FIFTHS))
+				withPreferredCandidate(C),
+				withVoteWeight(FOUR_FIFTHS)
 			)),
-			aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(nullValue())),
+			aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(null)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(C)),
-				withVoteWeight(equalTo(ONE_FIFTH))
+				withPreferredCandidate(C),
+				withVoteWeight(ONE_FIFTH)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(B)),
-				withVoteWeight(equalTo(ONE_HALF))
+				withPreferredCandidate(B),
+				withVoteWeight(ONE_HALF)
 			))
 		);
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, ONE);
 		verify(electionCalculationListenerMock)
 			.voteWeightRedistributionCompleted(eq(voteStates), (ImmutableCollection) argThat(newVoteStateMatcher),
-			                                   (VoteDistribution<Candidate>) argThat(
-				                                   is(aVoteDistribution(withVotesForCandidate(B, ONE_HALF),
-				                                                        withVotesForCandidate(C, ONE),
-				                                                        withNoVotes(ONE),
-				                                                        withInvalidVotes(ZERO)))));
+			                                   argThat(is(aVoteDistribution(withVotesForCandidate(B, ONE_HALF),
+			                                                                withVotesForCandidate(C, ONE),
+			                                                                withNoVotes(ONE),
+			                                                                withInvalidVotes(ZERO)))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
@@ -213,34 +209,33 @@ public final class STVElectionCalculationStepTest {
 
 		Matcher newVoteStatesMatcher = containsInAnyOrder(
 			aVoteState(allOf(
-				withPreferredCandidate(is(A)),
-				withVoteWeight(equalTo(FOUR_FIFTHS))
+				withPreferredCandidate(A),
+				withVoteWeight(FOUR_FIFTHS)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(A)),
-				withVoteWeight(equalTo(ONE))
+				withPreferredCandidate(A),
+				withVoteWeight(ONE)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(A)),
-				withVoteWeight(equalTo(ONE_FIFTH))
+				withPreferredCandidate(A),
+				withVoteWeight(ONE_FIFTH)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(C)),
-				withVoteWeight(equalTo(ONE_HALF))
+				withPreferredCandidate(C),
+				withVoteWeight(ONE_HALF)
 			))
 		);
 		verify(electionCalculationListenerMock).candidateIsElected(B, TWO, TWO);
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted(eq(voteStates),
 		                                                                          (ImmutableCollection) argThat(
 			                                                                          newVoteStatesMatcher),
-		                                                                          (VoteDistribution<Candidate>) argThat(
-			                                                                          is(aVoteDistribution(
-				                                                                          withVotesForCandidate(A, TWO),
-				                                                                          withVotesForCandidate(C,
-				                                                                                                ONE_HALF),
-				                                                                          withNoVotes(ZERO),
-				                                                                          withInvalidVotes(
-					                                                                          ZERO)))));
+		                                                                          argThat(is(aVoteDistribution(
+			                                                                          withVotesForCandidate(A, TWO),
+			                                                                          withVotesForCandidate(C,
+			                                                                                                ONE_HALF),
+			                                                                          withNoVotes(ZERO),
+			                                                                          withInvalidVotes(
+				                                                                          ZERO)))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(B)),
@@ -264,7 +259,7 @@ public final class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(FIVE);
 
 		verify(electionCalculationListenerMock).candidateDropped(
-			(VoteDistribution) argThat(
+			argThat(
 				is(aVoteDistribution(withVotesForCandidate(A, THREE), withVotesForCandidate(B, ONE),
 				                     withVotesForCandidate(C, ZERO)))),
 			eq(C)
@@ -272,27 +267,28 @@ public final class STVElectionCalculationStepTest {
 
 		Matcher<Iterable<? extends VoteState<Candidate>>> newVoteStatesMatcher = containsInAnyOrder(
 			aVoteState(allOf(
-				withPreferredCandidate(is(A)),
-				withVoteWeight(equalTo(ONE))
+				withPreferredCandidate(A),
+				withVoteWeight(ONE)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(A)),
-				withVoteWeight(equalTo(ONE))
+				withPreferredCandidate(A),
+				withVoteWeight(ONE)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(A)),
-				withVoteWeight(equalTo(ONE))
+				withPreferredCandidate(A),
+				withVoteWeight(ONE)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(is(B)),
-				withVoteWeight(equalTo(ONE))
+				withPreferredCandidate(B),
+				withVoteWeight(ONE)
 			))
 		);
 		verify(electionCalculationListenerMock)
 			.voteWeightRedistributionCompleted(eq(voteStates),
 			                                   Matchers.<ImmutableCollection>argThat((Matcher) newVoteStatesMatcher),
-			                                   (VoteDistribution) argThat(is(aVoteDistribution(
-				                                   withVotesForCandidate(A, THREE), withVotesForCandidate(B, ONE),
+			                                   argThat(is(aVoteDistribution(
+				                                   withVotesForCandidate(A, THREE),
+				                                   withVotesForCandidate(B, ONE),
 				                                   withNoVotes(ZERO),
 				                                   withInvalidVotes(ZERO)))));
 
@@ -321,32 +317,29 @@ public final class STVElectionCalculationStepTest {
 
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(THREE);
 
-		verify(electionCalculationListenerMock).candidateDropped(
-			(VoteDistribution) argThat(
-				is(aVoteDistribution(withVotesForCandidate(A, TWO), withVotesForCandidate(B, ONE),
-				                     withVotesForCandidate(C, ONE), withNoVotes(ZERO), withInvalidVotes(ZERO)))),
-			eq(B)
-		);
+		verify(electionCalculationListenerMock).candidateDropped(argThat(
+			is(aVoteDistribution(withVotesForCandidate(A, TWO), withVotesForCandidate(B, ONE),
+			                     withVotesForCandidate(C, ONE), withNoVotes(ZERO), withInvalidVotes(ZERO)))), eq(B));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withLooser(B)),
 			withNumberOfElectedCandidates(is(1L)),
 			withVoteStates(containsInAnyOrder(
 				aVoteState(allOf(
-					withPreferredCandidate(is(A)),
-					withVoteWeight(equalTo(ONE))
+					withPreferredCandidate(A),
+					withVoteWeight(ONE)
 				)),
 				aVoteState(allOf(
-					withPreferredCandidate(is(A)),
-					withVoteWeight(equalTo(ONE))
+					withPreferredCandidate(A),
+					withVoteWeight(ONE)
 				)),
 				aVoteState(allOf(
-					withPreferredCandidate(is(A)),
-					withVoteWeight(equalTo(ONE))
+					withPreferredCandidate(A),
+					withVoteWeight(ONE)
 				)),
 				aVoteState(allOf(
-					withPreferredCandidate(is(C)),
-					withVoteWeight(equalTo(ONE))
+					withPreferredCandidate(C),
+					withVoteWeight(ONE)
 				))
 			))
 		))));

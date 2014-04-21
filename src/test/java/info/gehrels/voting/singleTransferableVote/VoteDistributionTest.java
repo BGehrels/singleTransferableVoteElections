@@ -11,10 +11,16 @@ import org.junit.Test;
 
 import java.util.Collections;
 
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.aVoteDistribution;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.withInvalidVotes;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.withNoVotes;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.withVotesForCandidate;
+import static org.apache.commons.math3.fraction.BigFraction.ONE;
+import static org.apache.commons.math3.fraction.BigFraction.ONE_THIRD;
+import static org.apache.commons.math3.fraction.BigFraction.TWO;
+import static org.apache.commons.math3.fraction.BigFraction.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 
 public class VoteDistributionTest {
@@ -29,11 +35,12 @@ public class VoteDistributionTest {
 		.of(CANDIDATE_PETER, CANDIDATE_JOHN, CANDIDATE_MARTA);
 
 	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice", ALL_CANDIDATES);
+	public static final BigFraction SIX_FIFTHS = new BigFraction(6, 5);
 
 	@Test
 	public void returnsEmtpyVotesByCandidateMapIfCandidateSetAndVoteStatesAreEmpty() {
 		VoteDistribution<Candidate> voteDistribution = new VoteDistribution<>(EMPTY_CANDIDATE_SET,
-		                                                                         EMPTY_VOTE_STATE_LIST);
+		                                                                      EMPTY_VOTE_STATE_LIST);
 
 		assertThat(voteDistribution.votesByCandidate, is(equalTo(Collections.<Candidate, BigFraction>emptyMap())));
 	}
@@ -41,12 +48,11 @@ public class VoteDistributionTest {
 	@Test
 	public void returnsZeroVotesForCandidatesWhoAreNotMentionedByAnyVoteState() {
 		VoteDistribution<Candidate> voteDistribution = new VoteDistribution<>(ImmutableSet.of(CANDIDATE_PETER),
-		                                                                         EMPTY_VOTE_STATE_LIST);
+		                                                                      EMPTY_VOTE_STATE_LIST);
 
-		assertThat(voteDistribution.votesByCandidate.size(), is(1));
-		assertThat(voteDistribution.votesByCandidate, hasEntry(CANDIDATE_PETER, BigFraction.ZERO));
-		assertThat(voteDistribution.noVotes, is(equalTo(BigFraction.ZERO)));
-		assertThat(voteDistribution.invalidVotes, is(equalTo(BigFraction.ZERO)));
+		assertThat(voteDistribution, is(aVoteDistribution(withVotesForCandidate(CANDIDATE_PETER, ZERO),
+		                                                  withNoVotes(ZERO),
+		                                                  withInvalidVotes(ZERO))));
 	}
 
 	@Test
@@ -59,17 +65,13 @@ public class VoteDistributionTest {
 				createVoteStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA),
 				createNoVoteState(4),
 				createInvalidVoteState(5)
-			)
-			);
+			));
 
-		assertThat(voteDistribution.votesByCandidate.size(), is(3));
-		assertThat(voteDistribution.votesByCandidate, allOf(
-			hasEntry(CANDIDATE_PETER, BigFraction.ONE),
-			hasEntry(CANDIDATE_JOHN, BigFraction.ONE),
-			hasEntry(CANDIDATE_MARTA, BigFraction.ONE)
-		));
-		assertThat(voteDistribution.noVotes, is(equalTo(BigFraction.TWO)));
-		assertThat(voteDistribution.invalidVotes, is(equalTo(BigFraction.ONE)));
+		assertThat(voteDistribution, is(aVoteDistribution(withVotesForCandidate(CANDIDATE_PETER, ONE),
+		                                                  withVotesForCandidate(CANDIDATE_JOHN, ONE),
+		                                                  withVotesForCandidate(CANDIDATE_MARTA, ONE),
+		                                                  withNoVotes(TWO),
+		                                                  withInvalidVotes(ONE))));
 	}
 
 	@Test
@@ -78,16 +80,13 @@ public class VoteDistributionTest {
 			new VoteDistribution<>(ALL_CANDIDATES, ImmutableList.of(
 				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA),
 				createVoteStateFor(1, CANDIDATE_JOHN, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_FIFTH),
-				createVoteStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(BigFraction.ONE_THIRD)
-			)
-			);
+				createVoteStateFor(3, CANDIDATE_PETER, CANDIDATE_MARTA).withVoteWeight(ONE_THIRD)
+			));
 
-		assertThat(voteDistribution.votesByCandidate.size(), is(3));
-		assertThat(voteDistribution.votesByCandidate, allOf(
-			hasEntry(CANDIDATE_PETER, BigFraction.ONE_THIRD),
-			hasEntry(CANDIDATE_JOHN, new BigFraction(6, 5)),
-			hasEntry(CANDIDATE_MARTA, BigFraction.ZERO)
-		));
+		assertThat(voteDistribution, is(aVoteDistribution(withVotesForCandidate(CANDIDATE_PETER, ONE_THIRD),
+		                                                  withVotesForCandidate(CANDIDATE_JOHN, SIX_FIFTHS),
+		                                                  withVotesForCandidate(CANDIDATE_MARTA, ZERO)
+		)));
 	}
 
 	@Test
@@ -95,17 +94,14 @@ public class VoteDistributionTest {
 		VoteDistribution<Candidate> voteDistribution =
 			new VoteDistribution<>(ALL_CANDIDATES, ImmutableList.of(
 				createInvalidVoteState(0)
-			)
-			);
+			));
 
-		assertThat(voteDistribution.votesByCandidate, allOf(
-			hasEntry(CANDIDATE_PETER, BigFraction.ZERO),
-			hasEntry(CANDIDATE_JOHN, BigFraction.ZERO),
-			hasEntry(CANDIDATE_MARTA, BigFraction.ZERO)
-		));
-
-		assertThat(voteDistribution.invalidVotes, is(equalTo(BigFraction.ONE)));
-		assertThat(voteDistribution.noVotes, is(equalTo(BigFraction.ZERO)));
+		assertThat(voteDistribution, is(aVoteDistribution(withVotesForCandidate(CANDIDATE_PETER, ZERO),
+		                                                  withVotesForCandidate(CANDIDATE_JOHN, ZERO),
+		                                                  withVotesForCandidate(CANDIDATE_MARTA, ZERO),
+		                                                  withInvalidVotes(ONE),
+		                                                  withNoVotes(ZERO)
+		)));
 	}
 
 	@Test
@@ -113,53 +109,48 @@ public class VoteDistributionTest {
 		VoteDistribution<Candidate> voteDistribution =
 			new VoteDistribution<>(ALL_CANDIDATES, ImmutableList.of(
 				createNoVoteState(0)
-			)
-			);
+			));
 
-		assertThat(voteDistribution.votesByCandidate, allOf(
-			hasEntry(CANDIDATE_PETER, BigFraction.ZERO),
-			hasEntry(CANDIDATE_JOHN, BigFraction.ZERO),
-			hasEntry(CANDIDATE_MARTA, BigFraction.ZERO)
-		));
-
-		assertThat(voteDistribution.invalidVotes, is(equalTo(BigFraction.ZERO)));
-		assertThat(voteDistribution.noVotes, is(equalTo(BigFraction.ONE)));
+		assertThat(voteDistribution, is(aVoteDistribution(withVotesForCandidate(CANDIDATE_PETER, ZERO),
+		                                                  withVotesForCandidate(CANDIDATE_JOHN, ZERO),
+		                                                  withVotesForCandidate(CANDIDATE_MARTA, ZERO),
+		                                                  withInvalidVotes(ZERO),
+		                                                  withNoVotes(ONE)
+		)));
 	}
 
 	@Test
 	public void countsVoteForTheFirstHopefulCandidateInThePreference() {
 		VoteDistribution<Candidate> voteDistribution =
 			new VoteDistribution<>(ALL_CANDIDATES, ImmutableList.of(
-				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA).withFirstHopefulCandidate(new CandidateStates<>(ALL_CANDIDATES).withElected(CANDIDATE_JOHN))
+				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA).withFirstHopefulCandidate(
+					new CandidateStates<>(ALL_CANDIDATES).withElected(CANDIDATE_JOHN))
 			)
 			);
 
-		assertThat(voteDistribution.votesByCandidate, allOf(
-			hasEntry(CANDIDATE_PETER, BigFraction.ZERO),
-			hasEntry(CANDIDATE_JOHN, BigFraction.ZERO),
-			hasEntry(CANDIDATE_MARTA, BigFraction.ONE)
-		));
-
-		assertThat(voteDistribution.invalidVotes, is(equalTo(BigFraction.ZERO)));
-		assertThat(voteDistribution.noVotes, is(equalTo(BigFraction.ZERO)));
+		assertThat(voteDistribution, is(aVoteDistribution(
+			withVotesForCandidate(CANDIDATE_PETER, ZERO),
+			withVotesForCandidate(CANDIDATE_JOHN, ZERO),
+			withVotesForCandidate(CANDIDATE_MARTA, ONE),
+			withInvalidVotes(ZERO),
+			withNoVotes(ZERO))));
 	}
 
 	@Test
 	public void countsVoteAsNoIfPreferenceIsDepleted() {
 		VoteDistribution<Candidate> voteDistribution =
 			new VoteDistribution<>(ALL_CANDIDATES, ImmutableList.of(
-				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA).withFirstHopefulCandidate(new CandidateStates<>(ALL_CANDIDATES).withElected(CANDIDATE_JOHN).withLooser(CANDIDATE_MARTA))
-			)
-			);
+				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA).withFirstHopefulCandidate(
+					new CandidateStates<>(ALL_CANDIDATES).withElected(CANDIDATE_JOHN).withLooser(CANDIDATE_MARTA))
+			));
 
-		assertThat(voteDistribution.votesByCandidate, allOf(
-			hasEntry(CANDIDATE_PETER, BigFraction.ZERO),
-			hasEntry(CANDIDATE_JOHN, BigFraction.ZERO),
-			hasEntry(CANDIDATE_MARTA, BigFraction.ZERO)
-		));
-
-		assertThat(voteDistribution.invalidVotes, is(equalTo(BigFraction.ZERO)));
-		assertThat(voteDistribution.noVotes, is(equalTo(BigFraction.ONE)));
+		assertThat(voteDistribution,
+		           is(aVoteDistribution(withVotesForCandidate(CANDIDATE_PETER, ZERO),
+		                                withVotesForCandidate(CANDIDATE_JOHN, ZERO),
+		                                withVotesForCandidate(CANDIDATE_MARTA, ZERO),
+		                                withNoVotes(ONE),
+		                                withInvalidVotes(ZERO)
+		           )));
 	}
 
 	private VoteState<Candidate> createVoteStateFor(int id, Candidate... candidates) {

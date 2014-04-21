@@ -29,21 +29,12 @@ public final class VoteStateMatchers {
 	private VoteStateMatchers() {
 	}
 
-	static <CANDIDATE_TYPE extends Candidate> Matcher<VoteState<CANDIDATE_TYPE>> withPreferredCandidate(Matcher<? super CANDIDATE_TYPE> subMatcher) {
-		return new FeatureMatcher<VoteState<CANDIDATE_TYPE>, CANDIDATE_TYPE>(subMatcher, "with preferred candidate",
+	static <CANDIDATE_TYPE extends Candidate> Matcher<VoteState<CANDIDATE_TYPE>> withPreferredCandidate(CANDIDATE_TYPE candidate) {
+		return new FeatureMatcher<VoteState<CANDIDATE_TYPE>, CANDIDATE_TYPE>(is(candidate), "with preferred candidate",
 		                                                  "prefered candidate") {
 			@Override
 			protected CANDIDATE_TYPE featureValueOf(VoteState<CANDIDATE_TYPE> actual) {
 				return actual.getPreferredCandidate().orNull();
-			}
-		};
-	}
-
-	static Matcher<VoteState<?>> withVoteWeight(Matcher<? super BigFraction> bigFractionMatcher) {
-		return new FeatureMatcher<VoteState<?>, BigFraction>(bigFractionMatcher, "with vote weight", "vote Weight") {
-			@Override
-			protected BigFraction featureValueOf(VoteState<?> actual) {
-				return actual.getVoteWeight();
 			}
 		};
 	}
