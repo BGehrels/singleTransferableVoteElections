@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.ImmutableSortedSet;
 import info.gehrels.voting.AmbiguityResolver;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.Candidate;
@@ -27,6 +28,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map.Entry;
 
 import static com.google.common.collect.ImmutableSet.copyOf;
@@ -38,6 +40,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
+
 
 	private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
 	private final AmbiguityResolver<CANDIDATE_TYPE> ambiguityResolver;
@@ -74,7 +77,14 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	                                                                       CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		VoteDistribution<CANDIDATE_TYPE> voteDistribution = new VoteDistribution<>(
 			candidateStates.getHopefulCandidates(), voteStates);
-		Builder<CANDIDATE_TYPE> candidatesThatReachedTheQuorum = ImmutableSet.builder();
+
+		// We use a sorted set here, to provide Unit tests a predictable execution order.
+		Builder<CANDIDATE_TYPE> candidatesThatReachedTheQuorum = ImmutableSortedSet.orderedBy(new Comparator<CANDIDATE_TYPE>() {
+			@Override
+			public int compare(CANDIDATE_TYPE o1, CANDIDATE_TYPE o2) {
+				return o1.name.compareTo(o2.name);
+			}
+		});
 		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : voteDistribution.votesByCandidate.entrySet()) {
 			if (votesForCandidate.getValue().compareTo(quorum) >= 0) {
 				candidatesThatReachedTheQuorum.add(votesForCandidate.getKey());
