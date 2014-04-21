@@ -107,7 +107,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 				                    quorum);
 			newCandidateStates = newCandidateStates.withElected(winner);
 			voteStatesAfterRedistribution = redistributor.recalculateExceededVoteWeight(winner, quorum,
-			                                                                            originalVoteStates,
+			                                                                            voteStatesAfterRedistribution,
 			                                                                            originalCandidateStates);
 			newNumberOfElectedCandidates++;
 		}
