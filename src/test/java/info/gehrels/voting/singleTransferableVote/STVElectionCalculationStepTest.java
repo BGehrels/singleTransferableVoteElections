@@ -153,9 +153,9 @@ public final class STVElectionCalculationStepTest {
 			stateFor(BC_BALLOT)
 		);
 
-		when(redistributorMock.recalculateExceededVoteWeight(A, ONE, voteStates, CANDIDATE_STATES))
-			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 		when(redistributorMock.recalculateExceededVoteWeight(B, ONE, voteStates, CANDIDATE_STATES))
+			.thenReturn(STUB_REDISTRIBUTION_RESULT);
+		when(redistributorMock.recalculateExceededVoteWeight(A, ONE, STUB_REDISTRIBUTION_RESULT, CANDIDATE_STATES))
 			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
 		ElectionStepResult<Candidate> electionStepResult = step
