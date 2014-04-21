@@ -84,10 +84,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates = constructVoteStates(candidateStates);
 
 		electionCalculationListener
-			.calculationStarted(election,
-			                    VotesByCandidateCalculation
-				                    .calculateVotesByCandidate(candidateStates.getHopefulCandidates(),
-				                                               voteStates));
+			.calculationStarted(election, new VoteDistribution<>(candidateStates.getHopefulCandidates(),  voteStates));
 
 		long numberOfElectedCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {

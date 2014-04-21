@@ -35,7 +35,16 @@ public final class TestUtils {
 		return new Ballot<T>(ballotId++, ImmutableSet.of(vote));
 	}
 
-	private static <T extends Candidate> ImmutableSet<T> toPreference(String preferences, ImmutableSet<T> candidates) {
+	public static <T extends Candidate> Ballot<T> createNoBallot(Election<T> election) {
+		return new Ballot<T>(ballotId++, ImmutableSet.of(Vote.createNoVote(election)));
+	}
+
+
+	public static <T extends Candidate> Ballot<T> createInvalidBallot(Election<T> election) {
+		return new Ballot<T>(ballotId++, ImmutableSet.of(Vote.createInvalidVote(election)));
+	}
+
+	private static <T extends Candidate> ImmutableSet<T> toPreference(String preferences, ImmutableSet <T> candidates) {
 		ImmutableSet.Builder<T> preferenceBuilder = ImmutableSet.builder();
 		for (int i = 0; i < preferences.length(); i++) {
 			char c = preferences.charAt(i);

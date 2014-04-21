@@ -26,7 +26,6 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
@@ -137,15 +136,15 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 	}
 
 	@Override
-	public void calculationStarted(Election<T> election, Map<T, BigFraction> votesByCandidate) {
+	public void calculationStarted(Election<T> election, VoteDistribution<T> voteDistribution) {
 		formatLine("Beginne die Berechnung für Wahl „%s“. Ausgangsstimmverteilung:", election.getOfficeName());
-		dumpVoteDistribution(votesByCandidate);
+		dumpVoteDistribution(voteDistribution);
 	}
 
 	@Override
 	public void voteWeightRedistributionCompleted(ImmutableCollection<VoteState<T>> originalVoteStates,
 	                                              ImmutableCollection<VoteState<T>> newVoteStates,
-	                                              Map<T, BigFraction> votesByCandidate) {
+	                                              VoteDistribution<T> voteDistribution) {
 		for (VoteStatePair newAndOldState : getMatchingPairs(originalVoteStates, newVoteStates)) {
 			VoteState<T> oldState = newAndOldState.oldState;
 			VoteState<T> newState = newAndOldState.newState;
@@ -170,7 +169,7 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 
 		formatLine("Neue Stimmverteilung:");
 
-		dumpVoteDistribution(votesByCandidate);
+		dumpVoteDistribution(voteDistribution);
 
 	}
 
@@ -204,18 +203,18 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 	 * [...]
 	 */
 	@Override
-	public void candidateDropped(Map<T, BigFraction> votesByCandidateBeforeStriking, T candidate,
-	                             BigFraction weakestVoteCount) {
+	public void candidateDropped(VoteDistribution<T> voteDistributionBeforeStriking, T candidate) {
 		formatLine("%s hat mit %f Stimmen das schlechteste Ergebnis und scheidet aus.", candidate.name,
-		           weakestVoteCount.doubleValue());
+		           voteDistributionBeforeStriking.votesByCandidate.get(candidate).doubleValue());
 	}
 
-	private <CANDIDATE_TYPE extends Candidate> void dumpVoteDistribution(
-		Map<CANDIDATE_TYPE, BigFraction> votesByCandidate) {
-		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
+	private <CANDIDATE_TYPE extends Candidate> void dumpVoteDistribution(VoteDistribution<CANDIDATE_TYPE> voteDistribution) {
+		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : voteDistribution.votesByCandidate.entrySet()) {
 			formatLine("\t%s: %f Stimmen", votesForCandidate.getKey().name,
 			           votesForCandidate.getValue().doubleValue());
 		}
+		formatLine("\tNein: %f Stimmen", voteDistribution.noVotes.doubleValue());
+		formatLine("\tUngültig: %f Stimmen", voteDistribution.invalidVotes.doubleValue());
 	}
 
 	private void formatText(String formatString, Object... objects) {

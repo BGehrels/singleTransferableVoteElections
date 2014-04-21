@@ -33,6 +33,7 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	private final long ballotId;
 	private final BigFraction voteWeight;
 	private final int currentPositionInRankedCandidatesList;
+	private final Vote<CANDIDATE_TYPE> vote;
 
 	public static <CANDIDATE_TYPE extends Candidate> Optional<VoteState<CANDIDATE_TYPE>> forBallotAndElection(
 		Ballot<CANDIDATE_TYPE> ballot, Election<CANDIDATE_TYPE> election) {
@@ -47,18 +48,15 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 		return Optional.of(new VoteState<>(ballot.id, vote.get()));
 	}
 
-	private VoteState( long ballotId, Vote<CANDIDATE_TYPE> vote) {
-		this.ballotId = ballotId;
-		rankedCandidates = vote.getRankedCandidates().asList();
-
-		voteWeight = BigFraction.ONE;
-		currentPositionInRankedCandidatesList = 0;
+	private VoteState(long ballotId, Vote<CANDIDATE_TYPE> vote) {
+		this(ballotId, vote, BigFraction.ONE, 0);
 	}
 
-	private VoteState(long ballotId, ImmutableList<CANDIDATE_TYPE> rankedCandidates, BigFraction voteWeight,
+	private VoteState(long ballotId, Vote<CANDIDATE_TYPE> vote, BigFraction voteWeight,
 	                  int currentPositionInRankedCandidatesList) {
 		this.ballotId = ballotId;
-		this.rankedCandidates = rankedCandidates;
+		this.vote = vote;
+		this.rankedCandidates = vote.getRankedCandidates().asList();
 		this.voteWeight = voteWeight;
 		this.currentPositionInRankedCandidatesList = currentPositionInRankedCandidatesList;
 	}
@@ -93,11 +91,11 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	private VoteState<CANDIDATE_TYPE> withNextPreference() {
-		return new VoteState<>(ballotId, rankedCandidates, voteWeight, currentPositionInRankedCandidatesList + 1);
+		return new VoteState<>(ballotId, vote, voteWeight, currentPositionInRankedCandidatesList + 1);
 	}
 
 	public VoteState<CANDIDATE_TYPE> withVoteWeight(BigFraction newVoteWeight) {
-		return new VoteState<>(ballotId, rankedCandidates, newVoteWeight, currentPositionInRankedCandidatesList);
+		return new VoteState<>(ballotId, vote, newVoteWeight, currentPositionInRankedCandidatesList);
 	}
 
 	public long getBallotId() {
@@ -107,5 +105,13 @@ final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	@Override
 	public String toString() {
 		return "VoteState<" + ballotId + "; preferred: " + getPreferredCandidate() + "; " + voteWeight + ">";
+	}
+
+	public boolean isInvalid() {
+		return !vote.isValid();
+	}
+
+	public boolean isNoVote() {
+		return vote.isNo() || !getPreferredCandidate().isPresent();
 	}
 }

@@ -24,17 +24,12 @@ import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
-import info.gehrels.voting.MapMatchers;
 import info.gehrels.voting.TestUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.Matchers;
 
-import java.util.Map;
-
-import static info.gehrels.voting.MapMatchers.aMap;
-import static info.gehrels.voting.MapMatchers.anEntry;
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withLooser;
 import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.anElectionStepResult;
@@ -42,6 +37,10 @@ import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatch
 import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withNumberOfElectedCandidates;
 import static info.gehrels.voting.singleTransferableVote.ElectionStepResultMatchers.withVoteStates;
 import static info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.aVoteDistribution;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.withInvalidVotes;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.withNoVotes;
+import static info.gehrels.voting.singleTransferableVote.VoteDistributionMatchers.withVotesForCandidate;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.aVoteState;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withPreferredCandidate;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.withVoteWeight;
@@ -55,7 +54,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Matchers.argThat;
@@ -133,11 +131,14 @@ public final class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted(eq(voteStates),
 		                                                                          (ImmutableCollection<VoteState<Candidate>>) argThat(
 			                                                                          newVoteStatesMatcher),
-		                                                                          (Map<Candidate, BigFraction>) argThat(
-			                                                                          allOf(
-				                                                                          hasEntry(B, ONE_HALF),
-				                                                                          hasEntry(C, ONE))
-		                                                                          ));
+		                                                                          (VoteDistribution<Candidate>) argThat(
+			                                                                          is(aVoteDistribution(
+				                                                                          withVotesForCandidate(B,
+				                                                                                                ONE_HALF),
+				                                                                          withVotesForCandidate(C, ONE),
+				                                                                          withNoVotes(ONE),
+				                                                                          withInvalidVotes(ZERO)
+			                                                                          ))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
@@ -179,11 +180,11 @@ public final class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, ONE);
 		verify(electionCalculationListenerMock)
 			.voteWeightRedistributionCompleted(eq(voteStates), (ImmutableCollection) argThat(newVoteStateMatcher),
-			                                   (Map<Candidate, BigFraction>) argThat(
-				                                   allOf(
-					                                   hasEntry(B, ONE_HALF),
-					                                   hasEntry(C, ONE))
-			                                   ));
+			                                   (VoteDistribution<Candidate>) argThat(
+				                                   is(aVoteDistribution(withVotesForCandidate(B, ONE_HALF),
+				                                                        withVotesForCandidate(C, ONE),
+				                                                        withNoVotes(ONE),
+				                                                        withInvalidVotes(ZERO)))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(A)),
@@ -232,11 +233,14 @@ public final class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted(eq(voteStates),
 		                                                                          (ImmutableCollection) argThat(
 			                                                                          newVoteStatesMatcher),
-		                                                                          (Map<Candidate, BigFraction>) argThat(
-			                                                                          allOf(
-				                                                                          hasEntry(A, TWO),
-				                                                                          hasEntry(C, ONE_HALF))
-		                                                                          ));
+		                                                                          (VoteDistribution<Candidate>) argThat(
+			                                                                          is(aVoteDistribution(
+				                                                                          withVotesForCandidate(A, TWO),
+				                                                                          withVotesForCandidate(C,
+				                                                                                                ONE_HALF),
+				                                                                          withNoVotes(ZERO),
+				                                                                          withInvalidVotes(
+					                                                                          ZERO)))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withElectedCandidate(B)),
@@ -259,16 +263,11 @@ public final class STVElectionCalculationStepTest {
 
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(FIVE);
 
-		// TODO: Verify Call to VoteWeightRecalculationCompleted
 		verify(electionCalculationListenerMock).candidateDropped(
-			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				containsInAnyOrder(
-					anEntry(A, THREE),
-					anEntry(B, ONE),
-					anEntry(C, ZERO)
-				))))),
-			eq(C),
-			eq(ZERO)
+			(VoteDistribution) argThat(
+				is(aVoteDistribution(withVotesForCandidate(A, THREE), withVotesForCandidate(B, ONE),
+				                     withVotesForCandidate(C, ZERO)))),
+			eq(C)
 		);
 
 		Matcher<Iterable<? extends VoteState<Candidate>>> newVoteStatesMatcher = containsInAnyOrder(
@@ -291,12 +290,11 @@ public final class STVElectionCalculationStepTest {
 		);
 		verify(electionCalculationListenerMock)
 			.voteWeightRedistributionCompleted(eq(voteStates),
-			                                   Matchers.<ImmutableCollection>argThat((Matcher)newVoteStatesMatcher),
-			                                   argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				                                   containsInAnyOrder(
-					                                   anEntry(A, THREE),
-					                                   anEntry(B, ONE)
-				                                   ))))));
+			                                   Matchers.<ImmutableCollection>argThat((Matcher) newVoteStatesMatcher),
+			                                   (VoteDistribution) argThat(is(aVoteDistribution(
+				                                   withVotesForCandidate(A, THREE), withVotesForCandidate(B, ONE),
+				                                   withNoVotes(ZERO),
+				                                   withInvalidVotes(ZERO)))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
 			withCandidateStates(withLooser(C)),
@@ -316,7 +314,7 @@ public final class STVElectionCalculationStepTest {
 		);
 
 		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(B, C)))
-			.thenReturn(new AmbiguityResolverResult<>(B, "arbitrary message"));
+			.thenReturn(new AmbiguityResolverResult<>(B, "fixed as stub"));
 
 		ElectionStepResult<Candidate> electionStepResult = step
 			.declareWinnerOrStrikeCandidate(THREE, voteStates, redistributorMock, 1, CANDIDATE_STATES);
@@ -324,14 +322,10 @@ public final class STVElectionCalculationStepTest {
 		verify(electionCalculationListenerMock).nobodyReachedTheQuorumYet(THREE);
 
 		verify(electionCalculationListenerMock).candidateDropped(
-			argThat(is(aMap(MapMatchers.<Candidate, BigFraction>withEntries(
-				containsInAnyOrder(
-					anEntry(A, TWO),
-					anEntry(B, ONE),
-					anEntry(C, ONE)
-				))))),
-			eq(B),
-			eq(ONE)
+			(VoteDistribution) argThat(
+				is(aVoteDistribution(withVotesForCandidate(A, TWO), withVotesForCandidate(B, ONE),
+				                     withVotesForCandidate(C, ONE), withNoVotes(ZERO), withInvalidVotes(ZERO)))),
+			eq(B)
 		);
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(

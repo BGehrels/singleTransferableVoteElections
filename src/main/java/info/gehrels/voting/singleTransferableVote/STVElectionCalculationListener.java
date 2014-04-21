@@ -31,13 +31,12 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 	void electedCandidates(ImmutableSet<CANDIDATE_TYPE> electedCandidates);
 
 	void candidateDropped(
-		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateBeforeStriking, CANDIDATE_TYPE candidate,
-		BigFraction weakestVoteCount);
+		VoteDistribution<CANDIDATE_TYPE> voteDistributionBeforeStriking, CANDIDATE_TYPE candidate);
 
 
 	void voteWeightRedistributionCompleted(ImmutableCollection<VoteState<CANDIDATE_TYPE>> originalVoteStates,
 	                                       ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates,
-	                                       Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
+	                                       VoteDistribution<CANDIDATE_TYPE> voteDistribution);
 
 	void delegatingToExternalAmbiguityResolution(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
 
@@ -49,7 +48,7 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 
 	void noCandidatesAreLeft();
 
-	void calculationStarted(Election<CANDIDATE_TYPE> election, Map<CANDIDATE_TYPE, BigFraction> votesByCandidate);
+	void calculationStarted(Election<CANDIDATE_TYPE> election, VoteDistribution<CANDIDATE_TYPE> voteDistribution);
 
 	void quorumHasBeenCalculated(long numberOfValidBallots, long numberOfSeats, BigFraction quorum);
 

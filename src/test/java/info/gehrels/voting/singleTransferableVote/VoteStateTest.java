@@ -47,20 +47,30 @@ public final class VoteStateTest {
 
 		assertThat(newVoteState, is(not(sameInstance(voteState))));
 		assertThat(newVoteState.getPreferredCandidate(), is(equalTo(voteState.getPreferredCandidate())));
+		assertThat(newVoteState.isInvalid(), is(false));
+		assertThat(newVoteState.isNoVote(), is(false));
 		assertThat(newVoteState.getVoteWeight(), is(not(equalTo(voteState.getVoteWeight()))));
 		assertThat(newVoteState.getVoteWeight(), is(equalTo(BigFraction.ONE_THIRD)));
 	}
 
 	@Test
-	public void moveToNextHopefulCandidateReturnsStateWithAbsentPreferenceIfTheBallotContainedANoVoteForThisElection() {
-		Ballot<Candidate> ballot = TestUtils.createBallot("", ELECTION);
+	public void withFirstHopefulCandidateReturnsStateWithAbsentPreferenceIfTheBallotContainedANoVoteForThisElection() {
+		Ballot<Candidate> ballot = TestUtils.createNoBallot(ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A)));
 		assertThat(resultingVoteState.getPreferredCandidate(), is(anAbsentOptional()));
 	}
 
 	@Test
-	public void moveToNextHopefulCandidateReturnsStateWithNullPreferenceIfNoCandidatesAreInTheCandidateStateMap() {
+	public void withFirstHopefulCandidateReturnsStateWithNoIfTheBallotContainedANoVoteForThisElection() {
+		Ballot<Candidate> ballot = TestUtils.createNoBallot(ELECTION);
+		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A)));
+		assertThat(resultingVoteState.isNoVote(), is(true));
+	}
+
+	@Test
+	public void withFirstHopefulCandidateReturnsStateWithNullPreferenceIfNoCandidatesAreInTheCandidateStateMap() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.<Candidate>of()));
@@ -68,7 +78,15 @@ public final class VoteStateTest {
 	}
 
 	@Test
-	public void moveToNextHopefulCandidateReturnsStateWithNullPreferenceIfRemainingMarkedCandidatesAreNotHopefull() {
+	public void withFirstHopefulCandidateReturnsStateWithNoVoteIfNoCandidatesAreInTheCandidateStateMap() {
+		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
+		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.<Candidate>of()));
+		assertThat(resultingVoteState.isNoVote(), is(true));
+	}
+
+	@Test
+	public void withFirstHopefulCandidateReturnsStateWithNullPreferenceIfRemainingMarkedCandidatesAreNotHopefull() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
@@ -78,7 +96,17 @@ public final class VoteStateTest {
 	}
 
 	@Test
-	public void moveToNextHopefulCandidateReturnsSameStateIfCurrentCandidateIsStillHopeful() {
+	public void withFirstHopefulCandidateReturnsStateWithNoVoteIfRemainingMarkedCandidatesAreNotHopefull() {
+		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
+		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
+			.withFirstHopefulCandidate(
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
+					CANDIDATE_B));
+		assertThat(resultingVoteState.isNoVote(), is(true));
+	}
+
+	@Test
+	public void withFirstHopefulCandidateReturnsSameStateIfCurrentCandidateIsStillHopeful() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)));
@@ -86,12 +114,62 @@ public final class VoteStateTest {
 	}
 
 	@Test
-	public void moveToNextHopefulCandidateReturnsStateWithNextHopefulPreferenceIfCurrentPreferenceIsNotHopeful() {
+	public void withFirstHopefulCandidateReturnsNonNoVoteIfCurrentCandidateIsStillHopeful() {
+		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
+		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)));
+		assertThat(resultingVoteState.isNoVote(), is(false));
+	}
+
+	@Test
+	public void withFirstHopefulCandidateReturnsStateWithNextHopefulPreferenceIfCurrentPreferenceIsNotHopeful() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
 				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLooser(CANDIDATE_A));
 		assertThat(resultingVoteState.getPreferredCandidate(), is(anOptionalWhoseValue(is(CANDIDATE_B))));
 	}
+
+	@Test
+	public void withFirstHopefulCandidateReturnsStateWithNextHopefulNonNoVoteIfCurrentPreferenceIsNotHopeful() {
+		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
+		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
+			.withFirstHopefulCandidate(
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLooser(CANDIDATE_A));
+		assertThat(resultingVoteState.isNoVote(), is(false));
+	}
+
+	@Test
+	public void isInvalidIfVoteIsInvalid() {
+	    Ballot<Candidate> ballot = TestUtils.createInvalidBallot(ELECTION);
+		VoteState<Candidate> candidateVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get();
+		assertThat(candidateVoteState.isInvalid(), is(true));
+	}
+
+	@Test
+	public void isValidIfVoteIsNo() {
+	    Ballot<Candidate> ballot = TestUtils.createNoBallot(ELECTION);
+		VoteState<Candidate> candidateVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get();
+		assertThat(candidateVoteState.isInvalid(), is(false));
+	}
+
+	@Test
+	public void isValidIfVoteWithPreference() {
+	    Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
+		VoteState<Candidate> candidateVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get();
+		assertThat(candidateVoteState.isInvalid(), is(false));
+	}
+
+	@Test
+	public void isValidIfVoteWithPreferenceIsDepleted() {
+	    Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
+		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
+			.withFirstHopefulCandidate(
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
+					CANDIDATE_B));
+		assertThat(resultingVoteState.isInvalid(), is(false));
+	}
+
+
 
 }

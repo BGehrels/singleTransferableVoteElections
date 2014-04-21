@@ -49,10 +49,10 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	public final ElectionStepResult<CANDIDATE_TYPE> declareWinnerOrStrikeCandidate(BigFraction quorum,
-	                                                         ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
-	                                                         VoteWeightRecalculator<CANDIDATE_TYPE> redistributor,
-	                                                         long numberOfElectedCandidates,
-	                                                         CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	                                                                               ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
+	                                                                               VoteWeightRecalculator<CANDIDATE_TYPE> redistributor,
+	                                                                               long numberOfElectedCandidates,
+	                                                                               CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		CANDIDATE_TYPE winner = bestCandidateThatReachedTheQuorum(quorum, voteStates, candidateStates);
 		if (winner != null) {
 			return calculateElectionStepResultByRedistributingTheWinnersExceedingVotes(quorum,
@@ -69,10 +69,10 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	private CANDIDATE_TYPE bestCandidateThatReachedTheQuorum(BigFraction quorum,
-	                                                    ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
-	                                                    CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	                                                         ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
+	                                                         CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		Map<CANDIDATE_TYPE, BigFraction> votesByCandidate =
-			VotesByCandidateCalculation.calculateVotesByCandidate(candidateStates.getHopefulCandidates(), voteStates);
+			new VoteDistribution<>(candidateStates.getHopefulCandidates(), voteStates).votesByCandidate;
 		BigFraction numberOfVotesOfBestCandidate = BigFraction.MINUS_ONE;
 		Collection<CANDIDATE_TYPE> bestCandidates = newArrayList();
 		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
@@ -92,14 +92,17 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 	}
 
 
-	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByRedistributingTheWinnersExceedingVotes(BigFraction quorum,
-	                                                                                               ImmutableCollection<VoteState<CANDIDATE_TYPE>> originalVoteStates,
-	                                                                                               VoteWeightRecalculator<CANDIDATE_TYPE> redistributor,
-	                                                                                               long numberOfElectedCandidates,
-	                                                                                               CANDIDATE_TYPE winner,
-	                                                                                               CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByRedistributingTheWinnersExceedingVotes(
+		BigFraction quorum,
+		ImmutableCollection<VoteState<CANDIDATE_TYPE>> originalVoteStates,
+		VoteWeightRecalculator<CANDIDATE_TYPE> redistributor,
+		long numberOfElectedCandidates,
+		CANDIDATE_TYPE winner,
+		CandidateStates<CANDIDATE_TYPE> candidateStates) {
 		electionCalculationListener
-			.candidateIsElected(winner, VotesForCandidateCalculation.calculateVotesForCandidate(winner, originalVoteStates), quorum);
+			.candidateIsElected(winner,
+			                    VotesForCandidateCalculation.calculateVotesForCandidate(winner, originalVoteStates),
+			                    quorum);
 
 		long newNumberOfElectedCandidates = numberOfElectedCandidates + 1;
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStatesAfterRedistribution = redistributor
@@ -110,55 +113,53 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			voteStatesAfterRedistribution, newCandidateStates);
 
 		electionCalculationListener.voteWeightRedistributionCompleted(originalVoteStates, newVoteStates,
-			VotesByCandidateCalculation
-				.calculateVotesByCandidate(newCandidateStates.getHopefulCandidates(), newVoteStates));
+		                                                              new VoteDistribution<>(
+			                                                              newCandidateStates.getHopefulCandidates(),
+			                                                              newVoteStates));
 
-		return new ElectionStepResult<>(newVoteStates, newNumberOfElectedCandidates,
-		                                              newCandidateStates);
+		return new ElectionStepResult<>(newVoteStates, newNumberOfElectedCandidates, newCandidateStates);
 	}
 
-	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByStrikingTheWeakestCandidate(BigFraction quorum,
-	                                                                                    ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
-	                                                                                    long numberOfElectedCandidates,
-	                                                                                    CandidateStates<CANDIDATE_TYPE> candidateStates) {
+	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByStrikingTheWeakestCandidate(
+		BigFraction quorum,
+		ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
+		long numberOfElectedCandidates,
+		CandidateStates<CANDIDATE_TYPE> candidateStates) {
 
 		electionCalculationListener.nobodyReachedTheQuorumYet(quorum);
 		State<CANDIDATE_TYPE> state = strikeWeakestCandidate(voteStates, candidateStates);
 		return new ElectionStepResult<>(state.voteStates, numberOfElectedCandidates,
-		                                              state.candidateStates);
+		                                state.candidateStates);
 	}
 
 	private State<CANDIDATE_TYPE> strikeWeakestCandidate(
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates,
-		CandidateStates<CANDIDATE_TYPE> oldcandidateStates) {
+		CandidateStates<CANDIDATE_TYPE> oldCandidateStates) {
 
-		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateBeforeStriking = VotesByCandidateCalculation
-			.calculateVotesByCandidate(
-				oldcandidateStates.getHopefulCandidates(), voteStates);
+		VoteDistribution<CANDIDATE_TYPE> voteDistributionBeforeStriking = new VoteDistribution<>(
+			oldCandidateStates.getHopefulCandidates(), voteStates);
 
-		CANDIDATE_TYPE weakestCandidate = calculateWeakestCandidate(votesByCandidateBeforeStriking);
+		CANDIDATE_TYPE weakestCandidate = calculateWeakestCandidate(voteDistributionBeforeStriking);
 
-		CandidateStates<CANDIDATE_TYPE> newCandidateStates = oldcandidateStates.withLooser(weakestCandidate);
+		CandidateStates<CANDIDATE_TYPE> newCandidateStates = oldCandidateStates.withLooser(weakestCandidate);
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates = createVoteStatesPointingAtNextHopefulCandidate(
 			voteStates, newCandidateStates);
 
-		Map<CANDIDATE_TYPE, BigFraction> votesByCandidateAfterStriking =
-			VotesByCandidateCalculation.calculateVotesByCandidate(newCandidateStates.getHopefulCandidates(), newVoteStates);
+		VoteDistribution<CANDIDATE_TYPE> voteDistributionAfterStriking = new VoteDistribution<>(
+			newCandidateStates.getHopefulCandidates(), newVoteStates);
 
-		electionCalculationListener.candidateDropped(
-			votesByCandidateBeforeStriking,
-			weakestCandidate,
-			votesByCandidateBeforeStriking.get(weakestCandidate));
-		electionCalculationListener.voteWeightRedistributionCompleted(voteStates, newVoteStates, votesByCandidateAfterStriking);
+		electionCalculationListener.candidateDropped(voteDistributionBeforeStriking, weakestCandidate);
+		electionCalculationListener.voteWeightRedistributionCompleted(voteStates, newVoteStates,
+		                                                              voteDistributionAfterStriking);
 		return new State<>(newCandidateStates, newVoteStates);
 	}
 
 
-	private CANDIDATE_TYPE calculateWeakestCandidate(Map<CANDIDATE_TYPE, BigFraction> votesByCandidate) {
+	private CANDIDATE_TYPE calculateWeakestCandidate(VoteDistribution<CANDIDATE_TYPE> voteDistribution) {
 		BigFraction numberOfVotesOfBestCandidate = new BigFraction(Integer.MAX_VALUE, 1);
-		//TODO: Hier sollten eigentlich 0-Kandidierende noch aufgeführt werden, solange sie nicht bereits gedroppd sind.
 		Collection<CANDIDATE_TYPE> weakestCandidates = newArrayList();
-		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : votesByCandidate.entrySet()) {
+
+		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : voteDistribution.votesByCandidate.entrySet()) {
 			if (votesForCandidate.getValue().compareTo(numberOfVotesOfBestCandidate) < 0) {
 				numberOfVotesOfBestCandidate = votesForCandidate.getValue();
 				weakestCandidates = new ArrayList<>(singletonList(votesForCandidate.getKey()));
@@ -215,8 +216,8 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		final long newNumberOfElectedCandidates;
 
 		ElectionStepResult(ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates,
-		                          long newNumberOfElectedCandidates,
-		                          CandidateStates<CANDIDATE_TYPE> candidateStates) {
+		                   long newNumberOfElectedCandidates,
+		                   CandidateStates<CANDIDATE_TYPE> candidateStates) {
 			this.newCandidateStates = candidateStates;
 			this.newVoteStates = newVoteStates;
 			this.newNumberOfElectedCandidates = newNumberOfElectedCandidates;
