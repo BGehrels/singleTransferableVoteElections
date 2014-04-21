@@ -44,7 +44,7 @@ final class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<C
 		ImmutableSet.Builder<CANDIDATE_TYPE> builder = ImmutableSet.builder();
 		for (Entry<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> entry : candidateStates.entrySet()) {
 			if ((entry.getValue() != null) && entry.getValue().isHopeful()) {
-				builder.add(entry.getValue().getCandidate());
+				builder.add(entry.getKey());
 			}
 		}
 
@@ -68,6 +68,11 @@ final class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<C
 	@Override
 	public Iterator<CandidateState<CANDIDATE_TYPE>> iterator() {
 		return candidateStates.values().iterator();
+	}
+
+	@Override
+	public String toString() {
+		return candidateStates.toString();
 	}
 
 	private static <K, V, EK extends K, EV extends V> ImmutableMap<K, V> mapWithChangedEntry(

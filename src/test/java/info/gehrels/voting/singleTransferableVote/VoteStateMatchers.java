@@ -40,7 +40,7 @@ public final class VoteStateMatchers {
 	}
 
 	static <T extends Candidate> Matcher<VoteState<T>> aVoteState(Matcher<VoteState<T>> stateMatcher) {
-		return new DelegatingMatcher<>(stateMatcher, "a ballot state");
+		return new DelegatingMatcher<>(stateMatcher, "a vote state");
 	}
 
 	static Matcher<VoteState<?>> withVoteWeight(BigFraction voteWeight) {

@@ -145,7 +145,7 @@ public final class STVElectionCalculationStepTest {
 	}
 
 	@Test
-	public void marksCandidateWithHigherNumberOfVotesAsWinnerAndRedistributesVoteWeightIfMoreThanOneCandidateReachedTheQuorum() {
+	public void marksAllSuchCandidatesWinnerAndRedistributesVoteWeightIfMoreThanOneCandidateReachedTheQuorum() {
 		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
 			stateFor(AC_BALLOT),
 			stateFor(A_BALLOT),
@@ -154,6 +154,8 @@ public final class STVElectionCalculationStepTest {
 		);
 
 		when(redistributorMock.recalculateExceededVoteWeight(A, ONE, voteStates, CANDIDATE_STATES))
+			.thenReturn(STUB_REDISTRIBUTION_RESULT);
+		when(redistributorMock.recalculateExceededVoteWeight(B, ONE, voteStates, CANDIDATE_STATES))
 			.thenReturn(STUB_REDISTRIBUTION_RESULT);
 
 		ElectionStepResult<Candidate> electionStepResult = step
@@ -170,77 +172,22 @@ public final class STVElectionCalculationStepTest {
 				withVoteWeight(ONE_FIFTH)
 			)),
 			aVoteState(allOf(
-				withPreferredCandidate(B),
-				withVoteWeight(ONE_HALF)
-			))
-		);
-		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, ONE);
-		verify(electionCalculationListenerMock)
-			.voteWeightRedistributionCompleted(eq(voteStates), (ImmutableCollection) argThat(newVoteStateMatcher),
-			                                   argThat(is(aVoteDistribution(withVotesForCandidate(B, ONE_HALF),
-			                                                                withVotesForCandidate(C, ONE),
-			                                                                withNoVotes(ONE),
-			                                                                withInvalidVotes(ZERO)))));
-
-		assertThat(electionStepResult, is(anElectionStepResult(allOf(
-			withCandidateStates(withElectedCandidate(A)),
-			withNumberOfElectedCandidates(is(2L)),
-			withVoteStates(newVoteStateMatcher)
-		))));
-	}
-
-	@Test
-	public void marksCandidateResultingFromAbiguityResulutionAsWinnerAndRedistributesVoteWeightIfMoreThanOneCandidateWithEqualNumberOfVotesReachedWheQuorum() {
-		ImmutableList<VoteState<Candidate>> voteStates = ImmutableList.of(
-			stateFor(AC_BALLOT),
-			stateFor(A_BALLOT),
-			stateFor(BA_BALLOT),
-			stateFor(BC_BALLOT)
-		);
-
-		when(ambiguityResolverMock.chooseOneOfMany(ImmutableSet.of(A, B)))
-			.thenReturn(new AmbiguityResolverResult<>(B, "Fixed as Mock"));
-
-		when(redistributorMock.recalculateExceededVoteWeight(B, TWO, voteStates, CANDIDATE_STATES))
-			.thenReturn(STUB_REDISTRIBUTION_RESULT);
-
-		ElectionStepResult<Candidate> electionStepResult = step
-			.declareWinnerOrStrikeCandidate(TWO, voteStates, redistributorMock, 1, CANDIDATE_STATES);
-
-		Matcher newVoteStatesMatcher = containsInAnyOrder(
-			aVoteState(allOf(
-				withPreferredCandidate(A),
-				withVoteWeight(FOUR_FIFTHS)
-			)),
-			aVoteState(allOf(
-				withPreferredCandidate(A),
-				withVoteWeight(ONE)
-			)),
-			aVoteState(allOf(
-				withPreferredCandidate(A),
-				withVoteWeight(ONE_FIFTH)
-			)),
-			aVoteState(allOf(
 				withPreferredCandidate(C),
 				withVoteWeight(ONE_HALF)
 			))
 		);
-		verify(electionCalculationListenerMock).candidateIsElected(B, TWO, TWO);
-		verify(electionCalculationListenerMock).voteWeightRedistributionCompleted(eq(voteStates),
-		                                                                          (ImmutableCollection) argThat(
-			                                                                          newVoteStatesMatcher),
-		                                                                          argThat(is(aVoteDistribution(
-			                                                                          withVotesForCandidate(A, TWO),
-			                                                                          withVotesForCandidate(C,
-			                                                                                                ONE_HALF),
-			                                                                          withNoVotes(ZERO),
-			                                                                          withInvalidVotes(
-				                                                                          ZERO)))));
+		verify(electionCalculationListenerMock).candidateIsElected(A, THREE, ONE);
+		verify(electionCalculationListenerMock).candidateIsElected(B, ONE, ONE);
+		verify(electionCalculationListenerMock)
+			.voteWeightRedistributionCompleted(eq(voteStates), (ImmutableCollection) argThat(newVoteStateMatcher),
+			                                   argThat(is(aVoteDistribution(withVotesForCandidate(C, new BigFraction(3,2)),
+			                                                                withNoVotes(ONE),
+			                                                                withInvalidVotes(ZERO)))));
 
 		assertThat(electionStepResult, is(anElectionStepResult(allOf(
-			withCandidateStates(withElectedCandidate(B)),
-			withNumberOfElectedCandidates(is(2L)),
-			withVoteStates(newVoteStatesMatcher)
+			withCandidateStates(allOf(withElectedCandidate(A), withElectedCandidate(B))),
+			withNumberOfElectedCandidates(is(3L)),
+			withVoteStates(newVoteStateMatcher)
 		))));
 	}
 
