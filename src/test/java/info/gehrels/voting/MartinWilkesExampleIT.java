@@ -1,5 +1,5 @@
 /*
- * Copyright © 2014 Benjamin Gehrels
+ * Copyright © 2014 Martin Wilke, Benjamin Gehrels
  *
  * This file is part of The Single Transferable Vote Elections Library.
  *
