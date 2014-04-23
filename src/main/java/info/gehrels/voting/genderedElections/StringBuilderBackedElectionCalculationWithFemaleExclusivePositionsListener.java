@@ -55,7 +55,8 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 	@Override
 	public void startElectionCalculation(GenderedElection election,
 	                                     ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
-		formatLine("Starte die Wahlberechnungen für das Amt „%s“. Abgegebene Stimmen:", election.getOfficeName());
+		formatLine("Starte die Wahlberechnungen für %s.", election);
+		formatLine("Abgegebene Stimmen:");
 		List<Long> ballotIdsWithoutAVote = new ArrayList<>();
 		long numberOfCastVotes = 0;
 		for (Ballot<GenderedCandidate> ballot : ballots) {

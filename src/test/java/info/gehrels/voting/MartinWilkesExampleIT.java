@@ -31,6 +31,8 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import static info.gehrels.voting.TestUtils.createBallot;
+import static info.gehrels.voting.TestUtils.createInvalidBallot;
+import static info.gehrels.voting.TestUtils.createNoBallot;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
@@ -89,7 +91,11 @@ public final class MartinWilkesExampleIT {
 			createBallot("HGIF", election),
 			createBallot("IJF", election),
 			createBallot("IJH", election),
-			createBallot("JIHFE", election));
+			createBallot("JIHFE", election),
+		    createNoBallot(election),
+		    createInvalidBallot(election),
+		    new Ballot<>(9876, ImmutableSet.<Vote<GenderedCandidate>>of())
+		);
 	}
 
 	@Test

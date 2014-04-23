@@ -43,4 +43,9 @@ public final class GenderedElection extends Election<GenderedCandidate> {
 	public long getNumberOfNotFemaleExclusivePositions() {
 		return numberOfNotFemaleExclusivePositions;
 	}
+
+	@Override
+	public String toString() {
+		return getOfficeName() + " (" + numberOfFemaleExclusivePositions + " Frauenplätze, " + numberOfNotFemaleExclusivePositions + " offene Plätze)";
+	}
 }

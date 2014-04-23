@@ -42,7 +42,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 	}
 
 	public Result calculateElectionResult(GenderedElection election,
-	                                              ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
+	                                      ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
 		validateThat(election, is(notNullValue()));
 		validateThat(ballots, is(notNullValue()));
 
@@ -50,12 +50,21 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 			electionCalculationFactory.createElectionCalculation(election, ballots);
 		electionCalculationListener.startElectionCalculation(election, ballots);
 
-		ImmutableSet<GenderedCandidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
-			election, electionCalculation);
+		ImmutableSet<GenderedCandidate> electedFemaleCandidates = ImmutableSet.of();
+		if (election.getNumberOfFemaleExclusivePositions() > 0) {
+			electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
+				election, electionCalculation);
+		}
 
-		ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
-			election, electionCalculation, electedFemaleCandidates);
+		long numberOfElectableNotFemaleExclusivePositions = calculateNumberOfElectableFemaleExclusivePositions(
+			election,
+			electedFemaleCandidates);
 
+		ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun = ImmutableSet.of();
+		if (numberOfElectableNotFemaleExclusivePositions > 0) {
+			candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
+				election, electionCalculation, electedFemaleCandidates, numberOfElectableNotFemaleExclusivePositions);
+		}
 		return new Result(electedFemaleCandidates, candidatesElectedInOpenRun);
 	}
 
@@ -73,8 +82,21 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
 		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation,
-		ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
+		ImmutableSet<GenderedCandidate> electedFemaleCandidates, long numberOfElectableNotFemaleExclusivePositions) {
 		electionCalculationListener.startNonFemaleExclusiveElectionRun();
+		Predicate<GenderedCandidate> notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
+		                                                                                       electionCalculationListener);
+		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
+			copyOf(
+				filter(election.getCandidates(), notElectedBeforePredicate)
+			);
+
+		return electionCalculation
+			.calculate(candidatesNotElectedBefore, numberOfElectableNotFemaleExclusivePositions);
+	}
+
+	private long calculateNumberOfElectableFemaleExclusivePositions(GenderedElection election,
+	                                                                ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
 		long numberOfElectableNotFemaleExclusivePositions =
 			max(
 				0,
@@ -89,16 +111,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 				                                                           .getNumberOfNotFemaleExclusivePositions(),
 			                                                           numberOfElectableNotFemaleExclusivePositions);
 		}
-
-		Predicate<GenderedCandidate> notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
-		                                                                                    electionCalculationListener);
-		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
-			copyOf(
-				filter(election.getCandidates(), notElectedBeforePredicate)
-			);
-
-		return electionCalculation
-			.calculate(candidatesNotElectedBefore, numberOfElectableNotFemaleExclusivePositions);
+		return numberOfElectableNotFemaleExclusivePositions;
 	}
 
 
