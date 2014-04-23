@@ -88,4 +88,15 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 	public int hashCode() {
 		return Objects.hashCode(election, valid, no, rankedCandidates);
 	}
+
+	@Override
+	public String toString() {
+		if (!valid) {
+			return "invalid";
+		} else if (no) {
+			return "No";
+		} else {
+			return rankedCandidates.toString();
+		}
+	}
 }

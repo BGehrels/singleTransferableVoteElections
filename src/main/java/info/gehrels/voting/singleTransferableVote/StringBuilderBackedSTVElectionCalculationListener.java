@@ -34,17 +34,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-// § 19 Abs. 3,4 WahlO-GJ:
-// (3) Mit der Verkündung des Ergebnisses muss der Versammlung ein detailliertes Protokoll der Programmabläufe zur Verfügung
-// gestellt werden. Dieses Protokoll muss mindestens enthalten:
-// 1. Das Quorum gemäß § 18 Nr. 2
-// 2. Die Wahl von KandidatInnen gemäß § 18 Nr. 5
-// 3. Das Ausscheiden von KandidatInnen gemäß § 18 Nr. 8
-// 4. Die Anzahl der Stimmen von KandidatInnen zum Zeitpunkt ihrer Wahl oder ihres Ausscheidens
-// 5. In Fällen des § 18 Nr. 7, 8 die Anzahl der übertragenen Stimmen, der Gesamtstimmwert dieser Stimmen zum Zeitpunkt
-// der Übertragung sowie die Kandidatin / den Kandidaten von der / dem und zu der / dem übertragen wurde.
-// (4) Sofern Zufallsauswahlen gemäß § 18 Nr. 7, 8 erforderlich sind, entscheidet das von der Tagungsleitung zu ziehende
-// Los; die Ziehung und die Eingabe des Ergebnisses in den Computer müssen mitgliederöffentlich erfolgen.
 public final class StringBuilderBackedSTVElectionCalculationListener<T extends Candidate>
 	implements STVElectionCalculationListener<T> {
 	private final StringBuilder builder;
@@ -137,7 +126,7 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 
 	@Override
 	public void calculationStarted(Election<T> election, VoteDistribution<T> voteDistribution) {
-		formatLine("Beginne die Berechnung für Wahl „%s“. Ausgangsstimmverteilung:", election.getOfficeName());
+		formatLine("Ausgangsstimmverteilung:");
 		dumpVoteDistribution(voteDistribution);
 	}
 

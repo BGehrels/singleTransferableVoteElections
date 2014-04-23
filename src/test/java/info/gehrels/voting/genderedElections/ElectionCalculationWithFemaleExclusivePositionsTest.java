@@ -86,7 +86,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 	}
 
 	@Test
-	public void onlyNotElectedCanidatesQualifyForOpenPositions() {
+	public void onlyNotYetElectedCanidatesQualifyForOpenPositions() {
 		GenderedElection election = new GenderedElection("Example Office", 1, 2, CANDIDATES);
 
 
@@ -123,15 +123,14 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 	public void ifNotAllFemalePositionsHaveBeenFilledThenItCanAlsoHappenThatNoMalePositionsCanBeElected() {
 		GenderedElection election = new GenderedElection("Example Office", 3, 2, CANDIDATES);
 
-
-		// given only one female positions have been elected in the first run
+		// given only one female position has been elected in the first run
 		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3L)))
 			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
-		// Then all non elected candidates qualify for the second run.
+		// Then the second run has zero seats to fill
 		InOrder inOrder = inOrder(electionCalculationMock);
 		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3L));
 		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0L));
@@ -148,7 +147,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		objectUnderTest.calculateElectionResult(election, ballots);
 
-		// Then all non elected candidates qualify for the second run.
+		// Then the second run has zero seats to fill.
 		InOrder inOrder = inOrder(electionCalculationMock);
 		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(3L));
 		inOrder.verify(electionCalculationMock).calculate(any(ImmutableSet.class), eq(0L));
@@ -166,6 +165,24 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		objectUnderTest.calculateElectionResult(election, ballots);
 
 		verify(electionCalculationListener).reducedNonFemaleExclusiveSeats(1, 0, 2, 1);
+	}
+
+	@Test
+	public void shouldReportTheStartOfTheElectionRunAndTheStartOfTheIndividualGenderedCalculations() {
+		GenderedElection election = new GenderedElection("Example Office", 3, 2, CANDIDATES);
+
+		// given only two female positions have been elected in the first run
+		stub(electionCalculationMock.calculate(any(ImmutableSet.class), eq(3L)))
+			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1, FEMALE_CANDIDATE_2));
+
+
+		objectUnderTest.calculateElectionResult(election, ballots);
+
+		// Then all non elected candidates qualify for the second run.
+		InOrder inOrder = inOrder(electionCalculationListener);
+		inOrder.verify(electionCalculationListener).startElectionCalculation(election, ballots);
+		inOrder.verify(electionCalculationListener).startFemaleExclusiveElectionRun();
+		inOrder.verify(electionCalculationListener).startNonFemaleExclusiveElectionRun();
 	}
 
 

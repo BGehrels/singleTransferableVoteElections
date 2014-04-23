@@ -48,6 +48,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 
 		ElectionCalculation<GenderedCandidate> electionCalculation =
 			electionCalculationFactory.createElectionCalculation(election, ballots);
+		electionCalculationListener.startElectionCalculation(election, ballots);
 
 		ImmutableSet<GenderedCandidate> electedFemaleCandidates = calculateElectionResultForFemaleExclusivePositions(
 			election, electionCalculation);
@@ -60,6 +61,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForFemaleExclusivePositions(
 		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation) {
+		electionCalculationListener.startFemaleExclusiveElectionRun();
 		Predicate<GenderedCandidate> femalePredicate = new FemalePredicate(electionCalculationListener);
 		ImmutableSet<GenderedCandidate> femaleCandidates =
 			copyOf(
@@ -72,6 +74,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
 		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation,
 		ImmutableSet<GenderedCandidate> electedFemaleCandidates) {
+		electionCalculationListener.startNonFemaleExclusiveElectionRun();
 		long numberOfElectableNotFemaleExclusivePositions =
 			max(
 				0,

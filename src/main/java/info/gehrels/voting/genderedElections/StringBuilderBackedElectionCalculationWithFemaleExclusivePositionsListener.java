@@ -16,6 +16,14 @@
  */
 package info.gehrels.voting.genderedElections;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
+import info.gehrels.voting.Ballot;
+import info.gehrels.voting.Vote;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.lang.String.format;
 
 public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePositionsListener
@@ -40,7 +48,40 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 
 	@Override
 	public void candidateNotQualified(GenderedCandidate candidate, NonQualificationReason reason) {
-		formatLine("%s kann in diesem Wahlgang nicht antreten, Grund: %s", candidate.name, getReasonAsGermanString(reason));
+		formatLine("%s kann in diesem Wahlgang nicht antreten, Grund: %s", candidate.name,
+		           getReasonAsGermanString(reason));
+	}
+
+	@Override
+	public void startElectionCalculation(GenderedElection election,
+	                                     ImmutableCollection<Ballot<GenderedCandidate>> ballots) {
+		formatLine("Starte die Wahlberechnungen für das Amt „%s“. Abgegebene Stimmen:", election.getOfficeName());
+		List<Long> ballotIdsWithoutAVote = new ArrayList<>();
+		long numberOfCastVotes = 0;
+		for (Ballot<GenderedCandidate> ballot : ballots) {
+			Optional<Vote<GenderedCandidate>> vote = ballot.getVote(election);
+			if (vote.isPresent()) {
+				formatLine("Stimmzettel %d: %s", ballot.id, vote.get());
+				numberOfCastVotes++;
+			} else {
+				ballotIdsWithoutAVote.add(ballot.id);
+			}
+		}
+		formatLine("Insgesamt wurden für diese Wahl %d Stimmen abgegeben.", numberOfCastVotes);
+
+		if (!ballotIdsWithoutAVote.isEmpty()) {
+			formatLine("Keine Stimmabgabe auf den Stimmzetteln %s.", ballotIdsWithoutAVote);
+		}
+	}
+
+	@Override
+	public void startFemaleExclusiveElectionRun() {
+		formatLine("Starte die Berechnung der Frauenplätze.");
+	}
+
+	@Override
+	public void startNonFemaleExclusiveElectionRun() {
+		formatLine("Starte die Berechnung der offenen Plätze.");
 	}
 
 	private String getReasonAsGermanString(NonQualificationReason reason) {

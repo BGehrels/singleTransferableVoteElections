@@ -16,6 +16,9 @@
  */
 package info.gehrels.voting.genderedElections;
 
+import com.google.common.collect.ImmutableCollection;
+import info.gehrels.voting.Ballot;
+
 public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 
 
@@ -26,6 +29,12 @@ public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 
 
 	void candidateNotQualified(GenderedCandidate candidate, NonQualificationReason reason);
+
+	void startElectionCalculation(GenderedElection election, ImmutableCollection<Ballot<GenderedCandidate>> ballots);
+
+	void startFemaleExclusiveElectionRun();
+
+	void startNonFemaleExclusiveElectionRun();
 
 	public enum NonQualificationReason {
 		NOT_FEMALE, ALREADY_ELECTED
