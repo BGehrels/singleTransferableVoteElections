@@ -4,13 +4,35 @@
 
 	<groupId>info.gehrels.voting</groupId>
 	<artifactId>wigm</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>wigm</name>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/BGehrels</url>
 
-	<!-- TODO: License festlegen -->
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License v3 or later</name>
+			<distribution>repo</distribution>
+			<url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+			<comments>
+				Copyright © 2014 Benjamin Gehrels et al.
+
+				This file is part of The Single Transferable Vote Elections Web Interface.
+
+				The Single Transferable Vote Elections Web Interface is free software: you can redistribute it and/or
+				modify it under the terms of the GNU Affero General Public License as published by the Free Software
+				Foundation, either version 3 of the License, or (at your option) any later version.
+
+				The Single Transferable Vote Elections Web Interface is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+				PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+				You should have received a copy of the GNU Affero General Public License along with The Single
+				Transferable Vote Elections Web Interface. If not, see http://www.gnu.org/licenses/.
+			</comments>
+		</license>
+	</licenses>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,9 +55,9 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-math3</artifactId>
-		    <version>3.1.1</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
