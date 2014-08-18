@@ -28,7 +28,7 @@ import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-final class VoteState<CANDIDATE_TYPE extends Candidate> {
+public final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
 	private final long ballotId;
 	private final BigFraction voteWeight;
