@@ -23,8 +23,6 @@ import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.Map;
-
 public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate> {
 	void numberOfElectedPositions(long numberOfElectedCandidates, long numberOfSeatsToElect);
 
@@ -52,5 +50,5 @@ public interface STVElectionCalculationListener<CANDIDATE_TYPE extends Candidate
 
 	void quorumHasBeenCalculated(long numberOfValidBallots, long numberOfSeats, BigFraction quorum);
 
-	void redistributingExcessiveFractionOfVoteWeight(Candidate winner, BigFraction excessiveFractionOfVoteWeight);
+	void redistributingExcessiveFractionOfVoteWeight(CANDIDATE_TYPE winner, BigFraction excessiveFractionOfVoteWeight);
 }

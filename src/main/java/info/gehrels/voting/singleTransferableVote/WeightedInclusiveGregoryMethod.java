@@ -32,11 +32,17 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 
 	@Override
 	public final VoteWeightRecalculator<CANDIDATE_TYPE> recalculatorFor() {
-		return new WigmVoteWeightRecalculator<CANDIDATE_TYPE>();
+		return new WigmVoteWeightRecalculator<CANDIDATE_TYPE>(electionCalculationListener);
 	}
 
 	private final class WigmVoteWeightRecalculator<CANDIDATE_TYPE extends Candidate>
 		implements VoteWeightRecalculator<CANDIDATE_TYPE> {
+		private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
+
+		private WigmVoteWeightRecalculator(STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener) {
+			this.electionCalculationListener = electionCalculationListener;
+		}
+
 		@Override
 		public ImmutableList<VoteState<CANDIDATE_TYPE>> recalculateExceededVoteWeight(CANDIDATE_TYPE winner,
 		                                                                              BigFraction quorum,

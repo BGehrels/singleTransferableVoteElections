@@ -64,7 +64,7 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 	}
 
 	@Override
-	public void redistributingExcessiveFractionOfVoteWeight(Candidate winner,
+	public void redistributingExcessiveFractionOfVoteWeight(T winner,
 	                                                        BigFraction excessiveFractionOfVoteWeight) {
 		formatLine("Es werden %f%% des Stimmgewichts von %s weiterverteilt.",
 		           excessiveFractionOfVoteWeight.percentageValue(), winner.getName());
