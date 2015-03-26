@@ -36,7 +36,7 @@ public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 
 	void startNonFemaleExclusiveElectionRun();
 
-	public enum NonQualificationReason {
+	enum NonQualificationReason {
 		NOT_FEMALE, ALREADY_ELECTED
 	}
 }

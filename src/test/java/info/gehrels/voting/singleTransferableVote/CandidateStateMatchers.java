@@ -25,7 +25,7 @@ public final class CandidateStateMatchers {
 	private CandidateStateMatchers() {
 	}
 
-	static <CANDIDATE_TYPE extends Candidate> Matcher<CandidateStates<CANDIDATE_TYPE>> withLooser(final CANDIDATE_TYPE a) {
+	static <CANDIDATE_TYPE extends Candidate> Matcher<CandidateStates<CANDIDATE_TYPE>> withLooser(CANDIDATE_TYPE a) {
 		return new TypeSafeDiagnosingMatcher<CandidateStates<CANDIDATE_TYPE>>() {
 			@Override
 			protected boolean matchesSafely(CandidateStates<CANDIDATE_TYPE> candidateStates, Description description) {
@@ -55,7 +55,7 @@ public final class CandidateStateMatchers {
 		};
 	}
 
-	static <CANDIDATE_TYPE>  Matcher<CandidateStates<CANDIDATE_TYPE>> withElectedCandidate(final CANDIDATE_TYPE a) {
+	static <CANDIDATE_TYPE>  Matcher<CandidateStates<CANDIDATE_TYPE>> withElectedCandidate(CANDIDATE_TYPE a) {
 		return new TypeSafeDiagnosingMatcher<CandidateStates<CANDIDATE_TYPE>>() {
 			@Override
 			protected boolean matchesSafely(CandidateStates<CANDIDATE_TYPE> candidateStates, Description description) {
@@ -65,15 +65,15 @@ public final class CandidateStateMatchers {
 					return false;
 				}
 
-				if (candidateState.isLooser()) {
-					description.appendText("candidate ").appendValue(a).appendText(" is is a looser");
-					return false;
-				}
-
 				if (candidateState.isHopeful()) {
 					description.appendText("candidate ").appendValue(a).appendText(" is is still hopeful");
 					return false;
 				}
+
+                if (!candidateState.isElected()) {
+                    description.appendText("candidate ").appendValue(a).appendText(" is is neither hopeful not elected");
+                    return false;
+                }
 
 				return true;
 			}
@@ -85,7 +85,7 @@ public final class CandidateStateMatchers {
 		};
 	}
 
-	static <CANDIDATE_TYPE> Matcher<CandidateState<CANDIDATE_TYPE>> candidateStateFor(final CANDIDATE_TYPE candidate) {
+	static <CANDIDATE_TYPE> Matcher<CandidateState<CANDIDATE_TYPE>> candidateStateFor(CANDIDATE_TYPE candidate) {
 		return new TypeSafeDiagnosingMatcher<CandidateState<CANDIDATE_TYPE>>() {
 			@Override
 			protected boolean matchesSafely(CandidateState<CANDIDATE_TYPE> candidateState, Description description) {

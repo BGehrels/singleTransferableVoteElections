@@ -42,21 +42,23 @@ final class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<C
 
 	public ImmutableSet<CANDIDATE_TYPE> getHopefulCandidates() {
 		ImmutableSet.Builder<CANDIDATE_TYPE> builder = ImmutableSet.builder();
-		for (Entry<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> entry : candidateStates.entrySet()) {
-			if ((entry.getValue() != null) && entry.getValue().isHopeful()) {
-				builder.add(entry.getKey());
-			}
-		}
+        candidateStates.entrySet().stream()
+                .filter(this::isHopefulCandidate)
+                .forEach(entry -> builder.add(entry.getKey()));
 
 		return builder.build();
 	}
 
-	public CandidateStates<CANDIDATE_TYPE> withElected(CANDIDATE_TYPE candidate) {
+    private boolean isHopefulCandidate(Entry<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> entry) {
+        return (entry.getValue() != null) && entry.getValue().isHopeful();
+    }
+
+    public CandidateStates<CANDIDATE_TYPE> withElected(CANDIDATE_TYPE candidate) {
 		return new CandidateStates<>(
 			mapWithChangedEntry(candidateStates, candidate, candidateStates.get(candidate).asElected()));
 	}
 
-	public CandidateStates<CANDIDATE_TYPE> withLooser(CANDIDATE_TYPE candidate) {
+	public CandidateStates<CANDIDATE_TYPE> withLoser(CANDIDATE_TYPE candidate) {
 		return new CandidateStates<>(
 			mapWithChangedEntry(candidateStates, candidate, candidateStates.get(candidate).asLooser()));
 	}

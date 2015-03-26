@@ -29,23 +29,20 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 public final class SetMatchers {
-	private SetMatchers() {
-	}
-
-	public static  <SUPERSET extends Collection<?>, SUBSET extends Collection<?>> Matcher<SUBSET> isSubSetOf(final SUPERSET potentialSuperset) {
+	public static  <SUPERSET extends Collection<?>, SUBSET extends Collection<?>> Matcher<SUBSET> isSubSetOf(SUPERSET potentialSuperset) {
 		validateThat(potentialSuperset, is(not(nullValue())));
 
 		return new TypeSafeDiagnosingMatcher<SUBSET>() {
 			@Override
 			public void describeTo(Description description) {
-				description.appendText("a collection completly contained in ").appendValue(potentialSuperset);
+				description.appendText("a collection completely contained in ").appendValue(potentialSuperset);
 			}
 
 			@Override
 			protected boolean matchesSafely(SUBSET potentialSubset, Description mismatchDescription) {
 				boolean matched = potentialSuperset.containsAll(potentialSubset);
 				if (!matched) {
-					Collection<?> badElements = new ArrayList<Object>(potentialSubset);
+					Collection<Object> badElements = new ArrayList<>(potentialSubset);
 					badElements.removeAll(potentialSuperset);
 					mismatchDescription.appendText("also found ").appendValue(badElements);
 				}

@@ -1,7 +1,6 @@
 package info.gehrels.voting.singleTransferableVote;
 
 import info.gehrels.voting.Candidate;
-import info.gehrels.voting.DelegatingMatcher;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -18,7 +17,7 @@ public final class VoteDistributionMatchers {
 		return new DelegatingMatcher<>(allOf(subMatcher), "a vote distribution");
 	}
 
-	public static <CANDIDATE extends Candidate> Matcher<VoteDistribution<? super CANDIDATE>> withVotesForCandidate(final CANDIDATE candidate, BigFraction numberOfVotes) {
+	public static <CANDIDATE extends Candidate> Matcher<VoteDistribution<? super CANDIDATE>> withVotesForCandidate(CANDIDATE candidate, BigFraction numberOfVotes) {
 		String featureDescription = "number of votes for " + candidate;
 		return new FeatureMatcher<VoteDistribution<? super CANDIDATE>, BigFraction>(is(equalTo(numberOfVotes)), featureDescription, featureDescription) {
 

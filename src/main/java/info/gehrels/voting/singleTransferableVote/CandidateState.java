@@ -47,10 +47,6 @@ final class CandidateState<CANDIDATE_TYPE> {
 		return elected;
 	}
 
-	public boolean isLooser() {
-		return looser;
-	}
-
 	public CandidateState<CANDIDATE_TYPE> asElected() {
 		validateThat("Candidate " + candidate + " may not already be a looser", looser, is(false));
 		return new CandidateState<>(candidate, true, false);

@@ -23,22 +23,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class VoteDistributionTest {
-	public static final ImmutableList<VoteState<Candidate>> EMPTY_VOTE_STATE_LIST = ImmutableList.of();
-	public static final ImmutableSet<Candidate> EMPTY_CANDIDATE_SET = ImmutableSet.of();
-	public static final Candidate CANDIDATE_PETER = new Candidate("Peter");
-	public static final Candidate CANDIDATE_JOHN = new Candidate("John");
-	public static final Candidate CANDIDATE_MARTA = new Candidate("Marta");
+public final class VoteDistributionTest {
+	private static final ImmutableList<VoteState<Candidate>> EMPTY_VOTE_STATE_LIST = ImmutableList.of();
+	private static final ImmutableSet<Candidate> EMPTY_CANDIDATE_SET = ImmutableSet.of();
+	private static final Candidate CANDIDATE_PETER = new Candidate("Peter");
+	private static final Candidate CANDIDATE_JOHN = new Candidate("John");
+	private static final Candidate CANDIDATE_MARTA = new Candidate("Marta");
 
 
-	public static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
+	private static final ImmutableSet<Candidate> ALL_CANDIDATES = ImmutableSet
 		.of(CANDIDATE_PETER, CANDIDATE_JOHN, CANDIDATE_MARTA);
 
-	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice", ALL_CANDIDATES);
-	public static final BigFraction SIX_FIFTHS = new BigFraction(6, 5);
+	private static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice", ALL_CANDIDATES);
+	private static final BigFraction SIX_FIFTHS = new BigFraction(6, 5);
 
 	@Test
-	public void returnsEmtpyVotesByCandidateMapIfCandidateSetAndVoteStatesAreEmpty() {
+	public void returnsEmptyVotesByCandidateMapIfCandidateSetAndVoteStatesAreEmpty() {
 		VoteDistribution<Candidate> voteDistribution = new VoteDistribution<>(EMPTY_CANDIDATE_SET,
 		                                                                      EMPTY_VOTE_STATE_LIST);
 
@@ -141,7 +141,7 @@ public class VoteDistributionTest {
 		VoteDistribution<Candidate> voteDistribution =
 			new VoteDistribution<>(ALL_CANDIDATES, ImmutableList.of(
 				createVoteStateFor(0, CANDIDATE_JOHN, CANDIDATE_MARTA).withFirstHopefulCandidate(
-					new CandidateStates<>(ALL_CANDIDATES).withElected(CANDIDATE_JOHN).withLooser(CANDIDATE_MARTA))
+					new CandidateStates<>(ALL_CANDIDATES).withElected(CANDIDATE_JOHN).withLoser(CANDIDATE_MARTA))
 			));
 
 		assertThat(voteDistribution,

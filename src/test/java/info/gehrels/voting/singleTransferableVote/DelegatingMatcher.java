@@ -16,24 +16,31 @@
  */
 package info.gehrels.voting.singleTransferableVote;
 
-import info.gehrels.voting.Candidate;
-import org.apache.commons.math3.fraction.BigFraction;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import java.util.Collection;
+public final class DelegatingMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
+	private final Matcher<? super T> subMatcher;
+	private final String descriptionText;
 
-public final class VotesForCandidateCalculation {
-	private VotesForCandidateCalculation() {
+	public DelegatingMatcher(Matcher<? super T> subMatcher, String descriptionText) {
+		this.subMatcher = subMatcher;
+		this.descriptionText = descriptionText;
 	}
 
-	static <CANDIDATE_TYPE extends Candidate> BigFraction calculateVotesForCandidate(CANDIDATE_TYPE candidate,
-	                                                                                 Collection<VoteState<CANDIDATE_TYPE>> voteStates) {
-		BigFraction votes = BigFraction.ZERO;
-		for (VoteState<CANDIDATE_TYPE> voteState : voteStates) {
-			if (voteState.getPreferredCandidate().orNull() == candidate) {
-				votes = votes.add(voteState.getVoteWeight());
-			}
+	@Override
+	protected boolean matchesSafely(T item, Description mismatchDescription) {
+		if (!subMatcher.matches(item)) {
+			subMatcher.describeMismatch(item, mismatchDescription);
+			return false;
 		}
 
-		return votes;
+		return true;
+	}
+
+	@Override
+	public void describeTo(Description description) {
+		description.appendText(descriptionText + " ").appendDescriptionOf(subMatcher);
 	}
 }

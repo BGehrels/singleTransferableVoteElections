@@ -34,7 +34,7 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 		this.builder = builder;
 	}
 
-	// TODO: Am Anfang einmal Die Anzahl der Abgegebenen, Gültigen, ungültigen, Nein-Stimmen und Präferenz-Stimmen ausgeben
+	// TODO: Am Anfang einmal Die Anzahl der abgegebenen, gültigen, ungültigen, Nein-Stimmen und Präferenz-Stimmen ausgeben
 	@Override
 	public void reducedNonFemaleExclusiveSeats(long numberOfOpenFemaleExclusiveSeats,
 	                                           long numberOfElectedFemaleExclusiveSeats,
@@ -96,7 +96,7 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 		throw new IllegalArgumentException("Unbekannter Grund: " + reason);
 	}
 
-	private StringBuilder formatLine(String formatString, Object... objects) {
-		return builder.append(format(formatString, objects)).append('\n');
+	private void formatLine(String formatString, Object... objects) {
+		builder.append(format(formatString, objects)).append('\n');
 	}
 }

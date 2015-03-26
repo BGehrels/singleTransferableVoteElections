@@ -29,10 +29,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public final class NotElectedBeforePredicateTest {
-	public static final GenderedCandidate ALICE = new GenderedCandidate("Alice", true);
-	public static final GenderedCandidate BOB = new GenderedCandidate("Bob", false);
-	public static final GenderedCandidate EVE = new GenderedCandidate("Eve", true);
-	public static final ImmutableSet<GenderedCandidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
+	private static final GenderedCandidate ALICE = new GenderedCandidate("Alice", true);
+	private static final GenderedCandidate BOB = new GenderedCandidate("Bob", false);
+	private static final GenderedCandidate EVE = new GenderedCandidate("Eve", true);
+	private static final ImmutableSet<GenderedCandidate> ELECTED_CANDIDATES = ImmutableSet.of(BOB, EVE);
 
 	private final ElectionCalculationWithFemaleExclusivePositionsListener electionCalculationListener =
 		mock(ElectionCalculationWithFemaleExclusivePositionsListener.class);

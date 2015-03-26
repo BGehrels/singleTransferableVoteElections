@@ -19,7 +19,7 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableSet;
 
 public final class TestUtils {
-	private static int ballotId = 0;
+	private static int s_ballotId = 0;
 
 	private TestUtils() {
 	}
@@ -32,16 +32,16 @@ public final class TestUtils {
 		} else {
 			vote = Vote.createPreferenceVote(election, preference);
 		}
-		return new Ballot<T>(ballotId++, ImmutableSet.of(vote));
+		return new Ballot<>(s_ballotId++, ImmutableSet.of(vote));
 	}
 
 	public static <T extends Candidate> Ballot<T> createNoBallot(Election<T> election) {
-		return new Ballot<T>(ballotId++, ImmutableSet.of(Vote.createNoVote(election)));
+		return new Ballot<>(s_ballotId++, ImmutableSet.of(Vote.createNoVote(election)));
 	}
 
 
 	public static <T extends Candidate> Ballot<T> createInvalidBallot(Election<T> election) {
-		return new Ballot<T>(ballotId++, ImmutableSet.of(Vote.createInvalidVote(election)));
+		return new Ballot<>(s_ballotId++, ImmutableSet.of(Vote.createInvalidVote(election)));
 	}
 
 	private static <T extends Candidate> ImmutableSet<T> toPreference(String preferences, ImmutableSet <T> candidates) {

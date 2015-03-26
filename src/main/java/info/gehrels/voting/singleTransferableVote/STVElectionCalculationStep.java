@@ -85,18 +85,21 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 				return o1.name.compareTo(o2.name);
 			}
 		});
-		for (Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate : voteDistribution.votesByCandidate.entrySet()) {
-			if (votesForCandidate.getValue().compareTo(quorum) >= 0) {
-				candidatesThatReachedTheQuorum.add(votesForCandidate.getKey());
-			}
-		}
+
+        voteDistribution.votesByCandidate.entrySet().stream()
+                .filter(votesForCandidate -> quorumIsReached(quorum, votesForCandidate))
+                .forEach(votesForCandidate -> candidatesThatReachedTheQuorum.add(votesForCandidate.getKey()));
 
 
 		return candidatesThatReachedTheQuorum.build();
 	}
 
+    private boolean quorumIsReached(BigFraction quorum, Entry<CANDIDATE_TYPE, BigFraction> votesForCandidate) {
+        return votesForCandidate.getValue().compareTo(quorum) >= 0;
+    }
 
-	private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByRedistributingTheWinnersExceedingVotes(
+
+    private ElectionStepResult<CANDIDATE_TYPE> calculateElectionStepResultByRedistributingTheWinnersExceedingVotes(
 		BigFraction quorum,
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> originalVoteStates,
 		VoteWeightRecalculator<CANDIDATE_TYPE> redistributor,
@@ -155,7 +158,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 
 		CANDIDATE_TYPE weakestCandidate = calculateWeakestCandidate(voteDistributionBeforeStriking);
 
-		CandidateStates<CANDIDATE_TYPE> newCandidateStates = oldCandidateStates.withLooser(weakestCandidate);
+		CandidateStates<CANDIDATE_TYPE> newCandidateStates = oldCandidateStates.withLoser(weakestCandidate);
 		ImmutableCollection<VoteState<CANDIDATE_TYPE>> newVoteStates = createVoteStatesPointingAtNextHopefulCandidate(
 			voteStates, newCandidateStates);
 
@@ -165,7 +168,7 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 		electionCalculationListener.candidateDropped(voteDistributionBeforeStriking, weakestCandidate);
 		electionCalculationListener.voteWeightRedistributionCompleted(voteStates, newVoteStates,
 		                                                              voteDistributionAfterStriking);
-		return new State<>(newCandidateStates, newVoteStates);
+		return new State(newCandidateStates, newVoteStates);
 	}
 
 
@@ -201,19 +204,19 @@ public class STVElectionCalculationStep<CANDIDATE_TYPE extends Candidate> {
 			return candidates.iterator().next();
 		}
 
-		CANDIDATE_TYPE choosenCandidate = null;
+		CANDIDATE_TYPE chosenCandidate = null;
 		if (candidates.size() > 1) {
 			electionCalculationListener.delegatingToExternalAmbiguityResolution(candidates);
 			AmbiguityResolverResult<CANDIDATE_TYPE> ambiguityResolverResult = ambiguityResolver
 				.chooseOneOfMany(candidates);
-			electionCalculationListener.externalyResolvedAmbiguity(ambiguityResolverResult);
-			choosenCandidate = ambiguityResolverResult.chosenCandidate;
+			electionCalculationListener.externallyResolvedAmbiguity(ambiguityResolverResult);
+			chosenCandidate = ambiguityResolverResult.chosenCandidate;
 		}
 
-		return choosenCandidate;
+		return chosenCandidate;
 	}
 
-	private class State<CANDIDATE_TYPE extends Candidate> {
+	private static class State<CANDIDATE_TYPE extends Candidate> {
 		private final CandidateStates<CANDIDATE_TYPE> candidateStates;
 		private final ImmutableCollection<VoteState<CANDIDATE_TYPE>> voteStates;
 

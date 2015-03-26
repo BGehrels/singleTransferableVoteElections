@@ -37,21 +37,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public final class WeightedInclusiveGregoryMethodTest {
-	public static final Candidate CANDIDATE_A = new Candidate("A");
-	public static final Candidate CANDIDATE_B = new Candidate("B");
-	public static final Candidate CANDIDATE_C = new Candidate("C");
-	public static final Candidate CANDIDATE_D = new Candidate("D");
+	private static final Candidate CANDIDATE_A = new Candidate("A");
+	private static final Candidate CANDIDATE_B = new Candidate("B");
+	private static final Candidate CANDIDATE_C = new Candidate("C");
+	private static final Candidate CANDIDATE_D = new Candidate("D");
 
-	public static final ImmutableSet<Candidate> CANDIDATES = ImmutableSet
+	private static final ImmutableSet<Candidate> CANDIDATES = ImmutableSet
 		.of(CANDIDATE_A, CANDIDATE_B, CANDIDATE_C,
 		    CANDIDATE_D);
-	public static final Election<Candidate> ELECTION = new Election<>("Example Office",    CANDIDATES);
-	public static final Ballot<Candidate> BALLOT_ABCD = createBallot("ABCD", ELECTION);
-	public static final Ballot<Candidate> BALLOT_ACD = createBallot("ACD", ELECTION);
-	public static final Ballot<Candidate> BALLOT_BCDA = createBallot("BCDA", ELECTION);
-	public static final Ballot<Candidate> BALLOT_NO_VOTES = createBallot("", ELECTION);
+	private static final Election<Candidate> ELECTION = new Election<>("Example Office",    CANDIDATES);
+	private static final Ballot<Candidate> BALLOT_ABCD = createBallot("ABCD", ELECTION);
+	private static final Ballot<Candidate> BALLOT_ACD = createBallot("ACD", ELECTION);
+	private static final Ballot<Candidate> BALLOT_BCDA = createBallot("BCDA", ELECTION);
+	private static final Ballot<Candidate> BALLOT_NO_VOTES = createBallot("", ELECTION);
 
-	public static final ImmutableList<VoteState<Candidate>> VOTE_STATES_FIXTURE = ImmutableList.of(
+	private static final ImmutableList<VoteState<Candidate>> VOTE_STATES_FIXTURE = ImmutableList.of(
 		VoteState.forBallotAndElection(BALLOT_ABCD, ELECTION).get(),
 		VoteState.forBallotAndElection(BALLOT_ACD, ELECTION).get().withVoteWeight(BigFraction.THREE_QUARTERS),
 		VoteState.forBallotAndElection(BALLOT_BCDA, ELECTION).get(),
@@ -62,7 +62,7 @@ public final class WeightedInclusiveGregoryMethodTest {
 	private final WeightedInclusiveGregoryMethod<Candidate> wigm = new WeightedInclusiveGregoryMethod<>(
 		listenerMock);
 
-	private static final CandidateStates<Candidate> ALL_HOPEFULL_CANDIDATE_STATE = new CandidateStates<>(CANDIDATES);
+	private static final CandidateStates<Candidate> ALL_HOPEFUL_CANDIDATE_STATE = new CandidateStates<>(CANDIDATES);
 
 	@Test
 	public void reducesVoteWeightOfThoseBallotsThatHadTheElectedCandidateAsCurrentPreferredCandidate() {
@@ -70,7 +70,7 @@ public final class WeightedInclusiveGregoryMethodTest {
 
 		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRecalculator
 			.recalculateExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE,
-			                               ALL_HOPEFULL_CANDIDATE_STATE);
+                    ALL_HOPEFUL_CANDIDATE_STATE);
 
 		assertThat(voteStates, hasItems(
 			aVoteState(Matchers.<VoteState<Candidate>>allOf(
@@ -90,7 +90,7 @@ public final class WeightedInclusiveGregoryMethodTest {
 
 		voteWeightRecalculator
 			.recalculateExceededVoteWeight(CANDIDATE_A, new BigFraction(7, 8), VOTE_STATES_FIXTURE,
-			                               ALL_HOPEFULL_CANDIDATE_STATE);
+                    ALL_HOPEFUL_CANDIDATE_STATE);
 
 		verify(listenerMock).redistributingExcessiveFractionOfVoteWeight(CANDIDATE_A, ONE_HALF);
 	}
@@ -102,7 +102,7 @@ public final class WeightedInclusiveGregoryMethodTest {
 
 		ImmutableCollection<VoteState<Candidate>> voteStates = voteWeightRecalculator
 			.recalculateExceededVoteWeight(CANDIDATE_A, BigFraction.ONE, VOTE_STATES_FIXTURE,
-			                               ALL_HOPEFULL_CANDIDATE_STATE);
+                    ALL_HOPEFUL_CANDIDATE_STATE);
 
 		assertThat(voteStates, hasItems(
 			aVoteState(Matchers.<VoteState<Candidate>>allOf(

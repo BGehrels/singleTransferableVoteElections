@@ -14,10 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License along with The Single Transferable Vote
  * Elections Web Interface. If not, see <http://www.gnu.org/licenses/>.
  */
-package info.gehrels.voting.singleTransferableVote;
+package info.gehrels.voting;
 
-import info.gehrels.voting.NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum;
-import info.gehrels.voting.QuorumCalculation;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
@@ -27,10 +25,10 @@ import static org.hamcrest.Matchers.is;
 
 public final class NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorumTest {
 
-	public static final BigFraction ONE_TENTH = new BigFraction(1, 10);
+	private static final BigFraction ONE_TENTH = new BigFraction(1, 10);
 
 	@Test
-	public void returnsCorrectQuorumForZeroValidVotesAndZeroPostitions() {
+	public void returnsCorrectQuorumForZeroValidVotesAndZeroPositions() {
 		QuorumCalculation defaultQuorumCalculation
 			= new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(ONE_TENTH);
 		BigFraction quorum = defaultQuorumCalculation.calculateQuorum(0, 0);
@@ -39,7 +37,7 @@ public final class NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorumTest {
 	}
 
 	@Test
-	public void returnsCorrectQuorumForZeroValidVotesAndNonZeroPostitions() {
+	public void returnsCorrectQuorumForZeroValidVotesAndNonZeroPositions() {
 		QuorumCalculation defaultQuorumCalculation
 			= new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(ONE_TENTH);
 		BigFraction quorum = defaultQuorumCalculation.calculateQuorum(0, 4);
@@ -48,7 +46,7 @@ public final class NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorumTest {
 	}
 
 	@Test
-	public void returnsCorrectQuorumForNonZeroNumberOfValidVotesAndZeroPostitions() {
+	public void returnsCorrectQuorumForNonZeroNumberOfValidVotesAndZeroPositions() {
 		QuorumCalculation defaultQuorumCalculation
 			= new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(ONE_TENTH);
 		BigFraction quorum = defaultQuorumCalculation.calculateQuorum(4, 0);
@@ -57,7 +55,7 @@ public final class NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorumTest {
 	}
 
 	@Test
-	public void returnsCorrectQuorumForNonZeroNumberOfValidVotesAndNonZeroNumberOfPostitions() {
+	public void returnsCorrectQuorumForNonZeroNumberOfValidVotesAndNonZeroNumberOfPositions() {
 		QuorumCalculation defaultQuorumCalculation = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(
 			ONE_TENTH);
 		BigFraction quorum = defaultQuorumCalculation.calculateQuorum(6, 2);

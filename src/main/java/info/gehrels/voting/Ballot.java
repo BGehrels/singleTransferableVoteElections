@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.notNullValue;
  * designated to one Election. In each of the areas, the voter may have expressed his preference between
  * one or more Candidates, represented by a Vote.
  */
-public class Ballot<CANDIDATE_TYPE extends Candidate> {
+public final class Ballot<CANDIDATE_TYPE extends Candidate> {
 	public final long id;
 	public final ImmutableMap<Election<CANDIDATE_TYPE>, Vote<CANDIDATE_TYPE>> votesByElections;
 

@@ -25,10 +25,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 public final class VoteTest {
-
-	public static final Candidate CANDIDATE_A = new Candidate("A");
-	public static final Candidate CANDIDATE_B = new Candidate("B");
-	public static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A,
+	private static final Candidate CANDIDATE_A = new Candidate("A");
+	private static final Candidate CANDIDATE_B = new Candidate("B");
+	private static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A,
 	                                                                                                    CANDIDATE_B));
 
 	@Test
@@ -51,8 +50,8 @@ public final class VoteTest {
 
 	@Test
 	public void testPreferenceVoteCreation() {
-		Vote<Candidate> invalidVote = Vote.createPreferenceVote(ELECTION, ImmutableSet
-			.<Candidate>of(CANDIDATE_B, CANDIDATE_A));
+		Vote<Candidate> invalidVote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+
 		assertThat(invalidVote.getRankedCandidates(), contains(CANDIDATE_B, CANDIDATE_A));
 		assertThat(invalidVote.getElection(), is(ELECTION));
 		assertThat(invalidVote.isNo(), is(false));

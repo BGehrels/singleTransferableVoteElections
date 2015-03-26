@@ -19,10 +19,7 @@ package info.gehrels.voting.genderedElections;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import info.gehrels.voting.Ballot;
-import info.gehrels.voting.Election;
-import info.gehrels.voting.ElectionCalculation;
-import info.gehrels.voting.ElectionCalculationFactory;
+import info.gehrels.voting.*;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +40,7 @@ import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
 
 public final class ElectionCalculationWithFemaleExclusivePositionsTest {
-	private static final GenderedCandidate FEMALE_CANDIDATE_1 = new GenderedCandidate("F", true);
+    private static final GenderedCandidate FEMALE_CANDIDATE_1 = new GenderedCandidate("F", true);
 	private static final GenderedCandidate FEMALE_CANDIDATE_2 = new GenderedCandidate("G", true);
 	private static final GenderedCandidate CANDIDATE_E = new GenderedCandidate("A", false);
 	private static final GenderedCandidate CANDIDATE_F = new GenderedCandidate("B", false);
@@ -54,9 +51,10 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		CANDIDATE_E,
 		CANDIDATE_F
 	);
+    public static final Ballot<GenderedCandidate> BALLOT = new Ballot<>(1, ImmutableSet.of());
 
-	private final ImmutableCollection<Ballot<GenderedCandidate>> ballots =
-		ImmutableList.of((Ballot<GenderedCandidate>) mock(Ballot.class));
+    private final ImmutableCollection<Ballot<GenderedCandidate>> ballots =
+		ImmutableList.of(BALLOT);
 
 	private final ElectionCalculationFactory<GenderedCandidate> electionCalculationFactory =
 		mock(ElectionCalculationFactory.class);
@@ -90,7 +88,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 	}
 
 	@Test
-	public void onlyNotYetElectedCanidatesQualifyForOpenPositions() {
+	public void onlyNotYetElectedCandidatesQualifyForOpenPositions() {
 		GenderedElection election = new GenderedElection("Example Office", 1, 2, CANDIDATES);
 
 
@@ -204,7 +202,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		// given all female positions have been elected in the first run
 		stub(plainElectionCalculationMock.calculate(any(ImmutableSet.class), eq(1L)))
-			.toReturn(ImmutableSet.<GenderedCandidate>of(FEMALE_CANDIDATE_1));
+			.toReturn(ImmutableSet.of(FEMALE_CANDIDATE_1));
 
 		genderedElectionCalculation.calculateElectionResult(election, ballots);
 

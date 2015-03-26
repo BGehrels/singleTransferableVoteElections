@@ -29,10 +29,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 public final class CandidateStatesTest {
-	public static final Candidate A = new Candidate("A");
-	public static final Candidate B = new Candidate("B");
-	public static final Candidate C = new Candidate("C");
-	public static final Candidate D = new Candidate("D");
+	private static final Candidate A = new Candidate("A");
+	private static final Candidate B = new Candidate("B");
+	private static final Candidate C = new Candidate("C");
+	private static final Candidate D = new Candidate("D");
 
 	@Test
 	public void returnsEmptyCandidateSetIfCandidateStateMapIsEmpty() {
@@ -50,17 +50,17 @@ public final class CandidateStatesTest {
 	}
 
 	@Test
-	public void returnsEmptyCandidateSetIfAllCandidatesAreLoosers() {
-		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of(A, B)).withLooser(A)
-			.withLooser(B);
+	public void returnsEmptyCandidateSetIfAllCandidatesAreLosers() {
+		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of(A, B)).withLoser(A)
+			.withLoser(B);
 		ImmutableSet<Candidate> hopefulCandidates = candidateStates.getHopefulCandidates();
 
 		assertThat(hopefulCandidates, is(empty()));
 	}
 
 	@Test
-	public void returnsOnlyHopfulCandidates() {
-		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of(A, B, C, D)).withLooser(A)
+	public void returnsOnlyHopefulCandidates() {
+		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of(A, B, C, D)).withLoser(A)
 			.withElected(C);
 		ImmutableSet<Candidate> hopefulCandidates = candidateStates.getHopefulCandidates();
 
@@ -85,12 +85,12 @@ public final class CandidateStatesTest {
 
 
 	@Test
-	public void withLooserReturnsNewCandidateStatesWithRespectiveCandidateMarkedAsLooser() {
+	public void withLooserReturnsNewCandidateStatesWithRespectiveCandidateMarkedAsNonHopeful() {
 		CandidateStates<Candidate> oldCandidateStates = new CandidateStates<>(ImmutableSet.of(A, B));
 
-		CandidateStates<Candidate> result = oldCandidateStates.withLooser(B);
+		CandidateStates<Candidate> result = oldCandidateStates.withLoser(B);
 
-		assertThat(result.getCandidateState(B).isLooser(), is(true));
+		assertThat(result.getCandidateState(B).isHopeful(), is(false));
 	}
 
 

@@ -27,6 +27,7 @@ import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.QuorumCalculation;
 import info.gehrels.voting.Vote;
+import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.apache.commons.math3.util.Pair;
 import org.hamcrest.Description;
@@ -88,7 +89,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 
 		long numberOfElectedCandidates = 0;
 		while (notAllSeatsFilled(numberOfElectedCandidates, numberOfSeats) && anyCandidateIsHopeful(candidateStates)) {
-			STVElectionCalculationStep.ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep
+			ElectionStepResult<CANDIDATE_TYPE> electionStepResult = electionStep
 				.declareWinnerOrStrikeCandidate(quorum,
 				                                voteStates,
 				                                redistributor,
@@ -181,7 +182,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 	}
 
 
-	private static <T> Matcher<Iterable<T>> hasAPairOfElementsThat(final Matcher<Pair<T, T>> subMatcher) {
+	private static <T> Matcher<Iterable<T>> hasAPairOfElementsThat(Matcher<Pair<T, T>> subMatcher) {
 		return new TypeSafeDiagnosingMatcher<Iterable<T>>() {
 			@Override
 			protected boolean matchesSafely(Iterable<T> iterable, Description mismatchDescription) {

@@ -37,20 +37,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public final class MartinWilkesExampleIT {
-	public static final NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum QUORUM_CALCULATION = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(
+	private static final NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum QUORUM_CALCULATION = new NotMoreThanTheAllowedNumberOfCandidatesCanReachItQuorum(
 		new BigFraction(1, 1000));
-	public static final AmbiguityResolver<GenderedCandidate> AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver<>();
+	private static final AmbiguityResolver<GenderedCandidate> AMBIGUITY_RESOLVER = new JustTakeTheFirstOneAmbiguityResolver<>();
 
-	public static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);
-	public static final GenderedCandidate CANDIDATE_B = new GenderedCandidate("B", false);
-	public static final GenderedCandidate CANDIDATE_C = new GenderedCandidate("C", true);
-	public static final GenderedCandidate CANDIDATE_D = new GenderedCandidate("D", false);
-	public static final GenderedCandidate CANDIDATE_E = new GenderedCandidate("E", true);
-	public static final GenderedCandidate CANDIDATE_F = new GenderedCandidate("F", false);
-	public static final GenderedCandidate CANDIDATE_G = new GenderedCandidate("G", true);
-	public static final GenderedCandidate CANDIDATE_H = new GenderedCandidate("H", false);
-	public static final GenderedCandidate CANDIDATE_I = new GenderedCandidate("I", true);
-	public static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
+	private static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);
+	private static final GenderedCandidate CANDIDATE_B = new GenderedCandidate("B", false);
+	private static final GenderedCandidate CANDIDATE_C = new GenderedCandidate("C", true);
+	private static final GenderedCandidate CANDIDATE_D = new GenderedCandidate("D", false);
+	private static final GenderedCandidate CANDIDATE_E = new GenderedCandidate("E", true);
+	private static final GenderedCandidate CANDIDATE_F = new GenderedCandidate("F", false);
+	private static final GenderedCandidate CANDIDATE_G = new GenderedCandidate("G", true);
+	private static final GenderedCandidate CANDIDATE_H = new GenderedCandidate("H", false);
+	private static final GenderedCandidate CANDIDATE_I = new GenderedCandidate("I", true);
+	private static final GenderedCandidate CANDIDATE_J = new GenderedCandidate("J", false);
 
 	private final ImmutableList<Ballot<GenderedCandidate>> ballotImmutableList;
 	private final GenderedElection election;
@@ -71,29 +71,29 @@ public final class MartinWilkesExampleIT {
 		election = new GenderedElection("Example Office", 0, 4, candidateSet);
 
 		ballotImmutableList = ImmutableList.of(
-			createBallot("ABDC", election),
-			createBallot("ACBDE", election),
-			createBallot("C", election),
-			createBallot("CAE", election),
-			createBallot("CBAFEDG", election),
-			createBallot("CBDE", election),
-			createBallot("CFBDEH", election),
-			createBallot("CDFEHA", election),
-			createBallot("DEC", election),
-			createBallot("EBDCAF", election),
-			createBallot("EDCA", election),
-			createBallot("F", election),
-			createBallot("FCH", election),
-			createBallot("FGEIHJ", election),
-			createBallot("FHG", election),
-			createBallot("GFEI", election),
-			createBallot("HFJAI", election),
-			createBallot("HGIF", election),
-			createBallot("IJF", election),
-			createBallot("IJH", election),
-			createBallot("JIHFE", election),
-		    createNoBallot(election),
-		    createInvalidBallot(election),
+			createBallot("ABDC", election),  // 1
+			createBallot("ACBDE", election), // 2
+			createBallot("C", election),     // 3
+			createBallot("CAE", election),   // 4
+			createBallot("CBAFEDG", election),//5
+			createBallot("CBDE", election),  // 6
+			createBallot("CFBDEH", election),// 7
+			createBallot("CDFEHA", election),// 8
+			createBallot("DEC", election),   // 9
+			createBallot("EBDCAF", election),// 10
+			createBallot("EDCA", election),  // 11
+			createBallot("F", election),     // 12
+			createBallot("FCH", election),   // 13
+			createBallot("FGEIHJ", election),// 14
+			createBallot("FHG", election),   // 15
+			createBallot("GFEI", election),  // 16
+			createBallot("HFJAI", election), // 17
+			createBallot("HGIF", election),  // 18
+			createBallot("IJF", election),   // 19
+			createBallot("IJH", election),   // 20
+			createBallot("JIHFE", election), // 21
+		    createNoBallot(election),        // 22
+		    createInvalidBallot(election),   // 23
 		    new Ballot<>(9876, ImmutableSet.<Vote<GenderedCandidate>>of())
 		);
 	}

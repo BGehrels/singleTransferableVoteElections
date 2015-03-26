@@ -61,30 +61,30 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public final class STVElectionCalculationStepTest {
-	public static final Candidate A = new Candidate("A");
-	public static final Candidate B = new Candidate("B");
-	public static final Candidate C = new Candidate("C");
-	public static final Candidate G = new Candidate("G");
-	public static final Candidate H = new Candidate("H");
+	private static final Candidate A = new Candidate("A");
+	private static final Candidate B = new Candidate("B");
+	private static final Candidate C = new Candidate("C");
+	private static final Candidate G = new Candidate("G");
+	private static final Candidate H = new Candidate("H");
 
-	public static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice",
+	private static final Election<Candidate> ELECTION = new Election<>("arbitraryOffice",
 	                                                                  ImmutableSet.of(A, B, C, G, H));
 
-	public static final Ballot<Candidate> BC_BALLOT = createBallot("BC");
-	public static final Ballot<Candidate> ACGH_BALLOT = createBallot("ACGH");
-	public static final Ballot<Candidate> A_BALLOT = createBallot("A");
-	public static final Ballot<Candidate> AC_BALLOT = createBallot("AC");
-	public static final Ballot<Candidate> BA_BALLOT = createBallot("BA");
+	private static final Ballot<Candidate> BC_BALLOT = createBallot("BC");
+	private static final Ballot<Candidate> ACGH_BALLOT = createBallot("ACGH");
+	private static final Ballot<Candidate> A_BALLOT = createBallot("A");
+	private static final Ballot<Candidate> AC_BALLOT = createBallot("AC");
+	private static final Ballot<Candidate> BA_BALLOT = createBallot("BA");
 	private static final Ballot<Candidate> CA_BALLOT = createBallot("CA");
 
-	public static final BigFraction THREE = new BigFraction(3);
+	private static final BigFraction THREE = new BigFraction(3);
 	private static final ImmutableList<VoteState<Candidate>> STUB_REDISTRIBUTION_RESULT = ImmutableList.of(
 		stateFor(AC_BALLOT).withVoteWeight(FOUR_FIFTHS),
 		stateFor(A_BALLOT).withVoteWeight(ONE),
 		stateFor(ACGH_BALLOT).withVoteWeight(ONE_FIFTH),
 		stateFor(BC_BALLOT).withVoteWeight(ONE_HALF)
 	);
-	public static final BigFraction FIVE = new BigFraction(5);
+	private static final BigFraction FIVE = new BigFraction(5);
 
 	private final STVElectionCalculationListener<Candidate> electionCalculationListenerMock = mock(
 		STVElectionCalculationListener.class);
@@ -93,7 +93,7 @@ public final class STVElectionCalculationStepTest {
 
 	private final STVElectionCalculationStep<Candidate> step = new STVElectionCalculationStep<>(
 		electionCalculationListenerMock, ambiguityResolverMock);
-	public static final CandidateStates<Candidate> CANDIDATE_STATES = new CandidateStates<>(ImmutableSet.of(A, B, C));
+	private static final CandidateStates<Candidate> CANDIDATE_STATES = new CandidateStates<>(ImmutableSet.of(A, B, C));
 
 	@Test
 	public void marksOneCandidateAsWinnerAndRedistributesVoteWeightIfExactlyOneCandidateReachedTheQuorum() {
@@ -115,7 +115,7 @@ public final class STVElectionCalculationStepTest {
 				withPreferredCandidate(C),
 				withVoteWeight(FOUR_FIFTHS)
 			)),
-			aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(null)),
+			aVoteState(withPreferredCandidate(null)),
 			aVoteState(allOf(
 				withPreferredCandidate(C),
 				withVoteWeight(ONE_FIFTH)
@@ -166,7 +166,7 @@ public final class STVElectionCalculationStepTest {
 				withPreferredCandidate(C),
 				withVoteWeight(FOUR_FIFTHS)
 			)),
-			aVoteState(VoteStateMatchers.<Candidate>withPreferredCandidate(null)),
+			aVoteState(withPreferredCandidate(null)),
 			aVoteState(allOf(
 				withPreferredCandidate(C),
 				withVoteWeight(ONE_FIFTH)

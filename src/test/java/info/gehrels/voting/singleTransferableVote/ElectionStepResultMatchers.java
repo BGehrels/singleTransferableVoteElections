@@ -18,7 +18,6 @@ package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableCollection;
 import info.gehrels.voting.Candidate;
-import info.gehrels.voting.DelegatingMatcher;
 import info.gehrels.voting.singleTransferableVote.STVElectionCalculationStep.ElectionStepResult;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -54,7 +53,7 @@ public final class ElectionStepResultMatchers {
 	}
 
 	static <CANDIDATE_TYPE extends Candidate> Matcher<ElectionStepResult<CANDIDATE_TYPE>> withCandidateStates(
-		final Matcher<CandidateStates<CANDIDATE_TYPE>> candidateStatesMatcher) {
+		Matcher<CandidateStates<CANDIDATE_TYPE>> candidateStatesMatcher) {
 		return new FeatureMatcher<ElectionStepResult<CANDIDATE_TYPE>, CandidateStates<CANDIDATE_TYPE>>(
 			candidateStatesMatcher, "with candidateStates",
 			"") {

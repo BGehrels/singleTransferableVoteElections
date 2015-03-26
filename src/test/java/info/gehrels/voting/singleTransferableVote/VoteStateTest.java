@@ -33,9 +33,9 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 
 public final class VoteStateTest {
-	public static final Candidate CANDIDATE_A = new Candidate("A");
-	public static final Candidate CANDIDATE_B = new Candidate("B");
-	public static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A,
+	private static final Candidate CANDIDATE_A = new Candidate("A");
+	private static final Candidate CANDIDATE_B = new Candidate("B");
+	private static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A,
 	                                                                                                    CANDIDATE_B));
 
 	@Test
@@ -86,22 +86,22 @@ public final class VoteStateTest {
 	}
 
 	@Test
-	public void withFirstHopefulCandidateReturnsStateWithNullPreferenceIfRemainingMarkedCandidatesAreNotHopefull() {
+	public void withFirstHopefulCandidateReturnsStateWithNullPreferenceIfRemainingMarkedCandidatesAreNotHopeful() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
-				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
-					CANDIDATE_B));
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLoser(
+                        CANDIDATE_B));
 		assertThat(resultingVoteState.getPreferredCandidate(), is(anAbsentOptional()));
 	}
 
 	@Test
-	public void withFirstHopefulCandidateReturnsStateWithNoVoteIfRemainingMarkedCandidatesAreNotHopefull() {
+	public void withFirstHopefulCandidateReturnsStateWithNoVoteIfRemainingMarkedCandidatesAreNotHopeful() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
-				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
-					CANDIDATE_B));
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLoser(
+                        CANDIDATE_B));
 		assertThat(resultingVoteState.isNoVote(), is(true));
 	}
 
@@ -126,7 +126,7 @@ public final class VoteStateTest {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
-				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLooser(CANDIDATE_A));
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLoser(CANDIDATE_A));
 		assertThat(resultingVoteState.getPreferredCandidate(), is(anOptionalWhoseValue(is(CANDIDATE_B))));
 	}
 
@@ -135,7 +135,7 @@ public final class VoteStateTest {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
-				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLooser(CANDIDATE_A));
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withLoser(CANDIDATE_A));
 		assertThat(resultingVoteState.isNoVote(), is(false));
 	}
 
@@ -165,8 +165,8 @@ public final class VoteStateTest {
 	    Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(
-				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLooser(
-					CANDIDATE_B));
+				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLoser(
+                        CANDIDATE_B));
 		assertThat(resultingVoteState.isInvalid(), is(false));
 	}
 
