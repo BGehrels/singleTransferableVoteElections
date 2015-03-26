@@ -3,7 +3,7 @@
 
 	<groupId>info.gehrels.voting</groupId>
 	<artifactId>singleTransferableVoteElections</artifactId>
-	<version>2.2-SNAPSHOT</version>
+	<version>3.0</version>
 	<packaging>jar</packaging>
 
 	<name>Single Transferable Vote Elections</name>
