@@ -30,6 +30,10 @@ public final class GenderedCandidate extends Candidate {
 		return isFemale;
 	}
 
+	public GenderedCandidate withIsFemale(boolean isFemale) {
+		return new GenderedCandidate(name, isFemale);
+	}
+
 	@Override
 	public String toString() {
 		return name + (isFemale ? " (♀)": "");
