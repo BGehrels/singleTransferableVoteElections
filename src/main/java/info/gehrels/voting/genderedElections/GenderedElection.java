@@ -18,6 +18,9 @@ package info.gehrels.voting.genderedElections;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Election;
+import info.gehrels.voting.GuavaCollectors;
+
+import java.util.Objects;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -27,13 +30,13 @@ public final class GenderedElection extends Election<GenderedCandidate> {
 	private final long numberOfFemaleExclusivePositions;
 	private final long numberOfNotFemaleExclusivePositions;
 
-	public GenderedElection(String officeName, int numberOfFemaleExclusivePositions,
-	                        int numberOfNotFemaleExclusivePositions, ImmutableSet<GenderedCandidate> candidates) {
+	public GenderedElection(String officeName, long numberOfFemaleExclusivePositions,
+	                        long numberOfNotFemaleExclusivePositions, ImmutableSet<GenderedCandidate> candidates) {
 		super(officeName, candidates);
 		this.numberOfFemaleExclusivePositions = validateThat(numberOfFemaleExclusivePositions,
-		                                                     is(greaterThanOrEqualTo(0)));
+		                                                     is(greaterThanOrEqualTo(0L)));
 		this.numberOfNotFemaleExclusivePositions = validateThat(numberOfNotFemaleExclusivePositions,
-		                                                        is(greaterThanOrEqualTo(0)));
+		                                                        is(greaterThanOrEqualTo(0L)));
 	}
 
 	public long getNumberOfFemaleExclusivePositions() {
@@ -43,6 +46,33 @@ public final class GenderedElection extends Election<GenderedCandidate> {
 	public long getNumberOfNotFemaleExclusivePositions() {
 		return numberOfNotFemaleExclusivePositions;
 	}
+
+	public GenderedElection withOfficeName(String officeName) {
+		return new GenderedElection(officeName, numberOfFemaleExclusivePositions, numberOfNotFemaleExclusivePositions, getCandidates());
+	}
+
+	public GenderedElection withNumberOfFemaleExclusivePositions(long numberOfFemaleExclusivePositions) {
+		return new GenderedElection(getOfficeName(), numberOfFemaleExclusivePositions, numberOfNotFemaleExclusivePositions, getCandidates());
+	}
+
+	public GenderedElection withNumberOfNotFemaleExclusivePositions(long numberOfNotFemaleExclusivePositions) {
+		return new GenderedElection(getOfficeName(), numberOfFemaleExclusivePositions, numberOfNotFemaleExclusivePositions, getCandidates());
+	}
+
+	public GenderedElection withReplacedCandidate(GenderedCandidate replacement) {
+		ImmutableSet<GenderedCandidate> candidates = getCandidates().stream()
+				.map((c) -> replaceIfSameName(c, replacement))
+				.collect(GuavaCollectors.toImmutableSet());
+		return new GenderedElection(getOfficeName(), numberOfFemaleExclusivePositions, numberOfNotFemaleExclusivePositions, candidates);
+	}
+
+	private GenderedCandidate replaceIfSameName(GenderedCandidate c, GenderedCandidate replacement) {
+        if (Objects.equals(c.getName(), replacement.getName())) {
+            return replacement;
+        } else {
+            return c;
+        }
+    }
 
 	@Override
 	public String toString() {
