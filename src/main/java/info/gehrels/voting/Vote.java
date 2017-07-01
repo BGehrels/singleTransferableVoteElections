@@ -49,11 +49,11 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	private Vote(Election<CANDIDATE_TYPE> election, boolean valid, boolean no,
-	             ImmutableSet<CANDIDATE_TYPE> candidatePreference) {
+	             ImmutableSet<CANDIDATE_TYPE> rankedCandidates) {
 		this.election = validateThat(election, is(not(nullValue())));
 		this.valid = valid;
 		this.no = no;
-		this.rankedCandidates = validateThat(candidatePreference, isSubSetOf(election.getCandidates()));
+		this.rankedCandidates = validateThat(rankedCandidates, isSubSetOf(election.getCandidates()));
 	}
 
 	public Election<CANDIDATE_TYPE> getElection() {
@@ -98,5 +98,12 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 		} else {
 			return rankedCandidates.toString();
 		}
+	}
+
+	public Vote<CANDIDATE_TYPE> withReplacedElection(Election<CANDIDATE_TYPE> newElection) {
+		if (!newElection.getCandidates().containsAll(rankedCandidates)) {
+			throw new IllegalArgumentException();
+		}
+		return new Vote<>(newElection, valid, no, rankedCandidates);
 	}
 }

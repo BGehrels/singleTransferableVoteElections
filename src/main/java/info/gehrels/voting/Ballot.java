@@ -53,6 +53,19 @@ public final class Ballot<CANDIDATE_TYPE extends Candidate> {
 		return Optional.fromNullable(votesByElections.get(election));
 	}
 
+	public Ballot<CANDIDATE_TYPE> withReplacedElection(String oldOfficeName, Election<CANDIDATE_TYPE> newElection) {
+		ImmutableSet.Builder<Vote<CANDIDATE_TYPE>> builder = ImmutableSet.builder();
+		for (Vote<CANDIDATE_TYPE> vote : votesByElections.values()) {
+			if (vote.getElection().getOfficeName().equals(oldOfficeName)) {
+				builder.add(vote.withReplacedElection(newElection));
+			} else {
+				builder.add(vote);
+			}
+		}
+		return new Ballot<>(id, builder.build());
+	}
+
+
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(id, votesByElections);
