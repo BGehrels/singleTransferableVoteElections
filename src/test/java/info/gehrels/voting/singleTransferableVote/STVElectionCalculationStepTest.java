@@ -28,7 +28,8 @@ import info.gehrels.voting.TestUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
+import org.mockito.hamcrest.MockitoHamcrest;
 
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withLooser;
@@ -54,11 +55,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public final class STVElectionCalculationStepTest {
 	private static final Candidate A = new Candidate("A");
@@ -184,11 +185,12 @@ public final class STVElectionCalculationStepTest {
 			                                                                withNoVotes(ONE),
 			                                                                withInvalidVotes(ZERO)))));
 
-		assertThat(electionStepResult, is(anElectionStepResult(allOf(
-			withCandidateStates(allOf(withElectedCandidate(A), withElectedCandidate(B))),
-			withNumberOfElectedCandidates(is(3L)),
-			withVoteStates(newVoteStateMatcher)
-		))));
+		Matcher subMatcher = allOf(
+				withCandidateStates(allOf(withElectedCandidate(A), withElectedCandidate(B))),
+				withNumberOfElectedCandidates(is(3L)),
+				withVoteStates(newVoteStateMatcher)
+		);
+		assertThat(electionStepResult, is(anElectionStepResult(subMatcher)));
 	}
 
 	@Test
@@ -232,7 +234,7 @@ public final class STVElectionCalculationStepTest {
 		);
 		verify(electionCalculationListenerMock)
 			.voteWeightRedistributionCompleted(eq(voteStates),
-			                                   Matchers.<ImmutableCollection>argThat((Matcher) newVoteStatesMatcher),
+			                                   MockitoHamcrest.<ImmutableCollection>argThat((Matcher) newVoteStatesMatcher),
 			                                   argThat(is(aVoteDistribution(
 				                                   withVotesForCandidate(A, THREE),
 				                                   withVotesForCandidate(B, ONE),

@@ -29,7 +29,7 @@ import static info.gehrels.voting.Vote.createInvalidVote;
 import static info.gehrels.voting.Vote.createNoVote;
 import static info.gehrels.voting.Vote.createPreferenceVote;
 import static org.apache.commons.math3.fraction.BigFraction.TWO;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
