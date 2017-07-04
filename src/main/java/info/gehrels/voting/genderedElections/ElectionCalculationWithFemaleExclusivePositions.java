@@ -62,7 +62,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 
 		ImmutableSet<GenderedCandidate> candidatesElectedInOpenRun = ImmutableSet.of();
 		if (numberOfElectableNotFemaleExclusivePositions > 0) {
-			candidatesElectedInOpenRun = calculateElectionResultForNonFemaleExclusivePositions(
+			candidatesElectedInOpenRun = calculateElectionResultForNotFemaleExclusivePositions(
 				election, electionCalculation, electedFemaleCandidates, numberOfElectableNotFemaleExclusivePositions);
 		}
 		return new Result(electedFemaleCandidates, candidatesElectedInOpenRun);
@@ -80,10 +80,10 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 		                                     election.getNumberOfFemaleExclusivePositions());
 	}
 
-	private ImmutableSet<GenderedCandidate> calculateElectionResultForNonFemaleExclusivePositions(
+	private ImmutableSet<GenderedCandidate> calculateElectionResultForNotFemaleExclusivePositions(
 		GenderedElection election, ElectionCalculation<GenderedCandidate> electionCalculation,
 		ImmutableSet<GenderedCandidate> electedFemaleCandidates, long numberOfElectableNotFemaleExclusivePositions) {
-		electionCalculationListener.startNonFemaleExclusiveElectionRun();
+		electionCalculationListener.startNotFemaleExclusiveElectionRun();
 		Predicate<GenderedCandidate> notElectedBeforePredicate = new NotElectedBeforePredicate(electedFemaleCandidates,
 		                                                                                       electionCalculationListener);
 		ImmutableSet<GenderedCandidate> candidatesNotElectedBefore =
@@ -105,7 +105,7 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 			);
 
 		if (numberOfElectableNotFemaleExclusivePositions < election.getNumberOfNotFemaleExclusivePositions()) {
-			electionCalculationListener.reducedNonFemaleExclusiveSeats(election.getNumberOfFemaleExclusivePositions(),
+			electionCalculationListener.reducedNotFemaleExclusiveSeats(election.getNumberOfFemaleExclusivePositions(),
 			                                                           electedFemaleCandidates.size(),
 			                                                           election
 				                                                           .getNumberOfNotFemaleExclusivePositions(),
@@ -116,22 +116,22 @@ public final class ElectionCalculationWithFemaleExclusivePositions {
 
 
 	public static final class Result {
-		private final ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun;
-		private final ImmutableSet<GenderedCandidate> candidatesElectedInNonFemaleOnlyRun;
+		private final ImmutableSet<GenderedCandidate> candidatesElectedInFemaleExclusiveRun;
+		private final ImmutableSet<GenderedCandidate> candidatesElectedInNotFemaleExclusiveRun;
 
-		Result(ImmutableSet<GenderedCandidate> candidatesElectedInFemaleOnlyRun,
-		       ImmutableSet<GenderedCandidate> candidatesElectedInNonFemaleOnlyRun) {
+		Result(ImmutableSet<GenderedCandidate> candidatesElectedInFemaleExclusiveRun,
+		       ImmutableSet<GenderedCandidate> candidatesElectedInNotFemaleExclusiveRun) {
 
-			this.candidatesElectedInFemaleOnlyRun = candidatesElectedInFemaleOnlyRun;
-			this.candidatesElectedInNonFemaleOnlyRun = candidatesElectedInNonFemaleOnlyRun;
+			this.candidatesElectedInFemaleExclusiveRun = candidatesElectedInFemaleExclusiveRun;
+			this.candidatesElectedInNotFemaleExclusiveRun = candidatesElectedInNotFemaleExclusiveRun;
 		}
 
-		public ImmutableSet<GenderedCandidate> getCandidatesElectedInFemaleOnlyRun() {
-			return candidatesElectedInFemaleOnlyRun;
+		public ImmutableSet<GenderedCandidate> getCandidatesElectedInFemaleExclusiveRun() {
+			return candidatesElectedInFemaleExclusiveRun;
 		}
 
-		public ImmutableSet<GenderedCandidate> getCandidatesElectedInNonFemaleOnlyRun() {
-			return candidatesElectedInNonFemaleOnlyRun;
+		public ImmutableSet<GenderedCandidate> getCandidatesElectedInNotFemaleExclusiveRun() {
+			return candidatesElectedInNotFemaleExclusiveRun;
 		}
 	}
 }

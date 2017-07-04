@@ -31,7 +31,7 @@ public final class GenderedElection extends Election<GenderedCandidate> {
 	private final long numberOfNotFemaleExclusivePositions;
 
 	public GenderedElection(String officeName, long numberOfFemaleExclusivePositions,
-	                        long numberOfNotFemaleExclusivePositions, ImmutableSet<GenderedCandidate> candidates) {
+							long numberOfNotFemaleExclusivePositions, ImmutableSet<GenderedCandidate> candidates) {
 		super(officeName, candidates);
 		this.numberOfFemaleExclusivePositions = validateThat(numberOfFemaleExclusivePositions,
 		                                                     is(greaterThanOrEqualTo(0L)));

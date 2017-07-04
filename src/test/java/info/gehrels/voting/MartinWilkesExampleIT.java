@@ -113,7 +113,7 @@ public final class MartinWilkesExampleIT {
 		Result electionResult = electionCalculation.calculateElectionResult(election, ballotImmutableList);
 		LoggerFactory.getLogger(MartinWilkesExampleIT.class).info(builder.toString());
 
-		assertThat(electionResult.getCandidatesElectedInNonFemaleOnlyRun(),
+		assertThat(electionResult.getCandidatesElectedInNotFemaleExclusiveRun(),
 		           containsInAnyOrder(CANDIDATE_C, CANDIDATE_E, CANDIDATE_F, CANDIDATE_I));
 	}
 

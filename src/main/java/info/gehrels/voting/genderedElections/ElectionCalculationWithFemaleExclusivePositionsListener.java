@@ -22,10 +22,10 @@ import info.gehrels.voting.Ballot;
 public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 
 
-	void reducedNonFemaleExclusiveSeats(long numberOfOpenFemaleExclusiveSeats,
-	                                    long numberOfElectedFemaleExclusiveSeats,
-	                                    long numberOfOpenNonFemaleExclusiveSeats,
-	                                    long numberOfElectableNonFemaleExclusiveSeats);
+	void reducedNotFemaleExclusiveSeats(long numberOfOpenFemaleExclusiveSeats,
+										long numberOfElectedFemaleExclusiveSeats,
+										long numberOfOpenNotFemaleExclusiveSeats,
+										long numberOfElectableNotFemaleExclusiveSeats);
 
 
 	void candidateNotQualified(GenderedCandidate candidate, NonQualificationReason reason);
@@ -34,7 +34,7 @@ public interface ElectionCalculationWithFemaleExclusivePositionsListener {
 
 	void startFemaleExclusiveElectionRun();
 
-	void startNonFemaleExclusiveElectionRun();
+	void startNotFemaleExclusiveElectionRun();
 
 	enum NonQualificationReason {
 		NOT_FEMALE, ALREADY_ELECTED
