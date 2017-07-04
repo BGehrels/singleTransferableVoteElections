@@ -72,6 +72,13 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 		return rankedCandidates;
 	}
 
+	public Vote<CANDIDATE_TYPE> withReplacedElection(Election<CANDIDATE_TYPE> newElection) {
+		if (!newElection.getCandidates().containsAll(rankedCandidates)) {
+			throw new IllegalArgumentException();
+		}
+		return new Vote<>(newElection, valid, no, rankedCandidates);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Vote)) {
@@ -91,19 +98,13 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 
 	@Override
 	public String toString() {
+		String prefix = election.getOfficeName() + ": ";
 		if (!valid) {
-			return "invalid";
+			return prefix + "invalid";
 		} else if (no) {
-			return "No";
+			return prefix + "no";
 		} else {
-			return rankedCandidates.toString();
+			return prefix + rankedCandidates.toString();
 		}
-	}
-
-	public Vote<CANDIDATE_TYPE> withReplacedElection(Election<CANDIDATE_TYPE> newElection) {
-		if (!newElection.getCandidates().containsAll(rankedCandidates)) {
-			throw new IllegalArgumentException();
-		}
-		return new Vote<>(newElection, valid, no, rankedCandidates);
 	}
 }
