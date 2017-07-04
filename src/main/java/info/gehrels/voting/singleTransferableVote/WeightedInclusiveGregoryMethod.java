@@ -35,21 +35,21 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 		return new WigmVoteWeightRecalculator<>(electionCalculationListener);
 	}
 
-	private static final class WigmVoteWeightRecalculator<CANDIDATE_TYPE extends Candidate>
-		implements VoteWeightRecalculator<CANDIDATE_TYPE> {
-		private final STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener;
+	private static final class WigmVoteWeightRecalculator<CANDIDATE extends Candidate>
+		implements VoteWeightRecalculator<CANDIDATE> {
+		private final STVElectionCalculationListener<CANDIDATE> electionCalculationListener;
 
-		private WigmVoteWeightRecalculator(STVElectionCalculationListener<CANDIDATE_TYPE> electionCalculationListener) {
+		private WigmVoteWeightRecalculator(STVElectionCalculationListener<CANDIDATE> electionCalculationListener) {
 			this.electionCalculationListener = electionCalculationListener;
 		}
 
 		@Override
-		public ImmutableList<VoteState<CANDIDATE_TYPE>> recalculateExceededVoteWeight(CANDIDATE_TYPE winner,
-		                                                                              BigFraction quorum,
-		                                                                              ImmutableCollection<VoteState<CANDIDATE_TYPE>> originalVoteStates,
-		                                                                              CandidateStates<CANDIDATE_TYPE> candidateStates) {
-			Builder<VoteState<CANDIDATE_TYPE>> resultBuilder = ImmutableList.builder();
-			VoteDistribution<CANDIDATE_TYPE> voteDistribution = new VoteDistribution<>(
+		public ImmutableList<VoteState<CANDIDATE>> recalculateExceededVoteWeight(CANDIDATE winner,
+																				 BigFraction quorum,
+																				 ImmutableCollection<VoteState<CANDIDATE>> originalVoteStates,
+																				 CandidateStates<CANDIDATE> candidateStates) {
+			Builder<VoteState<CANDIDATE>> resultBuilder = ImmutableList.builder();
+			VoteDistribution<CANDIDATE> voteDistribution = new VoteDistribution<>(
 				candidateStates.getHopefulCandidates(), originalVoteStates);
 
 			BigFraction votesForCandidate = voteDistribution.votesByCandidate.get(winner);
@@ -59,10 +59,10 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 			electionCalculationListener
 				.redistributingExcessiveFractionOfVoteWeight(winner, excessiveFractionOfVoteWeight);
 
-			for (VoteState<CANDIDATE_TYPE> voteState : originalVoteStates) {
-				if (voteState.getPreferredCandidate().orNull() == winner) {
+			for (VoteState<CANDIDATE> voteState : originalVoteStates) {
+				if (voteState.getPreferredCandidate().orElse(null) == winner) {
 					BigFraction newVoteWeight = voteState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
-					VoteState<CANDIDATE_TYPE> newVoteState = voteState.withVoteWeight(newVoteWeight);
+					VoteState<CANDIDATE> newVoteState = voteState.withVoteWeight(newVoteWeight);
 					resultBuilder.add(newVoteState);
 				} else {
 					resultBuilder.add(voteState);

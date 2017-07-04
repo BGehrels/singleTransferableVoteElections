@@ -16,7 +16,6 @@
  */
 package info.gehrels.voting.singleTransferableVote;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.AmbiguityResolver.AmbiguityResolverResult;
@@ -27,6 +26,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static java.lang.String.format;

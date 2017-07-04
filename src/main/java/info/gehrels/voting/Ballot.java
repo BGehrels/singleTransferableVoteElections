@@ -17,10 +17,11 @@
 package info.gehrels.voting;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+
+import java.util.Optional;
 
 import static com.google.common.base.Objects.equal;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
@@ -50,7 +51,7 @@ public final class Ballot<CANDIDATE_TYPE extends Candidate> {
 	public Optional<Vote<CANDIDATE_TYPE>> getVote(Election<CANDIDATE_TYPE> election) {
 		validateThat(election, is(notNullValue()));
 
-		return Optional.fromNullable(votesByElections.get(election));
+		return Optional.ofNullable(votesByElections.get(election));
 	}
 
 	public Ballot<CANDIDATE_TYPE> withReplacedElection(String oldOfficeName, Election<CANDIDATE_TYPE> newElection) {

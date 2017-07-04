@@ -19,7 +19,7 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
-import static info.gehrels.voting.OptionalMatchers.anAbsentOptional;
+import static info.gehrels.voting.OptionalMatchers.anEmptyOptional;
 import static info.gehrels.voting.Vote.createPreferenceVote;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -45,7 +45,7 @@ public final class BallotTest {
 			= ImmutableSet.of(VOTE_FOR_ELECTION_1);
 		Ballot<Candidate> ballot = new Ballot<>(0, voteOnlyForElection1);
 
-		assertThat(ballot.getVote(ELECTION_2), is(anAbsentOptional()));
+		assertThat(ballot.getVote(ELECTION_2), is(anEmptyOptional()));
 	}
 
 	@Test

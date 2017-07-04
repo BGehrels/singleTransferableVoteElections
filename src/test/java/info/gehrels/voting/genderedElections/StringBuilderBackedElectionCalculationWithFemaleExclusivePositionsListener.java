@@ -16,13 +16,13 @@
  */
 package info.gehrels.voting.genderedElections;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Vote;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 

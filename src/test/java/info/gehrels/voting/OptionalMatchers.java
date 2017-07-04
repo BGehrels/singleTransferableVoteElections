@@ -16,13 +16,14 @@
  */
 package info.gehrels.voting;
 
-import com.google.common.base.Optional;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
+import java.util.Optional;
+
 public final class OptionalMatchers {
-	public static Matcher<Optional<?>> anAbsentOptional() {
+	public static Matcher<Optional<?>> anEmptyOptional() {
 		return new TypeSafeDiagnosingMatcher<Optional<?>>() {
 			@Override
 			protected boolean matchesSafely(Optional<?> item, Description mismatchDescription) {

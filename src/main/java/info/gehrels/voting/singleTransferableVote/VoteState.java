@@ -16,13 +16,14 @@
  */
 package info.gehrels.voting.singleTransferableVote;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.Vote;
 import org.apache.commons.math3.fraction.BigFraction;
+
+import java.util.Optional;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
@@ -41,11 +42,8 @@ public final class VoteState<CANDIDATE_TYPE extends Candidate> {
 		validateThat(election, is(notNullValue()));
 
 		Optional<Vote<CANDIDATE_TYPE>> vote = ballot.getVote(election);
-		if (!vote.isPresent()) {
-			return Optional.absent();
-		}
+		return vote.map(v -> new VoteState<>(ballot.id, v));
 
-		return Optional.of(new VoteState<>(ballot.id, vote.get()));
 	}
 
 	private VoteState(long ballotId, Vote<CANDIDATE_TYPE> vote) {
@@ -80,7 +78,7 @@ public final class VoteState<CANDIDATE_TYPE extends Candidate> {
 
 	public Optional<CANDIDATE_TYPE> getPreferredCandidate() {
 		if (currentPositionInRankedCandidatesList >= rankedCandidates.size()) {
-			return Optional.absent();
+			return Optional.empty();
 		}
 
 		return Optional.of(rankedCandidates.asList().get(currentPositionInRankedCandidatesList));

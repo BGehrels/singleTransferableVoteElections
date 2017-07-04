@@ -24,7 +24,7 @@ import info.gehrels.voting.TestUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
-import static info.gehrels.voting.OptionalMatchers.anAbsentOptional;
+import static info.gehrels.voting.OptionalMatchers.anEmptyOptional;
 import static info.gehrels.voting.OptionalMatchers.anOptionalWhoseValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -58,7 +58,7 @@ public final class VoteStateTest {
 		Ballot<Candidate> ballot = TestUtils.createNoBallot(ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of(CANDIDATE_A)));
-		assertThat(resultingVoteState.getPreferredCandidate(), is(anAbsentOptional()));
+		assertThat(resultingVoteState.getPreferredCandidate(), is(anEmptyOptional()));
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public final class VoteStateTest {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
 			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.<Candidate>of()));
-		assertThat(resultingVoteState.getPreferredCandidate(), is(anAbsentOptional()));
+		assertThat(resultingVoteState.getPreferredCandidate(), is(anEmptyOptional()));
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public final class VoteStateTest {
 			.withFirstHopefulCandidate(
 				new CandidateStates<>(ImmutableSet.of(CANDIDATE_A, CANDIDATE_B)).withElected(CANDIDATE_A).withLoser(
                         CANDIDATE_B));
-		assertThat(resultingVoteState.getPreferredCandidate(), is(anAbsentOptional()));
+		assertThat(resultingVoteState.getPreferredCandidate(), is(anEmptyOptional()));
 	}
 
 	@Test

@@ -33,7 +33,7 @@ public final class VoteStateMatchers {
 		                                                  "preferred candidate") {
 			@Override
 			protected CANDIDATE_TYPE featureValueOf(VoteState<CANDIDATE_TYPE> actual) {
-				return actual.getPreferredCandidate().orNull();
+				return actual.getPreferredCandidate().orElse(null);
 			}
 		};
 	}
