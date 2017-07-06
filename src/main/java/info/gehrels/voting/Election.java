@@ -18,6 +18,8 @@ package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Optional;
+
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
@@ -43,5 +45,9 @@ public class Election<CANDIDATE_TYPE extends Candidate> {
 
 	public final ImmutableSet<CANDIDATE_TYPE> getCandidates() {
 		return candidates;
+	}
+
+	public final Optional<CANDIDATE_TYPE> getCandidate(String name) {
+		return candidates.stream().filter(c -> c.getName().equals(name)).findAny();
 	}
 }

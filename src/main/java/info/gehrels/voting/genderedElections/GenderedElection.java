@@ -76,6 +76,6 @@ public final class GenderedElection extends Election<GenderedCandidate> {
 
 	@Override
 	public String toString() {
-		return getOfficeName() + " (" + numberOfFemaleExclusivePositions + " Frauenplätze, " + numberOfNotFemaleExclusivePositions + " offene Plätze)";
+		return getOfficeName() + " (" + numberOfFemaleExclusivePositions + " Frauenplätze, " + numberOfNotFemaleExclusivePositions + " offene Plätze) with candidates " + getCandidates();
 	}
 }

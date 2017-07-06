@@ -17,65 +17,107 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.genderedElections.GenderedCandidate;
+import info.gehrels.voting.genderedElections.GenderedElection;
 import org.junit.Test;
 
 import static info.gehrels.voting.OptionalMatchers.anEmptyOptional;
 import static info.gehrels.voting.Vote.createPreferenceVote;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 
 public final class BallotTest {
-	private static final Candidate CANDIDATE_1 = new Candidate("Peter");
-	private static final Candidate CANDIDATE_2 = new Candidate("Peter");
+	private static final GenderedCandidate CANDIDATE_1 = new GenderedCandidate("Peter", true);
+	private static final GenderedCandidate CANDIDATE_2 = new GenderedCandidate("Petra", false);
 
-	private static final Election<Candidate> ELECTION_1 = new Election<>("Office1", ImmutableSet.of(CANDIDATE_1));
-	private static final Election<Candidate> NEW_ELECTION_1 = new Election<>("Office 1 migrated", ImmutableSet.of(CANDIDATE_1));
-	private static final Election<Candidate> ELECTION_2 = new Election<>("Office2", ImmutableSet.of(CANDIDATE_2));
+	private static final GenderedElection ELECTION_1 = new GenderedElection("Office1", 1, 1, ImmutableSet.of(CANDIDATE_1, CANDIDATE_2));
+	private static final GenderedElection ELECTION_2 = new GenderedElection("Office2", 1, 1, ImmutableSet.of(CANDIDATE_2));
 
-	private static final Vote<Candidate> VOTE_FOR_ELECTION_1 = createPreferenceVote(ELECTION_1,
+	private static final Vote<GenderedCandidate> VOTE_FOR_ELECTION_1 = createPreferenceVote(ELECTION_1,
 	                                                                               ImmutableSet.of(CANDIDATE_1));
-	private static final Vote<Candidate> VOTE_FOR_ELECTION_2 = createPreferenceVote(ELECTION_2,
+	private static final Vote<GenderedCandidate> VOTE_FOR_ELECTION_2 = createPreferenceVote(ELECTION_2,
 	                                                                               ImmutableSet.of(CANDIDATE_2));
 
 	@Test
 	public void returnsAbsentOptionalIfBallotContainsNoVoteForThisElection() {
-		ImmutableSet<Vote<Candidate>> voteOnlyForElection1
+		ImmutableSet<Vote<GenderedCandidate>> voteOnlyForElection1
 			= ImmutableSet.of(VOTE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = new Ballot<>(0, voteOnlyForElection1);
+		Ballot<GenderedCandidate> ballot = new Ballot<>(0, voteOnlyForElection1);
 
 		assertThat(ballot.getVote(ELECTION_2), is(anEmptyOptional()));
 	}
 
 	@Test
 	public void returnsTheVoteIfBallotContainsOneThisElection() {
-		ImmutableSet<Vote<Candidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1);
-		Ballot<Candidate> ballot = new Ballot<>(0, votes);
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1);
+		Ballot<GenderedCandidate> ballot = new Ballot<>(0, votes);
 
 		assertThat(ballot.getVote(ELECTION_1).get().getElection(), is(ELECTION_1));
 	}
 
 	@Test
 	public void withReplacedElectionReturnsNewBallotWithMigratedVotes() {
-		ImmutableSet<Vote<Candidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1);
-		Ballot<Candidate> originalBallot = new Ballot<>(0, votes);
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1);
+		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
 
-		Ballot<Candidate> newBallot = originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), NEW_ELECTION_1);
+        GenderedElection migratedElection1 = ELECTION_1.withOfficeName("Office1 migrated");
+        Ballot<GenderedCandidate> newBallot = originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), migratedElection1);
 
 		assertThat(newBallot, is(not(sameInstance(originalBallot))));
 		assertThat(newBallot.getVote(ELECTION_1).isPresent(), is(false));
-		assertThat(newBallot.getVote(NEW_ELECTION_1).isPresent(), is(true));
-		assertThat(newBallot.getVote(NEW_ELECTION_1).get().getElection(), is(NEW_ELECTION_1));
-		assertThat(newBallot.getVote(NEW_ELECTION_1).get().getRankedCandidates().iterator().next(), is(sameInstance(CANDIDATE_1)));
+		assertThat(newBallot.getVote(migratedElection1).isPresent(), is(true));
+		assertThat(newBallot.getVote(migratedElection1).get().getElection(), is(migratedElection1));
+		assertThat(newBallot.getVote(migratedElection1).get().getRankedCandidates().iterator().next(), is(sameInstance(CANDIDATE_1)));
 	}
 
 	@Test
 	public void withReplacedElectionWontTouchUnrelatedElectionVotes() {
-		ImmutableSet<Vote<Candidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1, VOTE_FOR_ELECTION_2);
-		Ballot<Candidate> originalBallot = new Ballot<>(0, votes);
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1, VOTE_FOR_ELECTION_2);
+		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
 
-		Ballot<Candidate> newBallot = originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), NEW_ELECTION_1);
+        Ballot<GenderedCandidate> newBallot = originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), ELECTION_1.withOfficeName("Office1 migrated"));
+
+		assertThat(newBallot, is(not(sameInstance(originalBallot))));
+		assertThat(newBallot.getVote(ELECTION_2).isPresent(), is(true));
+		assertThat(newBallot.getVote(ELECTION_2).get(), is(sameInstance(VOTE_FOR_ELECTION_2)));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void withReplacedElectionThrowsIfCandidatesGotChanged() {
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1, VOTE_FOR_ELECTION_2);
+		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
+
+		originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), ELECTION_1.withReplacedCandidate(CANDIDATE_1.withIsFemale(false)));
+	}
+
+	@Test
+	public void withReplacedCandidateVersionReturnsNewBallotWithMigratedVotes() {
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableSet.of(CANDIDATE_1, CANDIDATE_2)));
+		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
+
+		GenderedCandidate newVersionOfCandidate1 = CANDIDATE_1.withIsFemale(false);
+        GenderedElection adaptedElection = ELECTION_1.withReplacedCandidate(newVersionOfCandidate1);
+        Ballot<GenderedCandidate> newBallot = originalBallot.withReplacedCandidateVersion(adaptedElection, newVersionOfCandidate1);
+
+		assertThat(newBallot, is(not(sameInstance(originalBallot))));
+		assertThat(newBallot.getVote(ELECTION_1).isPresent(), is(false));
+		assertThat(newBallot.getVote(adaptedElection).isPresent(), is(true));
+		assertThat(newBallot.getVote(adaptedElection).get().getElection(), is(adaptedElection));
+		assertThat(newBallot.getVote(adaptedElection).get().getRankedCandidates(), contains(sameInstance(newVersionOfCandidate1), sameInstance(CANDIDATE_2)));
+	}
+
+	@Test
+	public void withReplacedCandidateVersionWontTouchUnrelatedElectionVotes() {
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1, VOTE_FOR_ELECTION_2);
+		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
+
+
+        GenderedCandidate newVersionOfCandidate1 = CANDIDATE_1.withIsFemale(false);
+        GenderedElection adaptedElection = ELECTION_1.withReplacedCandidate(newVersionOfCandidate1);
+		Ballot<GenderedCandidate> newBallot = originalBallot.withReplacedCandidateVersion(adaptedElection, newVersionOfCandidate1);
 
 		assertThat(newBallot, is(not(sameInstance(originalBallot))));
 		assertThat(newBallot.getVote(ELECTION_2).isPresent(), is(true));

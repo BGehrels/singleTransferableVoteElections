@@ -17,22 +17,29 @@
 package info.gehrels.voting;
 
 import com.google.common.collect.ImmutableSet;
+import info.gehrels.voting.genderedElections.GenderedCandidate;
+import info.gehrels.voting.genderedElections.GenderedElection;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.sameInstance;
 
 public final class VoteTest {
-	private static final Candidate CANDIDATE_A = new Candidate("A");
-	private static final Candidate CANDIDATE_B = new Candidate("B");
-	private static final Election<Candidate> ELECTION = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A,
-	                                                                                                    CANDIDATE_B));
+	private static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);
+	private static final GenderedCandidate CANDIDATE_B = new GenderedCandidate("B", true);
+	private static final GenderedElection ELECTION = new GenderedElection(
+															"Example Office",
+                                                            1,
+                                                            1,
+															ImmutableSet.of(CANDIDATE_A, CANDIDATE_B));
 
 	@Test
 	public void testInvalidVoteCreation() {
-		Vote<Candidate> invalidVote = Vote.createInvalidVote(ELECTION);
+		Vote<GenderedCandidate> invalidVote = Vote.createInvalidVote(ELECTION);
 		assertThat(invalidVote.getRankedCandidates(), is(empty()));
 		assertThat(invalidVote.getElection(), is(ELECTION));
 		assertThat(invalidVote.isNo(), is(false));
@@ -41,7 +48,7 @@ public final class VoteTest {
 
 	@Test
 	public void testNoVoteCreation() {
-		Vote<Candidate> invalidVote = Vote.createNoVote(ELECTION);
+		Vote<GenderedCandidate> invalidVote = Vote.createNoVote(ELECTION);
 		assertThat(invalidVote.getRankedCandidates(), is(empty()));
 		assertThat(invalidVote.getElection(), is(ELECTION));
 		assertThat(invalidVote.isNo(), is(true));
@@ -50,12 +57,48 @@ public final class VoteTest {
 
 	@Test
 	public void testPreferenceVoteCreation() {
-		Vote<Candidate> invalidVote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> preferenceVote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
 
-		assertThat(invalidVote.getRankedCandidates(), contains(CANDIDATE_B, CANDIDATE_A));
-		assertThat(invalidVote.getElection(), is(ELECTION));
-		assertThat(invalidVote.isNo(), is(false));
-		assertThat(invalidVote.isValid(), is(true));
+		assertThat(preferenceVote.getRankedCandidates(), contains(CANDIDATE_B, CANDIDATE_A));
+		assertThat(preferenceVote.getElection(), is(ELECTION));
+		assertThat(preferenceVote.isNo(), is(false));
+		assertThat(preferenceVote.isValid(), is(true));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void withReplacedCandidateVersionThrowsIfNewElectionVersionDoesNotContainAllCandidates() {
+		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+
+		vote.withReplacedCandidateVersion(
+				new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A)),
+				CANDIDATE_B.withIsFemale(false)
+		);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void withReplacedCandidateVersionThrowsIfNewElectionChangesTheOfficeName() {
+		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+
+        GenderedCandidate newCandidateVersion = CANDIDATE_B.withIsFemale(false);
+        vote.withReplacedCandidateVersion(
+				ELECTION.withOfficeName("New Office Name").withReplacedCandidate(newCandidateVersion),
+                newCandidateVersion
+		);
+	}
+
+	@Test
+	public void withReplacedCandidateMigratesElectionAndPreference() {
+		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+
+        GenderedCandidate newCandidateVersion = CANDIDATE_B.withIsFemale(false);
+        Vote<GenderedCandidate> migratedVote = vote.withReplacedCandidateVersion(
+                ELECTION.withReplacedCandidate(newCandidateVersion),
+                newCandidateVersion
+        );
+
+        assertThat(migratedVote.getElection(), is(not(sameInstance(ELECTION))));
+        assertThat(migratedVote.getElection().getOfficeName(), is(ELECTION.getOfficeName()));
+        assertThat(migratedVote.getRankedCandidates(), contains(newCandidateVersion, CANDIDATE_A));
 	}
 }
 

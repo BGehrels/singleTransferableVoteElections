@@ -73,10 +73,24 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	public Vote<CANDIDATE_TYPE> withReplacedElection(Election<CANDIDATE_TYPE> newElection) {
-		if (!newElection.getCandidates().containsAll(rankedCandidates)) {
-			throw new IllegalArgumentException();
-		}
 		return new Vote<>(newElection, valid, no, rankedCandidates);
+	}
+
+	public Vote<CANDIDATE_TYPE> withReplacedCandidateVersion(Election<CANDIDATE_TYPE> adaptedElection, CANDIDATE_TYPE newCandidateVersion) {
+		if (!election.getOfficeName().equals(adaptedElection.getOfficeName())) {
+			throw new IllegalArgumentException("the office name must not be changed. Original Election: " + election + ", new Election: " + adaptedElection);
+		}
+
+		ImmutableSet.Builder<CANDIDATE_TYPE> newRankedCandidates = ImmutableSet.builder();
+		for (CANDIDATE_TYPE existingRankedCandidate : rankedCandidates) {
+			if (existingRankedCandidate.getName().equals(newCandidateVersion.getName())) {
+				newRankedCandidates.add(newCandidateVersion);
+			} else {
+				newRankedCandidates.add(existingRankedCandidate);
+			}
+		}
+
+		return new Vote<>(adaptedElection, valid, no, newRankedCandidates.build());
 	}
 
 	@Override

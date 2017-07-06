@@ -54,10 +54,17 @@ public final class Ballot<CANDIDATE_TYPE extends Candidate> {
 		return Optional.ofNullable(votesByElections.get(election));
 	}
 
+	public Optional<Vote<CANDIDATE_TYPE>> getVote(String officeName) {
+		validateThat(officeName, is(notNullValue()));
+
+		return votesByElections.values().stream().filter(v -> v.getElection().getOfficeName().equals(officeName)).findAny();
+	}
+
 	public Ballot<CANDIDATE_TYPE> withReplacedElection(String oldOfficeName, Election<CANDIDATE_TYPE> newElection) {
 		ImmutableSet.Builder<Vote<CANDIDATE_TYPE>> builder = ImmutableSet.builder();
 		for (Vote<CANDIDATE_TYPE> vote : votesByElections.values()) {
 			if (vote.getElection().getOfficeName().equals(oldOfficeName)) {
+				throwIfCandidatesChanged(newElection, vote);
 				builder.add(vote.withReplacedElection(newElection));
 			} else {
 				builder.add(vote);
@@ -66,6 +73,24 @@ public final class Ballot<CANDIDATE_TYPE extends Candidate> {
 		return new Ballot<>(id, builder.build());
 	}
 
+	private void throwIfCandidatesChanged(Election<CANDIDATE_TYPE> newElection, Vote<CANDIDATE_TYPE> vote) {
+		if (!vote.getElection().getCandidates().equals(newElection.getCandidates())) {
+            throw new IllegalArgumentException("You may not change the candidates of an election.");
+        }
+	}
+
+
+	public Ballot<CANDIDATE_TYPE> withReplacedCandidateVersion(Election<CANDIDATE_TYPE> adaptedElection, CANDIDATE_TYPE newCandidateVersion) {
+		ImmutableSet.Builder<Vote<CANDIDATE_TYPE>> builder = ImmutableSet.builder();
+		for (Vote<CANDIDATE_TYPE> vote : votesByElections.values()) {
+			if (vote.getElection().getOfficeName().equals(adaptedElection.getOfficeName())) {
+				builder.add(vote.withReplacedCandidateVersion(adaptedElection, newCandidateVersion));
+			} else {
+				builder.add(vote);
+			}
+		}
+		return new Ballot<>(id, builder.build());
+	}
 
 	@Override
 	public int hashCode() {
