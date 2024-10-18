@@ -22,11 +22,7 @@ import info.gehrels.voting.genderedElections.GenderedElection;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 
 public final class VoteTest {
 	private static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);
@@ -99,6 +95,14 @@ public final class VoteTest {
         assertThat(migratedVote.getElection(), is(not(sameInstance(ELECTION))));
         assertThat(migratedVote.getElection().getOfficeName(), is(ELECTION.getOfficeName()));
         assertThat(migratedVote.getRankedCandidates(), contains(newCandidateVersion, CANDIDATE_A));
+	}
+
+	@Test
+	public void testVotesAreNotEqualIfThePreferenceOrderIsDifferent() {
+		Vote<GenderedCandidate> voteA = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> voteB = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_A, CANDIDATE_B));
+
+		assertThat(voteA.equals(voteB), not(true));
 	}
 }
 

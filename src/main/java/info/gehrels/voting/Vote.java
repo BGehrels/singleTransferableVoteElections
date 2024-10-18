@@ -101,8 +101,8 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 
 		Vote<?> otherVote = (Vote<?>) obj;
 
-		return equal(election, otherVote.election) && equal(valid, otherVote.valid) && equal(no, otherVote.no) && equal(
-			rankedCandidates, otherVote.rankedCandidates);
+		return equal(election, otherVote.election) && equal(valid, otherVote.valid) && equal(no, otherVote.no) &&
+				equal(rankedCandidates.asList(), otherVote.rankedCandidates.asList());
 	}
 
 	@Override
