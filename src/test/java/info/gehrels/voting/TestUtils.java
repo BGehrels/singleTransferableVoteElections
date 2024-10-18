@@ -16,7 +16,10 @@
  */
 package info.gehrels.voting;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
+import java.util.Collection;
 
 public final class TestUtils {
 	private static int s_ballotId = 0;
@@ -25,7 +28,7 @@ public final class TestUtils {
 	}
 
 	public static <T extends Candidate> Ballot<T> createBallot(String preferenceString, Election<T> election) {
-		ImmutableSet<T> preference = toPreference(preferenceString, election.getCandidates());
+		ImmutableList<T> preference = toPreference(preferenceString, election.getCandidates());
 		Vote<T> vote;
 		if (preference.isEmpty()) {
 			vote = Vote.createNoVote(election);
@@ -44,8 +47,8 @@ public final class TestUtils {
 		return new Ballot<>(s_ballotId++, ImmutableSet.of(Vote.createInvalidVote(election)));
 	}
 
-	private static <T extends Candidate> ImmutableSet<T> toPreference(String preferences, ImmutableSet <T> candidates) {
-		ImmutableSet.Builder<T> preferenceBuilder = ImmutableSet.builder();
+	private static <T extends Candidate> ImmutableList<T> toPreference(String preferences, Collection<T> candidates) {
+		ImmutableList.Builder<T> preferenceBuilder = ImmutableList.builder();
 		for (int i = 0; i < preferences.length(); i++) {
 			char c = preferences.charAt(i);
 			preferenceBuilder.add(candidateByName(String.valueOf(c), candidates));
@@ -54,7 +57,7 @@ public final class TestUtils {
 		return preferenceBuilder.build();
 	}
 
-	private static <T extends Candidate> T candidateByName(String s, ImmutableSet<T> candidates) {
+	private static <T extends Candidate> T candidateByName(String s, Collection<T> candidates) {
 		for (T candidate : candidates) {
 			if (candidate.name.equals(s)) {
 				return candidate;

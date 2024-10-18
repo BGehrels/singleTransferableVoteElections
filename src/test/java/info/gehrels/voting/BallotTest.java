@@ -16,6 +16,7 @@
  */
 package info.gehrels.voting;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
 import info.gehrels.voting.genderedElections.GenderedElection;
@@ -37,9 +38,9 @@ public final class BallotTest {
 	private static final GenderedElection ELECTION_2 = new GenderedElection("Office2", 1, 1, ImmutableSet.of(CANDIDATE_2));
 
 	private static final Vote<GenderedCandidate> VOTE_FOR_ELECTION_1 = createPreferenceVote(ELECTION_1,
-	                                                                               ImmutableSet.of(CANDIDATE_1));
+	        ImmutableList.of(CANDIDATE_1));
 	private static final Vote<GenderedCandidate> VOTE_FOR_ELECTION_2 = createPreferenceVote(ELECTION_2,
-	                                                                               ImmutableSet.of(CANDIDATE_2));
+			ImmutableList.of(CANDIDATE_2));
 
 	@Test
 	public void returnsAbsentOptionalIfBallotContainsNoVoteForThisElection() {
@@ -95,7 +96,7 @@ public final class BallotTest {
 
 	@Test
 	public void withReplacedCandidateVersionReturnsNewBallotWithMigratedVotes() {
-		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableSet.of(CANDIDATE_1, CANDIDATE_2)));
+		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableList.of(CANDIDATE_1, CANDIDATE_2)));
 		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
 
 		GenderedCandidate newVersionOfCandidate1 = CANDIDATE_1.withIsFemale(false);

@@ -16,19 +16,22 @@
  */
 package info.gehrels.voting;
 
+import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-public final class SetMatchers {
+public final class CollectionMatchers {
 	public static  <SUPERSET extends Collection<?>, SUBSET extends Collection<?>> Matcher<SUBSET> isSubSetOf(SUPERSET potentialSuperset) {
 		validateThat(potentialSuperset, is(not(nullValue())));
 
@@ -45,6 +48,25 @@ public final class SetMatchers {
 					Collection<Object> badElements = new ArrayList<>(potentialSubset);
 					badElements.removeAll(potentialSuperset);
 					mismatchDescription.appendText("also found ").appendValue(badElements);
+				}
+				return matched;
+			}
+		};
+	}
+
+	public static  <COLLECTION extends Collection<?>> Matcher<COLLECTION> hasOnlyDistinctElements() {
+		return new TypeSafeDiagnosingMatcher<COLLECTION>() {
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("a collection with only distinct elements");
+			}
+
+			@Override
+			protected boolean matchesSafely(COLLECTION potentiallyDistinctCollection, Description mismatchDescription) {
+				boolean matched = ImmutableSet.copyOf(potentiallyDistinctCollection).size() == potentiallyDistinctCollection.size();
+				if (!matched) {
+					Collection<Object> badElements = ImmutableMultiset.copyOf(potentiallyDistinctCollection).entrySet().stream().filter(objectEntry -> objectEntry.getCount() > 1).collect(Collectors.toSet());
+					mismatchDescription.appendValue(badElements).appendText(" appeared more than once");
 				}
 				return matched;
 			}

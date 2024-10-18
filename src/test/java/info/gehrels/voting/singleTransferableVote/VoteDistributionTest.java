@@ -154,7 +154,7 @@ public final class VoteDistributionTest {
 	}
 
 	private VoteState<Candidate> createVoteStateFor(int id, Candidate... candidates) {
-		Vote<Candidate> preferenceVote = Vote.createPreferenceVote(ELECTION, ImmutableSet.copyOf(candidates));
+		Vote<Candidate> preferenceVote = Vote.createPreferenceVote(ELECTION, ImmutableList.copyOf(candidates));
 		return VoteState.forBallotAndElection(new Ballot<>(id, ImmutableSet.of(preferenceVote)), ELECTION).get();
 	}
 

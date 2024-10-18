@@ -80,10 +80,10 @@ public final class STVElectionCalculationTest {
 
 	private ImmutableList<Ballot<Candidate>> setupBallotsFixture() {
 		return ImmutableList.of(
-			new Ballot<>(1, ImmutableSet.of(createPreferenceVote(ELECTION_2, ImmutableSet.of(CANDIDATE_2_A)))),
+			new Ballot<>(1, ImmutableSet.of(createPreferenceVote(ELECTION_2, ImmutableList.of(CANDIDATE_2_A)))),
 			new Ballot<>(2, ImmutableSet.of(createInvalidVote(ELECTION_1))),
-			new Ballot<>(3, ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableSet.of(CANDIDATE_1_A)))),
-			new Ballot<>(4, ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableSet.of(CANDIDATE_1_B)))),
+			new Ballot<>(3, ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableList.of(CANDIDATE_1_A)))),
+			new Ballot<>(4, ImmutableSet.of(createPreferenceVote(ELECTION_1, ImmutableList.of(CANDIDATE_1_B)))),
 			new Ballot<>(5, ImmutableSet.of(createNoVote(ELECTION_1)))
 		);
 	}

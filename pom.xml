@@ -3,7 +3,7 @@
 
 	<groupId>info.gehrels.voting</groupId>
 	<artifactId>singleTransferableVoteElections</artifactId>
-	<version>4.0</version>
+	<version>5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Single Transferable Vote Elections</name>
@@ -47,7 +47,7 @@
 		<connection>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</connection>
 		<url>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</url>
 		<developerConnection>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</developerConnection>
-	  <tag>singleTransferableVoteElections-2.1</tag>
+	  <tag>singleTransferableVoteElections-5.0</tag>
   </scm>
 
 	<properties>

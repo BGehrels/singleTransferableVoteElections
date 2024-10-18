@@ -16,6 +16,7 @@
  */
 package info.gehrels.voting;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
 import info.gehrels.voting.genderedElections.GenderedElection;
@@ -53,7 +54,7 @@ public final class VoteTest {
 
 	@Test
 	public void testPreferenceVoteCreation() {
-		Vote<GenderedCandidate> preferenceVote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> preferenceVote = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
 
 		assertThat(preferenceVote.getRankedCandidates(), contains(CANDIDATE_B, CANDIDATE_A));
 		assertThat(preferenceVote.getElection(), is(ELECTION));
@@ -63,7 +64,7 @@ public final class VoteTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void withReplacedCandidateVersionThrowsIfNewElectionVersionDoesNotContainAllCandidates() {
-		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
 
 		vote.withReplacedCandidateVersion(
 				new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A)),
@@ -73,7 +74,7 @@ public final class VoteTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void withReplacedCandidateVersionThrowsIfNewElectionChangesTheOfficeName() {
-		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
 
         GenderedCandidate newCandidateVersion = CANDIDATE_B.withIsFemale(false);
         vote.withReplacedCandidateVersion(
@@ -84,7 +85,7 @@ public final class VoteTest {
 
 	@Test
 	public void withReplacedCandidateMigratesElectionAndPreference() {
-		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
 
         GenderedCandidate newCandidateVersion = CANDIDATE_B.withIsFemale(false);
         Vote<GenderedCandidate> migratedVote = vote.withReplacedCandidateVersion(
@@ -99,8 +100,8 @@ public final class VoteTest {
 
 	@Test
 	public void testVotesAreNotEqualIfThePreferenceOrderIsDifferent() {
-		Vote<GenderedCandidate> voteA = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_B, CANDIDATE_A));
-		Vote<GenderedCandidate> voteB = Vote.createPreferenceVote(ELECTION, ImmutableSet.of(CANDIDATE_A, CANDIDATE_B));
+		Vote<GenderedCandidate> voteA = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
+		Vote<GenderedCandidate> voteB = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_A, CANDIDATE_B));
 
 		assertThat(voteA.equals(voteB), not(true));
 	}

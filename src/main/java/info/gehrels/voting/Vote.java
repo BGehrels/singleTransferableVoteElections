@@ -17,43 +17,47 @@
 package info.gehrels.voting;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import static com.google.common.base.Objects.equal;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static info.gehrels.voting.SetMatchers.isSubSetOf;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static info.gehrels.voting.CollectionMatchers.hasOnlyDistinctElements;
+import static info.gehrels.voting.CollectionMatchers.isSubSetOf;
+import static org.hamcrest.Matchers.*;
 
 public final class Vote<CANDIDATE_TYPE extends Candidate> {
 	private final Election<CANDIDATE_TYPE> election;
 	private final boolean valid;
 	private final boolean no;
-	private final ImmutableSet<CANDIDATE_TYPE> rankedCandidates;
+	private final ImmutableList<CANDIDATE_TYPE> rankedCandidates;
 
 	public static <CANDIDATE_TYPE extends Candidate> Vote<CANDIDATE_TYPE> createInvalidVote(
 		Election<CANDIDATE_TYPE> election) {
-		return new Vote<>(election, false, false, ImmutableSet.<CANDIDATE_TYPE>of());
+		return new Vote<>(election, false, false, ImmutableList.<CANDIDATE_TYPE>of());
 	}
 
 	public static <CANDIDATE_TYPE extends Candidate> Vote<CANDIDATE_TYPE> createPreferenceVote(
-		Election<CANDIDATE_TYPE> election, ImmutableSet<CANDIDATE_TYPE> preference) {
+		Election<CANDIDATE_TYPE> election, ImmutableList<CANDIDATE_TYPE> preference) {
 		return new Vote<>(election, true, false, validateThat(preference, is(not(empty()))));
 	}
 
 	public static <CANDIDATE_TYPE extends Candidate> Vote<CANDIDATE_TYPE> createNoVote(
 		Election<CANDIDATE_TYPE> election) {
-		return new Vote<>(election, true, true, ImmutableSet.<CANDIDATE_TYPE>of());
+		return new Vote<>(election, true, true, ImmutableList.<CANDIDATE_TYPE>of());
 	}
 
 	private Vote(Election<CANDIDATE_TYPE> election, boolean valid, boolean no,
-	             ImmutableSet<CANDIDATE_TYPE> rankedCandidates) {
+	             ImmutableList<CANDIDATE_TYPE> rankedCandidates) {
 		this.election = validateThat(election, is(not(nullValue())));
 		this.valid = valid;
 		this.no = no;
-		this.rankedCandidates = validateThat(rankedCandidates, isSubSetOf(election.getCandidates()));
+		this.rankedCandidates = validateThat(
+				rankedCandidates,
+				allOf(
+						isSubSetOf(election.getCandidates()),
+						hasOnlyDistinctElements()
+				)
+		);
 	}
 
 	public Election<CANDIDATE_TYPE> getElection() {
@@ -68,7 +72,7 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 		return valid;
 	}
 
-	public ImmutableSet<CANDIDATE_TYPE> getRankedCandidates() {
+	public ImmutableList<CANDIDATE_TYPE> getRankedCandidates() {
 		return rankedCandidates;
 	}
 
@@ -81,7 +85,7 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 			throw new IllegalArgumentException("the office name must not be changed. Original Election: " + election + ", new Election: " + adaptedElection);
 		}
 
-		ImmutableSet.Builder<CANDIDATE_TYPE> newRankedCandidates = ImmutableSet.builder();
+		ImmutableList.Builder<CANDIDATE_TYPE> newRankedCandidates = ImmutableList.builder();
 		for (CANDIDATE_TYPE existingRankedCandidate : rankedCandidates) {
 			if (existingRankedCandidate.getName().equals(newCandidateVersion.getName())) {
 				newRankedCandidates.add(newCandidateVersion);
