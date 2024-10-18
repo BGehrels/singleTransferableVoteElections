@@ -1,207 +1,209 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
 	<groupId>info.gehrels.voting</groupId>
 	<artifactId>singleTransferableVoteElections</artifactId>
 	<version>5.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Single Transferable Vote Elections</name>
-	<url>https://github.com/BGehrels/singleTransferableVoteElections</url>
+    <name>Single Transferable Vote Elections</name>
+    <url>https://github.com/BGehrels/singleTransferableVoteElections</url>
 
-	<description>Calculates Single Transferable Vote election results using the Weighted Inclusive Gregory Method
-	</description>
+    <description>Calculates Single Transferable Vote election results using the Weighted Inclusive Gregory Method
+    </description>
 
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License v3 or later</name>
-			<distribution>repo</distribution>
-			<url>http://www.gnu.org/licenses/agpl-3.0.html</url>
-			<comments>
-				Copyright © 2014 Benjamin Gehrels et al.
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License v3 or later</name>
+            <distribution>repo</distribution>
+            <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+            <comments>
+                Copyright © 2014 Benjamin Gehrels et al.
 
-				This file is part of The Single Transferable Vote Elections Library.
+                This file is part of The Single Transferable Vote Elections Library.
 
-				The Single Transferable Vote Elections Library is free software: you can redistribute it and/or
-				modify it under the terms of the GNU Affero General Public License as published by the Free Software
-				Foundation, either version 3 of the License, or (at your option) any later version.
+                The Single Transferable Vote Elections Library is free software: you can redistribute it and/or
+                modify it under the terms of the GNU Affero General Public License as published by the Free Software
+                Foundation, either version 3 of the License, or (at your option) any later version.
 
-				The Single Transferable Vote Elections Library is distributed in the hope that it will be useful,
-				but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-				PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+                The Single Transferable Vote Elections Library is distributed in the hope that it will be useful,
+                but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+                PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
-				You should have received a copy of the GNU Affero General Public License along with The Single
-				Transferable Vote Elections Library. If not, see http://www.gnu.org/licenses/.
-			</comments>
-		</license>
-	</licenses>
+                You should have received a copy of the GNU Affero General Public License along with The Single
+                Transferable Vote Elections Library. If not, see http://www.gnu.org/licenses/.
+            </comments>
+        </license>
+    </licenses>
 
-	<developers>
-		<developer>
-			<name>Benjamin Gehrels</name>
-			<email>singleTransferableVoteElections.pom.xml@gehrels.info</email>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>Benjamin Gehrels</name>
+            <email>singleTransferableVoteElections.pom.xml@gehrels.info</email>
+        </developer>
+    </developers>
 
-	<scm>
-		<connection>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</connection>
-		<url>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</url>
-		<developerConnection>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</developerConnection>
-  </scm>
+    <scm>
+        <connection>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</connection>
+        <url>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</url>
+        <developerConnection>scm:git:git@github.com:BGehrels/singleTransferableVoteElections</developerConnection>
+    </scm>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>33.3.1-jre</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>info.gehrels</groupId>
-			<artifactId>parameter-validation</artifactId>
-			<version>[1.1,2.0)</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
-			<version>3.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>2.0.16</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.3.1-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>info.gehrels</groupId>
+            <artifactId>parameter-validation</artifactId>
+            <version>[1.1,2.0)</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.16</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>2.0.16</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>4.11.0</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.16</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.11.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
 
-			<!-- Used to run integration tests in the integration-test phase and fail in the verify phase, if ITs were
-			not successful -->
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.5.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- Used to run integration tests in the integration-test phase and fail in the verify phase, if ITs were
+            not successful -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<!-- We want to publish source JARs -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- We want to publish source JARs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
 
-			<!-- We want to publish Javadoc -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- We want to publish Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version>
-				<configuration>
-					<pushChanges>false</pushChanges>
-					<localCheckout>true</localCheckout>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-    <profiles>
-        <profile>
-            <id>release-profile</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>
