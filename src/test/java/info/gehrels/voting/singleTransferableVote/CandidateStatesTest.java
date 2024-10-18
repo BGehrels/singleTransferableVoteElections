@@ -18,7 +18,7 @@ package info.gehrels.voting.singleTransferableVote;
 
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.Candidate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.candidateStateFor;
 import static org.hamcrest.MatcherAssert.assertThat;

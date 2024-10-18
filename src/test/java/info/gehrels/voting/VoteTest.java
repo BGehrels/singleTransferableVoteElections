@@ -20,10 +20,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
 import info.gehrels.voting.genderedElections.GenderedElection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class VoteTest {
 	private static final GenderedCandidate CANDIDATE_A = new GenderedCandidate("A", true);
@@ -62,24 +63,29 @@ public final class VoteTest {
 		assertThat(preferenceVote.isValid(), is(true));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test()
 	public void withReplacedCandidateVersionThrowsIfNewElectionVersionDoesNotContainAllCandidates() {
 		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
 
-		vote.withReplacedCandidateVersion(
-				new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A)),
-				CANDIDATE_B.withIsFemale(false)
+		Election<GenderedCandidate> changedElection = new Election<>("Example Office", ImmutableSet.of(CANDIDATE_A));
+		GenderedCandidate changedCandidate = CANDIDATE_B.withIsFemale(false);
+
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> vote.withReplacedCandidateVersion(changedElection, changedCandidate)
 		);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test()
 	public void withReplacedCandidateVersionThrowsIfNewElectionChangesTheOfficeName() {
 		Vote<GenderedCandidate> vote = Vote.createPreferenceVote(ELECTION, ImmutableList.of(CANDIDATE_B, CANDIDATE_A));
 
         GenderedCandidate newCandidateVersion = CANDIDATE_B.withIsFemale(false);
-        vote.withReplacedCandidateVersion(
-				ELECTION.withOfficeName("New Office Name").withReplacedCandidate(newCandidateVersion),
-                newCandidateVersion
+		GenderedElection changedElection = ELECTION.withOfficeName("New Office Name").withReplacedCandidate(newCandidateVersion);
+
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> vote.withReplacedCandidateVersion(changedElection, newCandidateVersion)
 		);
 	}
 

@@ -23,7 +23,7 @@ import info.gehrels.voting.Ballot;
 import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.QuorumCalculation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static info.gehrels.voting.Vote.createInvalidVote;
 import static info.gehrels.voting.Vote.createNoVote;

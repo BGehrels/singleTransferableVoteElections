@@ -22,7 +22,7 @@ import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import info.gehrels.voting.TestUtils;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static info.gehrels.voting.OptionalMatchers.anEmptyOptional;
 import static info.gehrels.voting.OptionalMatchers.anOptionalWhoseValue;

@@ -27,7 +27,7 @@ import info.gehrels.voting.genderedElections.StringBuilderBackedElectionCalculat
 import info.gehrels.voting.singleTransferableVote.STVElectionCalculationFactory;
 import info.gehrels.voting.singleTransferableVote.StringBuilderBackedSTVElectionCalculationListener;
 import org.apache.commons.math3.fraction.BigFraction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import static info.gehrels.voting.TestUtils.createBallot;

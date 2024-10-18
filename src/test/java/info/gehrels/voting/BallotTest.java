@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import info.gehrels.voting.genderedElections.GenderedCandidate;
 import info.gehrels.voting.genderedElections.GenderedElection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static info.gehrels.voting.OptionalMatchers.anEmptyOptional;
 import static info.gehrels.voting.Vote.createPreferenceVote;
@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class BallotTest {
 	private static final GenderedCandidate CANDIDATE_1 = new GenderedCandidate("Peter", true);
@@ -86,12 +87,16 @@ public final class BallotTest {
 		assertThat(newBallot.getVote(ELECTION_2).get(), is(sameInstance(VOTE_FOR_ELECTION_2)));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test()
 	public void withReplacedElectionThrowsIfCandidatesGotChanged() {
 		ImmutableSet<Vote<GenderedCandidate>> votes = ImmutableSet.of(VOTE_FOR_ELECTION_1, VOTE_FOR_ELECTION_2);
 		Ballot<GenderedCandidate> originalBallot = new Ballot<>(0, votes);
 
-		originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), ELECTION_1.withReplacedCandidate(CANDIDATE_1.withIsFemale(false)));
+		GenderedElection electionWithChangedCandidate = ELECTION_1.withReplacedCandidate(CANDIDATE_1.withIsFemale(false));
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> originalBallot.withReplacedElection(ELECTION_1.getOfficeName(), electionWithChangedCandidate)
+		);
 	}
 
 	@Test

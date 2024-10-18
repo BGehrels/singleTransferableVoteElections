@@ -24,7 +24,7 @@ import info.gehrels.voting.Candidate;
 import info.gehrels.voting.Election;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static info.gehrels.voting.TestUtils.createBallot;
 import static info.gehrels.voting.singleTransferableVote.VoteStateMatchers.aVoteState;

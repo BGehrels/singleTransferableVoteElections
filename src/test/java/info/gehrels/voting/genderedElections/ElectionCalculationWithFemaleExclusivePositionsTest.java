@@ -24,8 +24,8 @@ import info.gehrels.voting.Election;
 import info.gehrels.voting.ElectionCalculation;
 import info.gehrels.voting.ElectionCalculationFactory;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -72,7 +72,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 		);
 
 
-	@Before
+	@BeforeEach
 	public void stubElectionCalculationFactoryToReturnElectionCalculation() {
 		when(electionCalculationFactory.createElectionCalculation(any(Election.class), any(ImmutableCollection.class)))
 			.thenReturn(plainElectionCalculationMock);

@@ -17,7 +17,7 @@
 package info.gehrels.voting;
 
 import org.apache.commons.math3.fraction.BigFraction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.commons.math3.fraction.BigFraction.ONE;
 import static org.hamcrest.MatcherAssert.assertThat;
