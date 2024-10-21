@@ -3,7 +3,7 @@
 
 	<groupId>info.gehrels.voting</groupId>
 	<artifactId>singleTransferableVoteElections</artifactId>
-	<version>6.1-SNAPSHOT</version>
+	<version>7.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
     <name>Single Transferable Vote Elections</name>
@@ -108,8 +108,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
 
