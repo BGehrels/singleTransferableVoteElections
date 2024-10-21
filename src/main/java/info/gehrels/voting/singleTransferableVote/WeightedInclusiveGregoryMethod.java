@@ -35,43 +35,39 @@ public class WeightedInclusiveGregoryMethod<CANDIDATE_TYPE extends Candidate> im
 		return new WigmVoteWeightRecalculator<>(electionCalculationListener);
 	}
 
-	private static final class WigmVoteWeightRecalculator<CANDIDATE extends Candidate>
-		implements VoteWeightRecalculator<CANDIDATE> {
-		private final STVElectionCalculationListener<CANDIDATE> electionCalculationListener;
-
-		private WigmVoteWeightRecalculator(STVElectionCalculationListener<CANDIDATE> electionCalculationListener) {
-			this.electionCalculationListener = electionCalculationListener;
-		}
+	private record WigmVoteWeightRecalculator<CANDIDATE extends Candidate>(
+			STVElectionCalculationListener<CANDIDATE> electionCalculationListener)
+			implements VoteWeightRecalculator<CANDIDATE> {
 
 		@Override
-		public ImmutableList<VoteState<CANDIDATE>> recalculateExceededVoteWeight(CANDIDATE winner,
-																				 BigFraction quorum,
-																				 ImmutableCollection<VoteState<CANDIDATE>> originalVoteStates,
-																				 CandidateStates<CANDIDATE> candidateStates) {
-			Builder<VoteState<CANDIDATE>> resultBuilder = ImmutableList.builder();
-			VoteDistribution<CANDIDATE> voteDistribution = new VoteDistribution<>(
-				candidateStates.getHopefulCandidates(), originalVoteStates);
+			public ImmutableList<VoteState<CANDIDATE>> recalculateExceededVoteWeight(CANDIDATE winner,
+																					 BigFraction quorum,
+																					 ImmutableCollection<VoteState<CANDIDATE>> originalVoteStates,
+																					 CandidateStates<CANDIDATE> candidateStates) {
+				Builder<VoteState<CANDIDATE>> resultBuilder = ImmutableList.builder();
+				VoteDistribution<CANDIDATE> voteDistribution = new VoteDistribution<>(
+						candidateStates.getHopefulCandidates(), originalVoteStates);
 
-			BigFraction votesForCandidate = voteDistribution.votesByCandidate.get(winner);
-			BigFraction excessiveVotes = votesForCandidate.subtract(quorum);
-			BigFraction excessiveFractionOfVoteWeight = excessiveVotes.divide(votesForCandidate);
+				BigFraction votesForCandidate = voteDistribution.votesByCandidate.get(winner);
+				BigFraction excessiveVotes = votesForCandidate.subtract(quorum);
+				BigFraction excessiveFractionOfVoteWeight = excessiveVotes.divide(votesForCandidate);
 
-			electionCalculationListener
-				.redistributingExcessiveFractionOfVoteWeight(winner, excessiveFractionOfVoteWeight);
+				electionCalculationListener
+						.redistributingExcessiveFractionOfVoteWeight(winner, excessiveFractionOfVoteWeight);
 
-			for (VoteState<CANDIDATE> voteState : originalVoteStates) {
-				if (voteState.getPreferredCandidate().orElse(null) == winner) {
-					BigFraction newVoteWeight = voteState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
-					VoteState<CANDIDATE> newVoteState = voteState.withVoteWeight(newVoteWeight);
-					resultBuilder.add(newVoteState);
-				} else {
-					resultBuilder.add(voteState);
+				for (VoteState<CANDIDATE> voteState : originalVoteStates) {
+					if (voteState.getPreferredCandidate().orElse(null) == winner) {
+						BigFraction newVoteWeight = voteState.getVoteWeight().multiply(excessiveFractionOfVoteWeight);
+						VoteState<CANDIDATE> newVoteState = voteState.withVoteWeight(newVoteWeight);
+						resultBuilder.add(newVoteState);
+					} else {
+						resultBuilder.add(voteState);
+					}
 				}
+
+				return resultBuilder.build();
+
 			}
 
-			return resultBuilder.build();
-
 		}
-
-	}
 }

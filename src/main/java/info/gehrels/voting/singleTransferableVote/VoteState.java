@@ -54,7 +54,7 @@ public final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	                  int currentPositionInRankedCandidatesList) {
 		this.ballotId = ballotId;
 		this.vote = vote;
-		this.rankedCandidates = vote.getRankedCandidates().asList();
+		this.rankedCandidates = vote.getRankedCandidates();
 		this.voteWeight = voteWeight;
 		this.currentPositionInRankedCandidatesList = currentPositionInRankedCandidatesList;
 	}
@@ -81,7 +81,7 @@ public final class VoteState<CANDIDATE_TYPE extends Candidate> {
 			return Optional.empty();
 		}
 
-		return Optional.of(rankedCandidates.asList().get(currentPositionInRankedCandidatesList));
+		return Optional.of(rankedCandidates.get(currentPositionInRankedCandidatesList));
 	}
 
 	public BigFraction getVoteWeight() {
@@ -110,6 +110,6 @@ public final class VoteState<CANDIDATE_TYPE extends Candidate> {
 	}
 
 	public boolean isNoVote() {
-		return vote.isNo() || !getPreferredCandidate().isPresent();
+		return vote.isNo() || getPreferredCandidate().isEmpty();
 	}
 }

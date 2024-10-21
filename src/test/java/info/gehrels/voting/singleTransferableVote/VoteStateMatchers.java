@@ -29,13 +29,13 @@ public final class VoteStateMatchers {
 	}
 
 	static <CANDIDATE_TYPE extends Candidate> Matcher<VoteState<CANDIDATE_TYPE>> withPreferredCandidate(CANDIDATE_TYPE candidate) {
-		return new FeatureMatcher<VoteState<CANDIDATE_TYPE>, CANDIDATE_TYPE>(is(candidate), "with preferred candidate",
-		                                                  "preferred candidate") {
-			@Override
-			protected CANDIDATE_TYPE featureValueOf(VoteState<CANDIDATE_TYPE> actual) {
-				return actual.getPreferredCandidate().orElse(null);
-			}
-		};
+		return new FeatureMatcher<>(is(candidate), "with preferred candidate",
+                "preferred candidate") {
+            @Override
+            protected CANDIDATE_TYPE featureValueOf(VoteState<CANDIDATE_TYPE> actual) {
+                return actual.getPreferredCandidate().orElse(null);
+            }
+        };
 	}
 
 	static <T extends Candidate> Matcher<VoteState<T>> aVoteState(Matcher<VoteState<T>> stateMatcher) {
@@ -43,23 +43,23 @@ public final class VoteStateMatchers {
 	}
 
 	static Matcher<VoteState<?>> withVoteWeight(BigFraction voteWeight) {
-		return new FeatureMatcher<VoteState<?>, BigFraction>(is(equalTo(voteWeight)), "with vote weight",
-		                                                    "vote weight") {
+		return new FeatureMatcher<>(is(equalTo(voteWeight)), "with vote weight",
+                "vote weight") {
 
-			@Override
-			protected BigFraction featureValueOf(VoteState<?> voteState) {
-				return voteState.getVoteWeight();
-			}
-		};
+            @Override
+            protected BigFraction featureValueOf(VoteState<?> voteState) {
+                return voteState.getVoteWeight();
+            }
+        };
 	}
 
 	static Matcher<VoteState<?>> withBallotId(long ballotId) {
-		return new FeatureMatcher<VoteState<?>, Long>(is(ballotId), "with ballot id", "ballot id") {
+		return new FeatureMatcher<>(is(ballotId), "with ballot id", "ballot id") {
 
-			@Override
-			protected Long featureValueOf(VoteState<?> voteState) {
-				return voteState.getBallotId();
-			}
-		};
+            @Override
+            protected Long featureValueOf(VoteState<?> voteState) {
+                return voteState.getBallotId();
+            }
+        };
 	}
 }

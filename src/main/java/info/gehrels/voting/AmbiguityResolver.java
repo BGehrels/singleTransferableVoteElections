@@ -19,10 +19,7 @@ package info.gehrels.voting;
 import com.google.common.collect.ImmutableSet;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 public interface AmbiguityResolver<CANDIDATE_TYPE extends Candidate> {
     AmbiguityResolverResult<CANDIDATE_TYPE> chooseOneOfMany(ImmutableSet<CANDIDATE_TYPE> bestCandidates);
@@ -33,7 +30,7 @@ public interface AmbiguityResolver<CANDIDATE_TYPE extends Candidate> {
 
 		public AmbiguityResolverResult(CANDIDATE_TYPE chosenCandidate, String auditLog) {
 			this.chosenCandidate = validateThat(chosenCandidate, is(not(nullValue())));
-			this.auditLog = validateThat(auditLog, not(isEmptyOrNullString()));
+			this.auditLog = validateThat(auditLog, not(is(emptyOrNullString())));
 		}
 	}
 }

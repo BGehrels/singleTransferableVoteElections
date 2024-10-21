@@ -16,7 +16,7 @@
         <license>
             <name>GNU Affero General Public License v3 or later</name>
             <distribution>repo</distribution>
-            <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
             <comments>
                 Copyright © 2014 Benjamin Gehrels et al.
 
@@ -31,7 +31,7 @@
                 PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
                 You should have received a copy of the GNU Affero General Public License along with The Single
-                Transferable Vote Elections Library. If not, see http://www.gnu.org/licenses/.
+                Transferable Vote Elections Library. If not, see https://www.gnu.org/licenses/.
             </comments>
         </license>
     </licenses>

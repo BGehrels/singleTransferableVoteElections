@@ -19,7 +19,7 @@ package info.gehrels.voting.singleTransferableVote;
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.Matchers.is;
 
-final class CandidateState<CANDIDATE_TYPE> {
+public final class CandidateState<CANDIDATE_TYPE> {
 	private final CANDIDATE_TYPE candidate;
 	private boolean elected = false;
 	private boolean looser = false;

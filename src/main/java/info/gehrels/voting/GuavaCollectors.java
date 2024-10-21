@@ -28,7 +28,7 @@ import java.util.stream.Collector;
 
 public class GuavaCollectors {
     public static <R> Collector<R, ImmutableSet.Builder<R>, ImmutableSet<R>> toImmutableSet() {
-        return new Collector<R, ImmutableSet.Builder<R>, ImmutableSet<R>>() {
+        return new Collector<>() {
             @Override
             public Supplier<ImmutableSet.Builder<R>> supplier() {
                 return ImmutableSet::builder;
@@ -41,7 +41,7 @@ public class GuavaCollectors {
 
             @Override
             public BinaryOperator<ImmutableSet.Builder<R>> combiner() {
-                return (a,b) -> ImmutableSet.<R>builder().addAll(a.build()).addAll(b.build());
+                return (a, b) -> ImmutableSet.<R>builder().addAll(a.build()).addAll(b.build());
             }
 
             @Override

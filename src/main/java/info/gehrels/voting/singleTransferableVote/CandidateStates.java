@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-final class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<CANDIDATE_TYPE>> {
+public final class CandidateStates<CANDIDATE_TYPE> implements Iterable<CandidateState<CANDIDATE_TYPE>> {
 	private final ImmutableMap<CANDIDATE_TYPE, CandidateState<CANDIDATE_TYPE>> candidateStates;
 
 	CandidateStates(ImmutableSet<CANDIDATE_TYPE> candidates) {

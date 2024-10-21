@@ -24,47 +24,47 @@ import java.util.Optional;
 
 public final class OptionalMatchers {
 	public static Matcher<Optional<?>> anEmptyOptional() {
-		return new TypeSafeDiagnosingMatcher<Optional<?>>() {
-			@Override
-			protected boolean matchesSafely(Optional<?> item, Description mismatchDescription) {
-				if (item.isPresent()) {
-					mismatchDescription.appendText("an Optional whose value was ").appendValue(item.get());
-					return false;
-				}
+		return new TypeSafeDiagnosingMatcher<>() {
+            @Override
+            protected boolean matchesSafely(Optional<?> item, Description mismatchDescription) {
+                if (item.isPresent()) {
+                    mismatchDescription.appendText("an Optional whose value was ").appendValue(item.get());
+                    return false;
+                }
 
-				return true;
-			}
+                return true;
+            }
 
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("an absent Optional");
-			}
-		};
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("an absent Optional");
+            }
+        };
 	}
 
 	public static <T> Matcher<Optional<T>> anOptionalWhoseValue(Matcher<? super T> valueMatcher) {
-		return new TypeSafeDiagnosingMatcher<Optional<T>>() {
-			@Override
-			protected boolean matchesSafely(Optional<T> optional, Description mismatchDescription) {
-				if (!optional.isPresent()) {
-					mismatchDescription.appendText("an absent Optional");
-					return false;
-				}
+		return new TypeSafeDiagnosingMatcher<>() {
+            @Override
+            protected boolean matchesSafely(Optional<T> optional, Description mismatchDescription) {
+                if (optional.isEmpty()) {
+                    mismatchDescription.appendText("an absent Optional");
+                    return false;
+                }
 
-				T value = optional.get();
-				if (!valueMatcher.matches(value)) {
-					mismatchDescription.appendText("an Optional whose value ");
-					valueMatcher.describeMismatch(value, mismatchDescription);
-					return false;
-				}
+                T value = optional.get();
+                if (!valueMatcher.matches(value)) {
+                    mismatchDescription.appendText("an Optional whose value ");
+                    valueMatcher.describeMismatch(value, mismatchDescription);
+                    return false;
+                }
 
-				return true;
-			}
+                return true;
+            }
 
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("an Optional whose value ").appendDescriptionOf(valueMatcher);
-			}
-		};
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("an Optional whose value ").appendDescriptionOf(valueMatcher);
+            }
+        };
 	}
 }

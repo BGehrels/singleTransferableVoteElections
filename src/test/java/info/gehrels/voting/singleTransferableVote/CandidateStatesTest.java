@@ -36,7 +36,7 @@ public final class CandidateStatesTest {
 
 	@Test
 	public void returnsEmptyCandidateSetIfCandidateStateMapIsEmpty() {
-		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.<Candidate>of());
+		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of());
 		ImmutableSet<Candidate> hopefulCandidates = candidateStates.getHopefulCandidates();
 		assertThat(hopefulCandidates, is(empty()));
 	}
@@ -105,7 +105,7 @@ public final class CandidateStatesTest {
 
 	@Test
 	public void returnsEmptyIteratorForEmptyState() {
-		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.<Candidate>of());
+		CandidateStates<Candidate> candidateStates = new CandidateStates<>(ImmutableSet.of());
 		assertThat(candidateStates, is(emptyIterable()));
 	}
 

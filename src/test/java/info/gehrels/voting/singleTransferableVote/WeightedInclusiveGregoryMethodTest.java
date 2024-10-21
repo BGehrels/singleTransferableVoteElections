@@ -73,11 +73,11 @@ public final class WeightedInclusiveGregoryMethodTest {
                     ALL_HOPEFUL_CANDIDATE_STATE);
 
 		assertThat(voteStates, hasItems(
-			aVoteState(Matchers.<VoteState<Candidate>>allOf(
+			aVoteState(Matchers.allOf(
 				withVoteWeight(ONE_HALF),
 				withBallotId(BALLOT_ABCD.id)
 			)),
-			aVoteState(Matchers.<VoteState<Candidate>>allOf(
+			aVoteState(Matchers.allOf(
 				withBallotId(BALLOT_ACD.id),
 				withVoteWeight(new BigFraction(3, 8))
 			))
@@ -105,10 +105,10 @@ public final class WeightedInclusiveGregoryMethodTest {
                     ALL_HOPEFUL_CANDIDATE_STATE);
 
 		assertThat(voteStates, hasItems(
-			aVoteState(Matchers.<VoteState<Candidate>>allOf(
+			aVoteState(Matchers.allOf(
 				withBallotId(BALLOT_BCDA.id),
 				withVoteWeight(BigFraction.ONE))),
-			aVoteState(Matchers.<VoteState<Candidate>>allOf(
+			aVoteState(Matchers.allOf(
 				withBallotId(BALLOT_NO_VOTES.id),
 				withVoteWeight(BigFraction.ONE)))
 		));

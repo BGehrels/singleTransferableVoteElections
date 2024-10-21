@@ -73,7 +73,7 @@ public final class VoteStateTest {
 	public void withFirstHopefulCandidateReturnsStateWithNullPreferenceIfNoCandidatesAreInTheCandidateStateMap() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
-			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.<Candidate>of()));
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of()));
 		assertThat(resultingVoteState.getPreferredCandidate(), is(anEmptyOptional()));
 	}
 
@@ -81,7 +81,7 @@ public final class VoteStateTest {
 	public void withFirstHopefulCandidateReturnsStateWithNoVoteIfNoCandidatesAreInTheCandidateStateMap() {
 		Ballot<Candidate> ballot = TestUtils.createBallot("AB", ELECTION);
 		VoteState<Candidate> resultingVoteState = VoteState.forBallotAndElection(ballot, ELECTION).get()
-			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.<Candidate>of()));
+			.withFirstHopefulCandidate(new CandidateStates<>(ImmutableSet.of()));
 		assertThat(resultingVoteState.isNoVote(), is(true));
 	}
 

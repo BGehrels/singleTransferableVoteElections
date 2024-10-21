@@ -26,8 +26,7 @@ public final class VoteDistribution<CANDIDATE extends Candidate> {
 				noVotesDraft = noVotesDraft.add(voteState.getVoteWeight());
 			} else {
 				CANDIDATE candidate = voteState.getPreferredCandidate().get();
-				BigFraction votes = votesByCandidateDraft.get(candidate);
-				votesByCandidateDraft.put(candidate, votes.add(voteState.getVoteWeight()));
+                votesByCandidateDraft.compute(candidate, (k, votes) -> votes.add(voteState.getVoteWeight()));
 			}
 		}
 

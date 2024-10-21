@@ -27,14 +27,14 @@ public final class ElectionStepResultMatchers {
 	}
 
 	static Matcher<ElectionStepResult<?>> withNumberOfElectedCandidates(Matcher<Long> subMatcher) {
-		return new FeatureMatcher<ElectionStepResult<?>, Long>(subMatcher, "whose number of elected candidates",
-		                                                          "number of elected candidates") {
+		return new FeatureMatcher<>(subMatcher, "whose number of elected candidates",
+                "number of elected candidates") {
 
-			@Override
-			protected Long featureValueOf(ElectionStepResult<?> electionStepResult) {
-				return electionStepResult.newNumberOfElectedCandidates;
-			}
-		};
+            @Override
+            protected Long featureValueOf(ElectionStepResult<?> electionStepResult) {
+                return electionStepResult.newNumberOfElectedCandidates;
+            }
+        };
 	}
 
 	static Matcher<ElectionStepResult<Candidate>> withVoteStates(
@@ -54,14 +54,14 @@ public final class ElectionStepResultMatchers {
 
 	static <CANDIDATE_TYPE extends Candidate> Matcher<ElectionStepResult<CANDIDATE_TYPE>> withCandidateStates(
 		Matcher<CandidateStates<CANDIDATE_TYPE>> candidateStatesMatcher) {
-		return new FeatureMatcher<ElectionStepResult<CANDIDATE_TYPE>, CandidateStates<CANDIDATE_TYPE>>(
-			candidateStatesMatcher, "with candidateStates",
-			"") {
-			@Override
-			protected CandidateStates<CANDIDATE_TYPE> featureValueOf(ElectionStepResult<CANDIDATE_TYPE> actual) {
-				return actual.newCandidateStates;
-			}
-		};
+		return new FeatureMatcher<>(
+                candidateStatesMatcher, "with candidateStates",
+                "") {
+            @Override
+            protected CandidateStates<CANDIDATE_TYPE> featureValueOf(ElectionStepResult<CANDIDATE_TYPE> actual) {
+                return actual.newCandidateStates;
+            }
+        };
 	}
 
 	static <T extends Candidate> Matcher<ElectionStepResult<T>> anElectionStepResult(Matcher<ElectionStepResult<T>> subMatcher) {

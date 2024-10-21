@@ -59,7 +59,7 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 
 		this.ballots = validateThat(ballots, allOf(
 			is(not(nullValue())),
-			not(hasAPairOfElementsThat(this.<CANDIDATE_TYPE>hasEqualIds()))
+			not(hasAPairOfElementsThat(this.hasEqualIds()))
 			));
 		this.quorumCalculation = validateThat(quorumCalculation, is(not(nullValue())));
 		this.election = validateThat(election, is(not(nullValue())));
@@ -123,9 +123,9 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 		ImmutableList.Builder<VoteState<CANDIDATE_TYPE>> builder = ImmutableList.builder();
 		for (Ballot<CANDIDATE_TYPE> ballot : ballots) {
 			Optional<VoteState<CANDIDATE_TYPE>> voteStateOptional = VoteState.forBallotAndElection(ballot, election);
-			if (voteStateOptional.isPresent()) {
-				builder.add(voteStateOptional.get().withFirstHopefulCandidate(candidateStates));
-			}
+            voteStateOptional.ifPresent(
+					candidateTypeVoteState -> builder.add(candidateTypeVoteState.withFirstHopefulCandidate(candidateStates))
+			);
 		}
 		return builder.build();
 	}
@@ -162,50 +162,50 @@ public class STVElectionCalculation<CANDIDATE_TYPE extends Candidate> implements
 	}
 
 	private <T extends Candidate> Matcher<Pair<Ballot<T>, Ballot<T>>> hasEqualIds() {
-		return new TypeSafeDiagnosingMatcher<Pair<Ballot<T>, Ballot<T>>>() {
-			@Override
-			protected boolean matchesSafely(Pair<Ballot<T>, Ballot<T>> item, Description mismatchDescription) {
-				long firstId = item.getFirst().id;
-				long secondId = item.getSecond().id;
-				if (firstId != secondId) {
-					mismatchDescription.appendValue(item).appendText(" had different ids ").appendValue(firstId)
-						.appendText(" and ").appendValue(secondId);
-					return false;
-				}
-				return true;
-			}
+		return new TypeSafeDiagnosingMatcher<>() {
+            @Override
+            protected boolean matchesSafely(Pair<Ballot<T>, Ballot<T>> item, Description mismatchDescription) {
+                long firstId = item.getFirst().id;
+                long secondId = item.getSecond().id;
+                if (firstId != secondId) {
+                    mismatchDescription.appendValue(item).appendText(" had different ids ").appendValue(firstId)
+                            .appendText(" and ").appendValue(secondId);
+                    return false;
+                }
+                return true;
+            }
 
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("has equal ids");
-			}
-		};
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has equal ids");
+            }
+        };
 	}
 
 
 	private static <T> Matcher<Iterable<T>> hasAPairOfElementsThat(Matcher<Pair<T, T>> subMatcher) {
-		return new TypeSafeDiagnosingMatcher<Iterable<T>>() {
-			@Override
-			protected boolean matchesSafely(Iterable<T> iterable, Description mismatchDescription) {
-				for (T item1 : iterable) {
-					for (T item2 : iterable) {
-						if (item1 != item2) {
-							Pair<T, T> pair = new Pair<>(item1, item2);
-							if (subMatcher.matches(pair)) {
-								return true;
-							}
-						}
-					}
-				}
+		return new TypeSafeDiagnosingMatcher<>() {
+            @Override
+            protected boolean matchesSafely(Iterable<T> iterable, Description mismatchDescription) {
+                for (T item1 : iterable) {
+                    for (T item2 : iterable) {
+                        if (item1 != item2) {
+                            Pair<T, T> pair = new Pair<>(item1, item2);
+                            if (subMatcher.matches(pair)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
 
-				mismatchDescription.appendValue(iterable).appendText(" did not contain a pair of elements that ").appendDescriptionOf(subMatcher);
-				return false;
-			}
+                mismatchDescription.appendValue(iterable).appendText(" did not contain a pair of elements that ").appendDescriptionOf(subMatcher);
+                return false;
+            }
 
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("has a pair of Elements that ").appendDescriptionOf(subMatcher);
-			}
-		};
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has a pair of Elements that ").appendDescriptionOf(subMatcher);
+            }
+        };
 	}
 }

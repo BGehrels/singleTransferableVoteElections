@@ -101,7 +101,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		genderedElectionCalculation.calculateElectionResult(election, ballots);
 
-		// Then all non elected candidates qualify for the second run.
+		// Then all non-elected candidates qualify for the second run.
 		Matcher<ImmutableSet<GenderedCandidate>> containsAllAndOnlyFemaleCandidates = (Matcher) containsInAnyOrder(
 			FEMALE_CANDIDATE_2, CANDIDATE_E, CANDIDATE_F);
 		verify(plainElectionCalculationMock).calculate(argThat(containsAllAndOnlyFemaleCandidates), eq(2L));
@@ -118,7 +118,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		genderedElectionCalculation.calculateElectionResult(election, ballots);
 
-		// Then all non elected candidates qualify for the second run.
+		// Then all non-elected candidates qualify for the second run.
 		InOrder inOrder = inOrder(plainElectionCalculationMock);
 		inOrder.verify(plainElectionCalculationMock).calculate(any(ImmutableSet.class), eq(3L));
 		inOrder.verify(plainElectionCalculationMock).calculate(any(ImmutableSet.class), eq(1L));
@@ -184,7 +184,7 @@ public final class ElectionCalculationWithFemaleExclusivePositionsTest {
 
 		genderedElectionCalculation.calculateElectionResult(election, ballots);
 
-		// Then all non elected candidates qualify for the second run.
+		// Then all non-elected candidates qualify for the second run.
 		InOrder inOrder = inOrder(electionCalculationListener);
 		inOrder.verify(electionCalculationListener).startElectionCalculation(election, ballots);
 		inOrder.verify(electionCalculationListener).startFemaleExclusiveElectionRun();

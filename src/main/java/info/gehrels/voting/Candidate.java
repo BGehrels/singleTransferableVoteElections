@@ -18,7 +18,7 @@ package info.gehrels.voting;
 
 import static info.gehrels.parameterValidation.MatcherValidation.validateThat;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.*;
 
 /**
  * A Candidate is a person running for one office.
@@ -27,7 +27,7 @@ public class Candidate {
     public final String name;
 
 	public Candidate(String name) {
-	    this.name = validateThat(name, not(isEmptyOrNullString()));
+	    this.name = validateThat(name, not(is(emptyOrNullString())));
     }
 
 	public final String getName() {

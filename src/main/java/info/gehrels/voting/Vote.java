@@ -33,7 +33,7 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 
 	public static <CANDIDATE_TYPE extends Candidate> Vote<CANDIDATE_TYPE> createInvalidVote(
 		Election<CANDIDATE_TYPE> election) {
-		return new Vote<>(election, false, false, ImmutableList.<CANDIDATE_TYPE>of());
+		return new Vote<>(election, false, false, ImmutableList.of());
 	}
 
 	public static <CANDIDATE_TYPE extends Candidate> Vote<CANDIDATE_TYPE> createPreferenceVote(
@@ -43,7 +43,7 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 
 	public static <CANDIDATE_TYPE extends Candidate> Vote<CANDIDATE_TYPE> createNoVote(
 		Election<CANDIDATE_TYPE> election) {
-		return new Vote<>(election, true, true, ImmutableList.<CANDIDATE_TYPE>of());
+		return new Vote<>(election, true, true, ImmutableList.of());
 	}
 
 	private Vote(Election<CANDIDATE_TYPE> election, boolean valid, boolean no,
@@ -99,14 +99,12 @@ public final class Vote<CANDIDATE_TYPE extends Candidate> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Vote)) {
+		if (!(obj instanceof Vote<?> otherVote)) {
 			return false;
 		}
 
-		Vote<?> otherVote = (Vote<?>) obj;
-
-		return equal(election, otherVote.election) && equal(valid, otherVote.valid) && equal(no, otherVote.no) &&
-				equal(rankedCandidates.asList(), otherVote.rankedCandidates.asList());
+        return equal(election, otherVote.election) && equal(valid, otherVote.valid) && equal(no, otherVote.no) &&
+				equal(rankedCandidates, otherVote.rankedCandidates);
 	}
 
 	@Override

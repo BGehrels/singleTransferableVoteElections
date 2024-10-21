@@ -94,7 +94,7 @@ public final class MartinWilkesExampleIT {
 			createBallot("JIHFE", election), // 21
 		    createNoBallot(election),        // 22
 		    createInvalidBallot(election),   // 23
-		    new Ballot<>(9876, ImmutableSet.<Vote<GenderedCandidate>>of())
+		    new Ballot<>(9876, ImmutableSet.of())
 		);
 	}
 

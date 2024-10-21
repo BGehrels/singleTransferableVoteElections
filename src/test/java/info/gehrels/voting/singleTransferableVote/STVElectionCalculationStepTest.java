@@ -28,7 +28,6 @@ import info.gehrels.voting.TestUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.hamcrest.MockitoHamcrest;
 
 import static info.gehrels.voting.singleTransferableVote.CandidateStateMatchers.withElectedCandidate;

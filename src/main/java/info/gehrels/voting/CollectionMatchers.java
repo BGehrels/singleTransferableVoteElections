@@ -35,41 +35,41 @@ public final class CollectionMatchers {
 	public static  <SUPERSET extends Collection<?>, SUBSET extends Collection<?>> Matcher<SUBSET> isSubSetOf(SUPERSET potentialSuperset) {
 		validateThat(potentialSuperset, is(not(nullValue())));
 
-		return new TypeSafeDiagnosingMatcher<SUBSET>() {
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("a collection completely contained in ").appendValue(potentialSuperset);
-			}
+		return new TypeSafeDiagnosingMatcher<>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a collection completely contained in ").appendValue(potentialSuperset);
+            }
 
-			@Override
-			protected boolean matchesSafely(SUBSET potentialSubset, Description mismatchDescription) {
-				boolean matched = potentialSuperset.containsAll(potentialSubset);
-				if (!matched) {
-					Collection<Object> badElements = new ArrayList<>(potentialSubset);
-					badElements.removeAll(potentialSuperset);
-					mismatchDescription.appendText("also found ").appendValue(badElements);
-				}
-				return matched;
-			}
-		};
+            @Override
+            protected boolean matchesSafely(SUBSET potentialSubset, Description mismatchDescription) {
+                boolean matched = potentialSuperset.containsAll(potentialSubset);
+                if (!matched) {
+                    Collection<Object> badElements = new ArrayList<>(potentialSubset);
+                    badElements.removeAll(potentialSuperset);
+                    mismatchDescription.appendText("also found ").appendValue(badElements);
+                }
+                return matched;
+            }
+        };
 	}
 
 	public static  <COLLECTION extends Collection<?>> Matcher<COLLECTION> hasOnlyDistinctElements() {
-		return new TypeSafeDiagnosingMatcher<COLLECTION>() {
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("a collection with only distinct elements");
-			}
+		return new TypeSafeDiagnosingMatcher<>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a collection with only distinct elements");
+            }
 
-			@Override
-			protected boolean matchesSafely(COLLECTION potentiallyDistinctCollection, Description mismatchDescription) {
-				boolean matched = ImmutableSet.copyOf(potentiallyDistinctCollection).size() == potentiallyDistinctCollection.size();
-				if (!matched) {
-					Collection<Object> badElements = ImmutableMultiset.copyOf(potentiallyDistinctCollection).entrySet().stream().filter(objectEntry -> objectEntry.getCount() > 1).collect(Collectors.toSet());
-					mismatchDescription.appendValue(badElements).appendText(" appeared more than once");
-				}
-				return matched;
-			}
-		};
+            @Override
+            protected boolean matchesSafely(COLLECTION potentiallyDistinctCollection, Description mismatchDescription) {
+                boolean matched = ImmutableSet.copyOf(potentiallyDistinctCollection).size() == potentiallyDistinctCollection.size();
+                if (!matched) {
+                    Collection<Object> badElements = ImmutableMultiset.copyOf(potentiallyDistinctCollection).entrySet().stream().filter(objectEntry -> objectEntry.getCount() > 1).collect(Collectors.toSet());
+                    mismatchDescription.appendValue(badElements).appendText(" appeared more than once");
+                }
+                return matched;
+            }
+        };
 	}
 }

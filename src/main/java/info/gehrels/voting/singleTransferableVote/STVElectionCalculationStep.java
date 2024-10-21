@@ -212,14 +212,8 @@ public class STVElectionCalculationStep<CANDIDATE extends Candidate> {
 		return chosenCandidate;
 	}
 
-	private static class State<C extends Candidate> {
-		private final CandidateStates<C> candidateStates;
-		private final ImmutableCollection<VoteState<C>> voteStates;
-
-		private State(CandidateStates<C> candidateStates, ImmutableCollection<VoteState<C>> voteStates) {
-			this.candidateStates = candidateStates;
-			this.voteStates = voteStates;
-		}
+	private record State<C extends Candidate>(CandidateStates<C> candidateStates,
+											  ImmutableCollection<VoteState<C>> voteStates) {
 	}
 
 	public static class ElectionStepResult<CANDIDATE_TYPE extends Candidate> {

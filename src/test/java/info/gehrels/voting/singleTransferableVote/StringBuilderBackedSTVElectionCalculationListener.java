@@ -72,7 +72,7 @@ public final class StringBuilderBackedSTVElectionCalculationListener<T extends C
 
 	@Override
 	public void delegatingToExternalAmbiguityResolution(ImmutableSet<T> bestCandidates) {
-		formatLine("Mehrere Stimmgleiche Kandidierende: %s. Delegiere an externes Auswahlverfahren.", bestCandidates);
+		formatLine("Mehrere stimmengleiche Kandidierende: %s. Delegiere an externes Auswahlverfahren.", bestCandidates);
 	}
 
 	/*

@@ -85,15 +85,12 @@ public final class StringBuilderBackedElectionCalculationWithFemaleExclusivePosi
 	}
 
 	private String getReasonAsGermanString(NonQualificationReason reason) {
-		switch (reason) {
-			case NOT_FEMALE:
-				return "Nicht weiblich";
-			case ALREADY_ELECTED:
-				return "Bereits gewählt";
-		}
+        return switch (reason) {
+            case NOT_FEMALE -> "Nicht weiblich";
+            case ALREADY_ELECTED -> "Bereits gewählt";
+        };
 
-		throw new IllegalArgumentException("Unbekannter Grund: " + reason);
-	}
+    }
 
 	private void formatLine(String formatString, Object... objects) {
 		builder.append(format(formatString, objects)).append('\n');
